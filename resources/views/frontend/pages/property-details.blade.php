@@ -9,18 +9,20 @@
     </div>
     @if($property->image || !empty($property->detail->gallery))
     <div class="pm-thumbnails">
-      <button class="nav-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
-      <div class="thumb-track">
-        @if($property->image)
-          <img src="{{ asset_url($property->image) }}" class="active" alt="Cover Image">
-        @endif
-        @if(!empty($property->detail->gallery))
-          @foreach($property->detail->gallery as $imgPath)
-            <img src="{{ asset_url($imgPath) }}" class="{{ !$property->image && $loop->first ? 'active' : '' }}" alt="Thumb {{ $loop->iteration }}">
-          @endforeach
-        @endif
+      <button class="nav-btn prev" type="button"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="thumb-track-wrap">
+        <div class="thumb-track">
+          @if($property->image)
+            <img src="{{ asset_url($property->image) }}" class="active" alt="Cover Image">
+          @endif
+          @if(!empty($property->detail->gallery))
+            @foreach($property->detail->gallery as $imgPath)
+              <img src="{{ asset_url($imgPath) }}" class="{{ !$property->image && $loop->first ? 'active' : '' }}" alt="Thumb {{ $loop->iteration }}">
+            @endforeach
+          @endif
+        </div>
       </div>
-      <button class="nav-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="nav-btn next" type="button"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
     @endif
   </div>
@@ -145,6 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
     src = src.replace('&w=200', '&w=1200');
     mainImg.src = src;
     currentIndex = index;
+
+    thumbs[index].scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest'
+    });
   }
 
   thumbs.forEach((thumb, index) => {
