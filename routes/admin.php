@@ -42,4 +42,10 @@ Route::middleware(['admin'])->group(function () {
     Route::get('submissions', [\App\Http\Controllers\Backend\SubmissionController::class, 'index'])->name('submissions.index');
     Route::get('submissions/{submission}', [\App\Http\Controllers\Backend\SubmissionController::class, 'show'])->name('submissions.show');
     Route::delete('submissions/{submission}', [\App\Http\Controllers\Backend\SubmissionController::class, 'destroy'])->name('submissions.destroy');
+
+    // Services Management
+    Route::resource('services', \App\Http\Controllers\Backend\ServiceController::class);
+
+    // Amenities Management
+    Route::resource('amenities', \App\Http\Controllers\Backend\AmenityController::class);
 });

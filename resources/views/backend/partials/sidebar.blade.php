@@ -86,6 +86,29 @@
                 @endif
             </a>
         </li>
+        <li>
+            <a href="#servicesSubmenu" data-bs-toggle="collapse"
+                class="{{ request()->routeIs('admin.services.*') || request()->routeIs('admin.amenities.*') ? 'active' : '' }} d-flex justify-content-between">
+                <span><i class="bi bi-briefcase-fill"></i> Services</span>
+                <i class="bi bi-chevron-down small"></i>
+            </a>
+            <ul class="collapse {{ request()->routeIs('admin.services.*') || request()->routeIs('admin.amenities.*') ? 'show' : '' }} sidebar-submenu"
+                id="servicesSubmenu">
+                <li>
+                    <a href="{{ route('admin.services.index') }}"
+                        class="{{ request()->routeIs('admin.services.index') || request()->routeIs('admin.services.edit') ? 'active' : '' }}">
+                        <i class="bi bi-list-ul"></i> All Services
+                    </a>
+                </li>
+              
+                <li>
+                    <a href="{{ route('admin.amenities.index') }}"
+                        class="{{ request()->routeIs('admin.amenities.*') ? 'active' : '' }}">
+                        <i class="bi bi-stars"></i> Amenities
+                    </a>
+                </li>
+            </ul>
+        </li>
         
         <li>
             <a href="{{ route('admin.settings.footer') }}"

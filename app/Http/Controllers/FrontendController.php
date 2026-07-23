@@ -50,7 +50,9 @@ class FrontendController extends Controller
 
     public function services()
     {
-        return view('frontend.pages.services');
+        $services = \App\Models\Service::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        $amenities = \App\Models\Amenity::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        return view('frontend.pages.services', compact('services', 'amenities'));
     }
 
     public function about()

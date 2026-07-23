@@ -390,7 +390,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .brand-name strong{ display:block; font-weight:600; }
 .header-links{ display:flex; align-items:center; gap:28px; font-size:.86rem; font-weight:500; }
 .header-links a:hover{ color:var(--copper); }
-.btn-line{ border:1.5px solid #fff; color:#fff; padding:9px 20px; border-radius:100px; font-size:.82rem; font-weight:600; font-family:var(--font-mono); transition:background .3s, color .3s; }
+.btn-line{ border:1.5px solid #fff; color:#000000; padding:9px 20px; border-radius:100px; font-size:.82rem; font-weight:600; font-family:var(--font-mono); transition:background .3s, color .3s; }
 .btn-line:hover{ background:var(--copper); border-color:var(--copper); color:#fff; }
 .btn-copper{ background:var(--copper); color:var(--paper); padding:12px 26px; border-radius:100px; font-size:.85rem; font-weight:600; font-family:var(--font-mono); display:inline-flex; align-items:center; gap:8px; transition:background .3s, transform .3s; }
 .btn-copper:hover{ background:var(--copper-deep); transform:translateY(-2px); }
