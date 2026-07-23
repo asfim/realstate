@@ -102,6 +102,16 @@
             color: var(--primary);
         }
 
+        .sidebar-submenu {
+            list-style: none;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+        .sidebar-submenu a {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
         /* Main Content Styles */
         #main-content {
             margin-left: 260px;

@@ -9,7 +9,7 @@ Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['admin'])->group(function () {
     Route::get('dashboard', [\App\Http\Controllers\Backend\DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Homepage Settings Core
     Route::get('/homepage-settings', [\App\Http\Controllers\Backend\HomepageSettingController::class, 'index'])->name('homepage_settings.index');
     Route::post('/homepage-settings', [\App\Http\Controllers\Backend\HomepageSettingController::class, 'update'])->name('homepage_settings.update');
@@ -23,4 +23,14 @@ Route::middleware(['admin'])->group(function () {
     Route::resource('featured-properties', \App\Http\Controllers\Backend\FeaturedPropertyController::class);
     Route::resource('team-members', \App\Http\Controllers\Backend\TeamMemberController::class);
     Route::resource('testimonials', \App\Http\Controllers\Backend\TestimonialController::class);
+
+    // Properties Management
+    Route::resource('properties', \App\Http\Controllers\Backend\PropertyController::class);
+    Route::post('properties/{property}/details', [\App\Http\Controllers\Backend\PropertyController::class, 'updateDetails'])->name('properties.updateDetails');
+    Route::post('properties/{property}/construction-status', [\App\Http\Controllers\Backend\PropertyController::class, 'updateConstruction'])->name('properties.updateConstruction');
+    Route::resource('property-types', \App\Http\Controllers\Backend\PropertyTypeController::class);
+
+    // Manage Property Details & Construction Status Routes
+    Route::get('properties-manage', [\App\Http\Controllers\Backend\PropertyController::class, 'manageIndex'])->name('properties.manage.index');
+    Route::get('properties-manage/{property}/edit', [\App\Http\Controllers\Backend\PropertyController::class, 'manageEdit'])->name('properties.manage.edit');
 });

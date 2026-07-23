@@ -393,7 +393,7 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
     </div>
     <div class="row g-4">
       <div class="col-lg-4 col-md-6" data-aos="fade-up">
-        <div class="project-card" onclick="window.location.href='{{ route('property.featured.details') }}'" style="cursor:pointer;">
+        <div class="project-card" onclick="window.location.href='{{ route('project.featured') }}'" style="cursor:pointer;">
           <div class="project-img-wrap"><span class="project-badge">New Launch</span><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=75" loading="lazy" alt="Aurelia Heights apartment tower"></div>
           <div class="project-body">
             <h4>Aurelia Heights</h4>
@@ -403,12 +403,12 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
               <div><strong>24 Units</strong>Available</div>
               <div class="project-price">$340k</div>
             </div>
-            <a href="{{ route('property.featured.details') }}" class="btn btn-navy w-100 mt-3">View Details</a>
+            <a href="{{ route('project.featured') }}" class="btn btn-navy w-100 mt-3">View Details</a>
           </div>
         </div>
       </div>
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="project-card" onclick="window.location.href='{{ route('property.featured.details') }}'" style="cursor:pointer;">
+        <div class="project-card" onclick="window.location.href='{{ route('project.featured') }}'" style="cursor:pointer;">
           <div class="project-img-wrap"><span class="project-badge">Best Seller</span><img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=75" loading="lazy" alt="The Meridian villa"></div>
           <div class="project-body">
             <h4>The Meridian Villas</h4>
@@ -418,12 +418,12 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
               <div><strong>8 Units</strong>Available</div>
               <div class="project-price">$780k</div>
             </div>
-            <a href="{{ route('property.featured.details') }}" class="btn btn-navy w-100 mt-3">View Details</a>
+            <a href="{{ route('project.featured') }}" class="btn btn-navy w-100 mt-3">View Details</a>
           </div>
         </div>
       </div>
       <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="project-card" onclick="window.location.href='{{ route('property.featured.details') }}'" style="cursor:pointer;">
+        <div class="project-card" onclick="window.location.href='{{ route('project.featured') }}'" style="cursor:pointer;">
           <div class="project-img-wrap"><span class="project-badge">Featured</span><img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=75" loading="lazy" alt="Skyline Business Bay tower"></div>
           <div class="project-body">
             <h4>Skyline Business Bay</h4>
@@ -433,7 +433,7 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
               <div><strong>16 Units</strong>Available</div>
               <div class="project-price">$510k</div>
             </div>
-            <a href="{{ route('property.featured.details') }}" class="btn btn-navy w-100 mt-3">View Details</a>
+            <a href="{{ route('project.featured') }}" class="btn btn-navy w-100 mt-3">View Details</a>
           </div>
         </div>
       </div>

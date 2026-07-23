@@ -58,7 +58,7 @@
       <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar"></i>Launch Date</span><span class="v">May 2024</span></div>
       <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar-check"></i>Completion</span><span class="v">Mar 2027</span></div>
       <div class="spec-actions">
-        <a href="{{ route('property.construction.status') }}" class="btn-line">Construction Status</a>
+        <a href="{{ route('') }}" class="btn-line">Construction Status</a>
         <a href="#" class="btn-copper"><i class="fa-solid fa-download"></i>Brochure</a>
       </div>
     </div>
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const planTitle = document.getElementById('planTitle');
       const planList = document.getElementById('planList');
       const planImageText = document.querySelector('#planImage svg text');
-      
+
       if (planTitle) planTitle.textContent = data.title;
       if (planList) planList.innerHTML = data.rows.map(r => `<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
       if (planImageText) planImageText.textContent = data.label;

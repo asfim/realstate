@@ -11,19 +11,50 @@
             </a>
         </li>
         <li>
-            <a href="{{ route('admin.homepage_settings.index') }}" class="{{ request()->routeIs('admin.homepage_settings.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.homepage_settings.index') }}"
+                class="{{ request()->routeIs('admin.homepage_settings.*') ? 'active' : '' }}">
                 <i class="bi bi-gear-fill"></i>
                 Homepage Settings
             </a>
         </li>
         <li>
-            <a href="{{ route('admin.featured-properties.index') }}" class="{{ request()->routeIs('admin.featured-properties.*') ? 'active' : '' }}">
-                <i class="bi bi-house-heart-fill"></i>
-                Featured Properties
+            <a href="#propertiesSubmenu" data-bs-toggle="collapse"
+                class="{{ request()->routeIs('admin.properties.*') || request()->routeIs('admin.property-types.*') || request()->routeIs('admin.properties.manage.*') ? 'active' : '' }} d-flex justify-content-between">
+                <span><i class="bi bi-building"></i> Properties</span>
+                <i class="bi bi-chevron-down small"></i>
             </a>
+            <ul class="collapse {{ request()->routeIs('admin.properties.*') || request()->routeIs('admin.property-types.*') || request()->routeIs('admin.properties.manage.*') ? 'show' : '' }} sidebar-submenu"
+                id="propertiesSubmenu">
+                <li>
+                    <a href="{{ route('admin.properties.index') }}"
+                        class="{{ request()->routeIs('admin.properties.index') || request()->routeIs('admin.properties.edit') ? 'active' : '' }}">
+                        <i class="bi bi-list-ul"></i> All Properties
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.properties.create') }}"
+                        class="{{ request()->routeIs('admin.properties.create') ? 'active' : '' }}">
+                        <i class="bi bi-plus-circle"></i> Add Property
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.properties.manage.index') }}"
+                        class="{{ request()->routeIs('admin.properties.manage.*') ? 'active' : '' }}">
+                        <i class="bi bi-gear-fill"></i> Manage Property
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.property-types.index') }}"
+                        class="{{ request()->routeIs('admin.property-types.*') ? 'active' : '' }}">
+                        <i class="bi bi-tags"></i> Property Types
+                    </a>
+                </li>
+            </ul>
         </li>
+        
         <li>
-            <a href="{{ route('admin.settings.footer') }}" class="{{ request()->routeIs('admin.settings.footer') ? 'active' : '' }}">
+            <a href="{{ route('admin.settings.footer') }}"
+                class="{{ request()->routeIs('admin.settings.footer') ? 'active' : '' }}">
                 <i class="bi bi-layout-text-window-reverse"></i>
                 Footer Settings
             </a>
