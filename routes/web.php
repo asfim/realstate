@@ -1,41 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FrontendController;
 
-Route::get('/', function () {
-    return view('frontend.pages.home');
-})->name('home');
-
-Route::get('/projects', function () {
-    return view('frontend.pages.projects');
-})->name('projects');
-
-Route::get('/properties', function () {
-    return view('frontend.pages.properties');
-})->name('properties');
-
-Route::get('/services', function () {
-    return view('frontend.pages.services');
-})->name('services');
-
-Route::get('/about', function () {
-    return view('frontend.pages.about');
-})->name('about');
-
-Route::get('/gallery', function () {
-    return view('frontend.pages.gallery');
-})->name('gallery');
-
-Route::get('/blog', function () {
-    return view('frontend.pages.blog');
-})->name('blog');
-
-Route::get('/contact', function () {
-    return view('frontend.pages.contact');
-})->name('contact');
-
-Route::get('/property/details', function () { return view('frontend.pages.property-details'); })->name('property.details');
-
-Route::get('/property/construction-status', function () { return view('frontend.pages.construction-status'); })->name('property.construction.status');
-
-Route::get('/property/featured', function () { return view('frontend.pages.property-featured'); })->name('property.featured.details');
+Route::get('/', [FrontendController::class, 'home'])->name('home');
+Route::get('/projects', [FrontendController::class, 'projects'])->name('projects');
+Route::get('/properties', [FrontendController::class, 'properties'])->name('properties');
+Route::get('/services', [FrontendController::class, 'services'])->name('services');
+Route::get('/about', [FrontendController::class, 'about'])->name('about');
+Route::get('/gallery', [FrontendController::class, 'gallery'])->name('gallery');
+Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
+Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
+Route::get('/property/details', [FrontendController::class, 'propertyDetails'])->name('property.details');
+Route::get('/property/construction-status', [FrontendController::class, 'constructionStatus'])->name('property.construction.status');
+Route::get('/property/featured', [FrontendController::class, 'propertyFeatured'])->name('property.featured.details');
