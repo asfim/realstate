@@ -47,6 +47,22 @@
             color: #fff;
             transition: all 0.3s ease;
             z-index: 1050;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         #sidebar.collapsed {

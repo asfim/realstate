@@ -109,6 +109,34 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <a href="#aboutSubmenu" data-bs-toggle="collapse"
+                class="{{ request()->routeIs('admin.about_settings.*') || request()->routeIs('admin.journeys.*') || request()->routeIs('admin.team-members.*') ? 'active' : '' }} d-flex justify-content-between">
+                <span><i class="bi bi-info-circle-fill"></i> About Us</span>
+                <i class="bi bi-chevron-down small"></i>
+            </a>
+            <ul class="collapse {{ request()->routeIs('admin.about_settings.*') || request()->routeIs('admin.journeys.*') || request()->routeIs('admin.team-members.*') ? 'show' : '' }} sidebar-submenu"
+                id="aboutSubmenu">
+                <li>
+                    <a href="{{ route('admin.about_settings.index') }}"
+                        class="{{ request()->routeIs('admin.about_settings.*') ? 'active' : '' }}">
+                        <i class="bi bi-gear-fill"></i> Page Content & Stats
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.journeys.index') }}"
+                        class="{{ request()->routeIs('admin.journeys.*') ? 'active' : '' }}">
+                        <i class="bi bi-diagram-3"></i> Milestones / Journey
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.team-members.index') }}"
+                        class="{{ request()->routeIs('admin.team-members.*') ? 'active' : '' }}">
+                        <i class="bi bi-people-fill"></i> Team Members
+                    </a>
+                </li>
+            </ul>
+        </li>
         
         <li>
             <a href="{{ route('admin.settings.footer') }}"

@@ -48,4 +48,9 @@ Route::middleware(['admin'])->group(function () {
 
     // Amenities Management
     Route::resource('amenities', \App\Http\Controllers\Backend\AmenityController::class);
+
+    // About Us Management
+    Route::get('about-settings', [\App\Http\Controllers\Backend\AboutSettingController::class, 'index'])->name('about_settings.index');
+    Route::post('about-settings', [\App\Http\Controllers\Backend\AboutSettingController::class, 'update'])->name('about_settings.update');
+    Route::resource('journeys', \App\Http\Controllers\Backend\JourneyController::class);
 });

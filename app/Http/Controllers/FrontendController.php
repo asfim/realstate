@@ -57,7 +57,10 @@ class FrontendController extends Controller
 
     public function about()
     {
-        return view('frontend.pages.about');
+        $journeys = \App\Models\Journey::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        $teamMembers = \App\Models\TeamMember::where('is_active', true)->latest()->take(8)->get();
+
+        return view('frontend.pages.about', compact('journeys', 'teamMembers'));
     }
 
     public function gallery()
