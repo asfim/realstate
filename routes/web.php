@@ -11,6 +11,7 @@ Route::get('/services', [FrontendController::class, 'services'])->name('services
 Route::get('/about', [FrontendController::class, 'about'])->name('about');
 Route::get('/gallery', [FrontendController::class, 'gallery'])->name('gallery');
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
+Route::get('/blog/{slug}', [FrontendController::class, 'blogDetails'])->name('blog.details');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::get('/property/{property}/details', [FrontendController::class, 'propertyDetails'])->name('property.details');
 Route::get('/property/{property}/construction-status', [FrontendController::class, 'constructionStatus'])->name('property.construction.status');

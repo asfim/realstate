@@ -10,7 +10,7 @@ class JourneyController extends Controller
 {
     public function index()
     {
-        $journeys = Journey::orderBy('sort_order', 'asc')->orderBy('id', 'desc')->get();
+        $journeys = Journey::orderBy('sort_order', 'asc')->latest()->limit(10)->get();
         return view('backend.journeys.index', compact('journeys'));
     }
 

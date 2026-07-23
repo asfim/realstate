@@ -16,7 +16,7 @@
         <table class="table table-hover align-middle">
             <thead class="table-light">
                 <tr>
-                    <th style="width: 70px;">Order</th>
+                    <th style="width: 70px;">Sl</th>
                     <th style="width: 100px;">Year</th>
                     <th>Milestone Title</th>
                     <th>Description</th>
@@ -27,7 +27,7 @@
             <tbody>
                 @forelse($journeys as $item)
                 <tr>
-                    <td class="fw-bold text-muted">#{{ $item->sort_order }}</td>
+                    <td class="fw-bold text-muted">{{ $loop->iteration }}</td>
                     <td>
                         <span class="badge bg-gold text-dark fs-6">{{ $item->year }}</span>
                     </td>

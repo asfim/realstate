@@ -2,59 +2,89 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\AdminAuthController;
+use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\HomepageSettingController;
+use App\Http\Controllers\Backend\SettingController;
+use App\Http\Controllers\Backend\FeaturedProjectController;
+use App\Http\Controllers\Backend\TeamMemberController;
+use App\Http\Controllers\Backend\TestimonialController;
+use App\Http\Controllers\Backend\PropertyController;
+use App\Http\Controllers\Backend\PropertyTypeController;
+use App\Http\Controllers\Backend\SubmissionController;
+use App\Http\Controllers\Backend\ServiceController;
+use App\Http\Controllers\Backend\AmenityController;
+use App\Http\Controllers\Backend\AboutSettingController;
+use App\Http\Controllers\Backend\JourneyController;
+use App\Http\Controllers\Backend\GalleryController;
+use App\Http\Controllers\Backend\PostController;
+use App\Http\Controllers\Backend\FaqController;
+use App\Http\Controllers\Backend\ContactSettingController;
 
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AdminAuthController::class, 'login'])->name('login.submit');
 Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['admin'])->group(function () {
-    Route::get('dashboard', [\App\Http\Controllers\Backend\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Homepage Settings Core
-    Route::get('/homepage-settings', [\App\Http\Controllers\Backend\HomepageSettingController::class, 'index'])->name('homepage_settings.index');
-    Route::post('/homepage-settings', [\App\Http\Controllers\Backend\HomepageSettingController::class, 'update'])->name('homepage_settings.update');
+    Route::get('/homepage-settings', [HomepageSettingController::class, 'index'])->name('homepage_settings.index');
+    Route::post('/homepage-settings', [HomepageSettingController::class, 'update'])->name('homepage_settings.update');
 
     // General Settings
-    Route::get('/settings/footer', [\App\Http\Controllers\Backend\SettingController::class, 'footer'])->name('settings.footer');
-    Route::get('/settings/other', [\App\Http\Controllers\Backend\SettingController::class, 'other'])->name('settings.other');
-    Route::post('/settings/update', [\App\Http\Controllers\Backend\SettingController::class, 'update'])->name('settings.update');
+    Route::get('/settings/footer', [SettingController::class, 'footer'])->name('settings.footer');
+    Route::get('/settings/other', [SettingController::class, 'other'])->name('settings.other');
+    Route::post('/settings/update', [SettingController::class, 'update'])->name('settings.update');
 
     // Featured Projects
-    Route::resource('featured-project', \App\Http\Controllers\Backend\FeaturedProjectController::class);
-    Route::get('featured-project-details', [\App\Http\Controllers\Backend\FeaturedProjectController::class, 'detailsIndex'])->name('featured-project.details.index');
-    Route::get('featured-project-details/{featuredProject}/edit', [\App\Http\Controllers\Backend\FeaturedProjectController::class, 'detailsEdit'])->name('featured-project.details.edit');
-    Route::post('featured-project-details/{featuredProject}', [\App\Http\Controllers\Backend\FeaturedProjectController::class, 'detailsUpdate'])->name('featured-project.details.update');
+    Route::resource('featured-project', FeaturedProjectController::class);
+    Route::get('featured-project-details', [FeaturedProjectController::class, 'detailsIndex'])->name('featured-project.details.index');
+    Route::get('featured-project-details/{featuredProject}/edit', [FeaturedProjectController::class, 'detailsEdit'])->name('featured-project.details.edit');
+    Route::post('featured-project-details/{featuredProject}', [FeaturedProjectController::class, 'detailsUpdate'])->name('featured-project.details.update');
 
-    Route::resource('team-members', \App\Http\Controllers\Backend\TeamMemberController::class);
-    Route::resource('testimonials', \App\Http\Controllers\Backend\TestimonialController::class);
+    Route::resource('team-members', TeamMemberController::class);
+    Route::resource('testimonials', TestimonialController::class);
 
     // Properties Management
-    Route::resource('properties', \App\Http\Controllers\Backend\PropertyController::class);
-    Route::post('properties/{property}/details', [\App\Http\Controllers\Backend\PropertyController::class, 'updateDetails'])->name('properties.updateDetails');
-    Route::post('properties/{property}/construction-status', [\App\Http\Controllers\Backend\PropertyController::class, 'updateConstruction'])->name('properties.updateConstruction');
-    Route::resource('property-types', \App\Http\Controllers\Backend\PropertyTypeController::class);
+    Route::resource('properties', PropertyController::class);
+    Route::post('properties/{property}/details', [PropertyController::class, 'updateDetails'])->name('properties.updateDetails');
+    Route::post('properties/{property}/construction-status', [PropertyController::class, 'updateConstruction'])->name('properties.updateConstruction');
+    Route::resource('property-types', PropertyTypeController::class);
 
     // Manage Property Details & Construction Status Routes
-    Route::get('properties-manage', [\App\Http\Controllers\Backend\PropertyController::class, 'manageIndex'])->name('properties.manage.index');
-    Route::get('properties-manage/{property}/edit', [\App\Http\Controllers\Backend\PropertyController::class, 'manageEdit'])->name('properties.manage.edit');
+    Route::get('properties-manage', [PropertyController::class, 'manageIndex'])->name('properties.manage.index');
+    Route::get('properties-manage/{property}/edit', [PropertyController::class, 'manageEdit'])->name('properties.manage.edit');
 
     // Submissions Management
-    Route::get('submissions', [\App\Http\Controllers\Backend\SubmissionController::class, 'index'])->name('submissions.index');
-    Route::get('submissions/{submission}', [\App\Http\Controllers\Backend\SubmissionController::class, 'show'])->name('submissions.show');
-    Route::delete('submissions/{submission}', [\App\Http\Controllers\Backend\SubmissionController::class, 'destroy'])->name('submissions.destroy');
+    Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions.index');
+    Route::get('submissions/{submission}', [SubmissionController::class, 'show'])->name('submissions.show');
+    Route::delete('submissions/{submission}', [SubmissionController::class, 'destroy'])->name('submissions.destroy');
 
     // Services Management
-    Route::resource('services', \App\Http\Controllers\Backend\ServiceController::class);
+    Route::resource('services', ServiceController::class);
 
     // Amenities Management
-    Route::resource('amenities', \App\Http\Controllers\Backend\AmenityController::class);
+    Route::resource('amenities', AmenityController::class);
 
     // About Us Management
-    Route::get('about-settings', [\App\Http\Controllers\Backend\AboutSettingController::class, 'index'])->name('about_settings.index');
-    Route::post('about-settings', [\App\Http\Controllers\Backend\AboutSettingController::class, 'update'])->name('about_settings.update');
-    Route::resource('journeys', \App\Http\Controllers\Backend\JourneyController::class);
+    Route::get('about-settings', [AboutSettingController::class, 'index'])->name('about_settings.index');
+    Route::post('about-settings', [AboutSettingController::class, 'update'])->name('about_settings.update');
+    Route::resource('journeys', JourneyController::class);
+
+    // Contact Page Settings Management
+    Route::get('contact-settings', [ContactSettingController::class, 'index'])->name('contact_settings.index');
+    Route::post('contact-settings', [ContactSettingController::class, 'update'])->name('contact_settings.update');
 
     // Gallery Management
-    Route::resource('galleries', \App\Http\Controllers\Backend\GalleryController::class);
-    Route::post('gallery-settings', [\App\Http\Controllers\Backend\GalleryController::class, 'updateSettings'])->name('galleries.updateSettings');
+    Route::resource('galleries', GalleryController::class);
+    Route::post('gallery-settings', [GalleryController::class, 'updateSettings'])->name('galleries.updateSettings');
+
+    // Blog & Posts Management
+    Route::resource('posts', PostController::class);
+    Route::post('posts-settings', [PostController::class, 'updateSettings'])->name('posts.updateSettings');
+
+    // FAQs Management
+    Route::resource('faqs', FaqController::class);
+    Route::post('faqs-settings', [FaqController::class, 'updateSettings'])->name('faqs.updateSettings');
 });
+

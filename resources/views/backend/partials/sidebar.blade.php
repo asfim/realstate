@@ -143,7 +143,36 @@
                 Media Gallery
             </a>
         </li>
+        <li>
+            <a href="#blogSubmenu" data-bs-toggle="collapse"
+                class="{{ request()->routeIs('admin.posts.*') || request()->routeIs('admin.faqs.*') ? 'active' : '' }} d-flex justify-content-between">
+                <span><i class="bi bi-journal-richtext"></i> Blog & FAQs</span>
+                <i class="bi bi-chevron-down small"></i>
+            </a>
+            <ul class="collapse {{ request()->routeIs('admin.posts.*') || request()->routeIs('admin.faqs.*') ? 'show' : '' }} sidebar-submenu"
+                id="blogSubmenu">
+                <li>
+                    <a href="{{ route('admin.posts.index') }}"
+                        class="{{ request()->routeIs('admin.posts.*') ? 'active' : '' }}">
+                        <i class="bi bi-newspaper"></i> Blog Posts
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.faqs.index') }}"
+                        class="{{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}">
+                        <i class="bi bi-question-circle-fill"></i> FAQ Items
+                    </a>
+                </li>
+            </ul>
+        </li>
         
+        <li>
+            <a href="{{ route('admin.contact_settings.index') }}"
+                class="{{ request()->routeIs('admin.contact_settings.*') ? 'active' : '' }}">
+                <i class="bi bi-telephone-fill"></i>
+                Contact Settings
+            </a>
+        </li>
         <li>
             <a href="{{ route('admin.settings.footer') }}"
                 class="{{ request()->routeIs('admin.settings.footer') ? 'active' : '' }}">

@@ -71,12 +71,22 @@ class FrontendController extends Controller
 
     public function blog()
     {
-        return view('frontend.pages.blog');
+        $posts = \App\Models\Post::where('is_active', true)->latest('published_at')->paginate(6);
+        $faqs = \App\Models\Faq::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        return view('frontend.pages.blog', compact('posts', 'faqs'));
+    }
+
+    public function blogDetails($slug)
+    {
+        $post = \App\Models\Post::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $recentPosts = \App\Models\Post::where('is_active', true)->where('id', '!=', $post->id)->latest()->take(4)->get();
+        return view('frontend.pages.blog-details', compact('post', 'recentPosts'));
     }
 
     public function contact()
     {
-        return view('frontend.pages.contact');
+        $propertyTypes = \App\Models\PropertyType::all();
+        return view('frontend.pages.contact', compact('propertyTypes'));
     }
 
     public function propertyDetails(Property $property)
