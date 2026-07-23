@@ -1,6 +1,6 @@
 <nav id="sidebar">
     <div class="sidebar-header">
-        <h3>AURELIA<span>ESTATES</span></h3>
+        <h3>{{ strtoupper(setting('site_title', 'AURELIA ESTATES')) }}</h3>
     </div>
 
     <ul class="sidebar-menu">
@@ -166,6 +166,13 @@
             </ul>
         </li>
         
+        <li>
+            <a href="{{ route('admin.settings.site') }}"
+                class="{{ request()->routeIs('admin.settings.site') ? 'active' : '' }}">
+                <i class="bi bi-sliders"></i>
+                Site Settings
+            </a>
+        </li>
         <li>
             <a href="{{ route('admin.contact_settings.index') }}"
                 class="{{ request()->routeIs('admin.contact_settings.*') ? 'active' : '' }}">

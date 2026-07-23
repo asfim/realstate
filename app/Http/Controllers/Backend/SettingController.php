@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
+    public function site()
+    {
+        $settings = Setting::pluck('value', 'key')->toArray();
+        return view('backend.settings.site', compact('settings'));
+    }
+
     public function footer()
     {
         $settings = Setting::pluck('value', 'key')->toArray();

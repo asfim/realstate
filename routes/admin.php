@@ -32,6 +32,7 @@ Route::middleware(['admin'])->group(function () {
     Route::post('/homepage-settings', [HomepageSettingController::class, 'update'])->name('homepage_settings.update');
 
     // General Settings
+    Route::get('/settings/site', [SettingController::class, 'site'])->name('settings.site');
     Route::get('/settings/footer', [SettingController::class, 'footer'])->name('settings.footer');
     Route::get('/settings/other', [SettingController::class, 'other'])->name('settings.other');
     Route::post('/settings/update', [SettingController::class, 'update'])->name('settings.update');

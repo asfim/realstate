@@ -1,10 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-luxury {{ request()->routeIs('home') || request()->routeIs('property.details') ? '' : 'navbar-inner-page' }}" id="mainNav">
   <div class="container">
     <a class="navbar-brand" href="{{ route('home') }}">
-      @if(setting('footer_logo'))
-        <img src="{{ Storage::url(setting('footer_logo')) }}" alt="Logo" style="height: 40px;">
+      @if(setting('site_logo'))
+        <img src="{{ asset_url(setting('site_logo')) }}" alt="{{ setting('site_title', 'Aurelia Estates') }}" style="height: 40px;">
+      @elseif(setting('footer_logo'))
+        <img src="{{ asset_url(setting('footer_logo')) }}" alt="{{ setting('site_title', 'Aurelia Estates') }}" style="height: 40px;">
       @else
-        AURELIA<span>.</span>
+        {{ setting('site_title', 'AURELIA') }}<span>.</span>
       @endif
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><i class="fa-solid fa-bars"></i></button>

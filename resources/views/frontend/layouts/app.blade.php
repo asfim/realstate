@@ -3,8 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurelia Estates | Find Your Dream Property</title>
-<meta name="description" content="Aurelia Estates — luxury real estate developer offering premium apartments, villas and commercial properties with verified listings, easy installments and legal support.">
+<title>@yield('title', setting('meta_title', setting('site_title', 'Aurelia Estates | Find Your Dream Property')))</title>
+<meta name="description" content="{{ setting('meta_description', 'Aurelia Estates — luxury real estate developer offering premium apartments, villas and commercial properties with verified listings, easy installments and legal support.') }}">
+@if(setting('meta_keywords'))
+<meta name="keywords" content="{{ setting('meta_keywords') }}">
+@endif
+@if(setting('site_favicon'))
+<link rel="icon" href="{{ asset_url(setting('site_favicon')) }}">
+@endif
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +23,7 @@
 </head>
 <body>
 
-<div id="preloader"><div class="loader-mark">AURELIA<span style="color:#D4AF37">ESTATES</span><div class="loader-bar"></div></div></div>
+<div id="preloader"><div class="loader-mark">{{ strtoupper(setting('site_title', 'AURELIA ESTATES')) }}<div class="loader-bar"></div></div></div>
 <div id="scrollProgress"></div>
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>

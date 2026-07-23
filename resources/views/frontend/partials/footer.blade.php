@@ -3,9 +3,11 @@
     <div class="row g-4 mb-4">
       <div class="col-lg-4">
         @if(setting('footer_logo'))
-          <img src="{{ Storage::url(setting('footer_logo')) }}" alt="Logo" style="height: 50px; margin-bottom: 15px;">
+          <img src="{{ asset_url(setting('footer_logo')) }}" alt="Logo" style="height: 50px; margin-bottom: 15px;">
+        @elseif(setting('site_logo'))
+          <img src="{{ asset_url(setting('site_logo')) }}" alt="Logo" style="height: 50px; margin-bottom: 15px;">
         @else
-          <div class="footer-brand mb-3">AURELIA<span>.</span></div>
+          <div class="footer-brand mb-3">{{ setting('site_title', 'AURELIA') }}<span>.</span></div>
         @endif
         <p style="font-size:.9rem; max-width:300px;">{{ setting('footer_description', 'Two decades of building verified, premium properties people are proud to call home.') }}</p>
         <div class="footer-social mt-3">

@@ -4,7 +4,7 @@
 <!-- PAGE HEADER -->
 <div class="page-header">
   <div class="container">
-    <h1 data-aos="fade-up">{{ setting('about_title', 'About Aurelia Estates') }}</h1>
+    <h1 data-aos="fade-up">{{ setting('about_title', 'About ' . setting('site_title', 'Aurelia Estates')) }}</h1>
     <p data-aos="fade-up" data-aos-delay="100">{{ setting('about_subtitle', 'Two decades of excellence in luxury real estate.') }}</p>
   </div>
 </div>
@@ -21,9 +21,9 @@
         </div>
       </div>
       <div class="col-lg-6" data-aos="fade-left">
-        <span class="eyebrow">{{ setting('about_eyebrow', 'About Aurelia Estates') }}</span>
+        <span class="eyebrow">{{ setting('about_eyebrow', 'About ' . setting('site_title', 'Aurelia Estates')) }}</span>
         <h2 class="section-title">{{ setting('about_heading', 'Building More Than Properties — Building Trust') }}</h2>
-        <p class="mt-3">{{ setting('about_description', 'Since 2010, Aurelia Estates has delivered over 500 residential and commercial projects across the country, guided by one principle: every buyer deserves clarity, quality, and a home worth the investment.') }}</p>
+        <p class="mt-3">{{ setting('about_description', 'Since 2010, ' . setting('site_title', 'Aurelia Estates') . ' has delivered over 500 residential and commercial projects across the country, guided by one principle: every buyer deserves clarity, quality, and a home worth the investment.') }}</p>
         
         <div class="row g-3 my-3">
           <div class="col-6">
@@ -82,7 +82,7 @@
   <div class="container">
     <div class="text-center mb-5" data-aos="fade-up">
       <span class="eyebrow">Our Team</span>
-      <h2 class="section-title">The People Behind Aurelia</h2>
+      <h2 class="section-title">The People Behind {{ setting('site_title', 'Aurelia') }}</h2>
     </div>
     <div class="row g-4">
       @forelse($teamMembers as $index => $member)

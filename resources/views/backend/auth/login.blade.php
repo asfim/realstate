@@ -151,7 +151,7 @@
         <div class="glass-card">
             
             <div class="brand-logo">
-                <h1>AURELIA<span>ESTATES</span></h1>
+                <h1>{{ strtoupper(setting('site_title', 'AURELIA ESTATES')) }}</h1>
                 <p>Admin Portal</p>
             </div>
 
