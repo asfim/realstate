@@ -26,9 +26,15 @@ class FrontendController extends Controller
         return view('frontend.pages.projects', compact('projects'));
     }
 
-    public function projectFeatured()
+    public function projectFeatured(?FeaturedProject $featuredProject = null)
     {
-        return view('frontend.pages.project-featured');
+        if (!$featuredProject || !$featuredProject->exists) {
+            $featuredProject = FeaturedProject::where('is_active', true)->first() ?? FeaturedProject::first();
+        }
+
+        return view('frontend.pages.project-featured', [
+            'project' => $featuredProject
+        ]);
     }
 
     public function properties(Request $request)

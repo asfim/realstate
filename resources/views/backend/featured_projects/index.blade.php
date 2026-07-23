@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0 fw-bold">Featured Projects</h4>
+    <h4 class="mb-0 fw-bold">All Projects</h4>
     <a href="{{ route('admin.featured-project.create') }}" class="btn btn-gold">
         <i class="bi bi-plus-lg me-1"></i> Add Project
     </a>
@@ -26,7 +26,7 @@
                 <tr>
                     <td>
                         @if($project->image)
-                            <img src="{{ Storage::url($project->image) }}" alt="Img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                            <img src="{{ asset_url($project->image) }}" alt="Img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                         @else
                             <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="width: 60px; height: 60px; border-radius: 8px;">
                                 <i class="bi bi-image"></i>

@@ -3,28 +3,52 @@
 @section('content')
 <div class="property-dossier" style="background:#F7F5F0; color:#1C1B19; padding-bottom: 60px;">
 <div class="crumb-strip">
-
-  <div class="container"><a href="{{ route('home') }}">Home</a> / <a href="{{ route('properties') }}">Properties</a> / <span>Beverly Residence</span></div>
+  <div class="container"><a href="{{ route('home') }}">Home</a> / <a href="{{ route('projects') }}">Projects</a> / <span>{{ $project->title ?? 'Featured Project' }}</span></div>
 </div>
+
+@php
+    $gallery = $project->gallery ?? [
+        'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=80',
+        'https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1400&q=80',
+        'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+        'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1400&q=80',
+        'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=80'
+    ];
+    if($project->image && !in_array($project->image, $gallery)) {
+        array_unshift($gallery, $project->image);
+    }
+@endphp
 
 <section class="hero-collage container">
   <div class="hero-grid">
     <div class="hero-main">
-      <span class="hero-tag mono">01 / ROOFTOP WALKWAY</span>
-      <img id="heroMainImg" src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=80" alt="Beverly Residence rooftop walkway at night">
+      <span class="hero-tag mono">01 / OVERVIEW</span>
+      <img id="heroMainImg" src="{{ asset_url($gallery[0]) }}" alt="{{ $project->title }}">
     </div>
     <div class="hero-side">
-      <div class="cell"><img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=700&q=75" alt="Beverly Residence dining terrace"><div class="more mono">02</div></div>
-      <div class="cell"><img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=700&q=75" alt="Beverly Residence facade detail"><div class="more mono">+6 more</div></div>
+      @if(isset($gallery[1]))
+      <div class="cell">
+          <img src="{{ asset_url($gallery[1]) }}" alt="{{ $project->title }}">
+          <div class="more mono">02</div>
+      </div>
+      @endif
+      @if(isset($gallery[2]))
+      <div class="cell">
+          <img src="{{ asset_url($gallery[2]) }}" alt="{{ $project->title }}">
+          <div class="more mono">+{{ count($gallery) > 2 ? count($gallery) - 2 : 1 }} more</div>
+      </div>
+      @endif
     </div>
   </div>
   <div class="thumb-rail" id="thumbRail">
-    <div class="thumb active" data-src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=80"><img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=200&q=60" alt=""><span>01</span></div>
-    <div class="thumb" data-src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1400&q=80"><img src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=200&q=60" alt=""><span>02</span></div>
-    <div class="thumb" data-src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=80"><img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=200&q=60" alt=""><span>03</span></div>
-    <div class="thumb" data-src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=200&q=60" alt=""><span>04</span></div>
-    <div class="thumb" data-src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1400&q=80"><img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=200&q=60" alt=""><span>05</span></div>
-    <div class="thumb" data-src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=80"><img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=200&q=60" alt=""><span>06</span></div>
+    @foreach($gallery as $index => $imgUrl)
+      @php $fullUrl = asset_url($imgUrl); @endphp
+      <div class="thumb {{ $loop->first ? 'active' : '' }}" data-src="{{ $fullUrl }}">
+        <img src="{{ $fullUrl }}" alt="Thumb">
+        <span>0{{ $index + 1 }}</span>
+      </div>
+    @endforeach
   </div>
 </section>
 
@@ -32,34 +56,41 @@
   <div class="container overview-grid">
     <div>
       <span class="idx">OVERVIEW</span>
-      <h1 class="property-title">Beverly Residence</h1>
-      <div class="property-loc"><i class="fa-solid fa-location-dot"></i> Plot # 17/A, Road # 126, Gulshan, Dhaka</div>
+      <h1 class="property-title">{{ $project->title ?? 'Beverly Residence' }}</h1>
+      <div class="property-loc"><i class="fa-solid fa-location-dot"></i> {{ $project->address ?? $project->location ?? 'Plot # 17/A, Road # 126, Gulshan, Dhaka' }}</div>
       <div class="overview-text">
-        <p>Nestled in the vibrant center of Gulshan, Beverly Residence is a nine-storey address built around a double-height entrance and a furnished "meet and greet" lobby that keeps arrival private and unhurried.</p>
-        <p>Each floor holds a single 3,000+ sqft, three-bedroom apartment, and the patterned rooftop turns the building's crown into its most memorable room — restaurants, hospitals and schools sit within easy reach on every side.</p>
+        @if($project->description)
+            <p>{{ $project->description }}</p>
+        @else
+            <p>Nestled in the vibrant center of Gulshan, {{ $project->title }} is a nine-storey address built around a double-height entrance and a furnished "meet and greet" lobby that keeps arrival private and unhurried.</p>
+            <p>Each floor holds a single 3,000+ sqft, three-bedroom apartment, and the patterned rooftop turns the building's crown into its most memorable room — restaurants, hospitals and schools sit within easy reach on every side.</p>
+        @endif
       </div>
       <div class="status-row">
-        <div class="status-item"><span class="n mono">G+9</span><span class="l">Floors</span></div>
-        <div class="status-item"><span class="n mono">1</span><span class="l">Apt / Floor</span></div>
-        <div class="status-item"><span class="n mono">3 / 3</span><span class="l">Bed / Bath</span></div>
-        <div class="status-item"><span class="n mono">6.43</span><span class="l">Katha Land</span></div>
+        <div class="status-item"><span class="n mono">{{ $project->no_of_floors ?? 'G+9' }}</span><span class="l">Floors</span></div>
+        <div class="status-item"><span class="n mono">{{ $project->apartments_per_floor ?? '1' }}</span><span class="l">Apt / Floor</span></div>
+        <div class="status-item"><span class="n mono">{{ $project->beds ?? 3 }} / {{ $project->baths ?? 3 }}</span><span class="l">Bed / Bath</span></div>
+        <div class="status-item"><span class="n mono">{{ $project->land_area ?? '6.43' }}</span><span class="l">Land Area</span></div>
       </div>
     </div>
 
     <div class="spec-plate">
       <div class="spec-plate-head"><h5>At a Glance</h5><span class="idx" style="margin:0;">SPEC</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-location-dot"></i>Address</span><span class="v">Plot 17/A, Rd 126</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-ruler-combined"></i>Land Area</span><span class="v">6.43 Katha</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-building"></i>No. of Floors</span><span class="v">G + 9</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-table-cells"></i>Apt / Floor</span><span class="v">1</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-vector-square"></i>Apt Size</span><span class="v">3000+ sft</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-bed"></i>Bedroom</span><span class="v">3</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-bath"></i>Bathroom</span><span class="v">3</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar"></i>Launch Date</span><span class="v">May 2024</span></div>
-      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar-check"></i>Completion</span><span class="v">Mar 2027</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-location-dot"></i>Address</span><span class="v">{{ $project->address ?? $project->location }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-ruler-combined"></i>Land Area</span><span class="v">{{ $project->land_area ?? '6.43 Katha' }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-building"></i>No. of Floors</span><span class="v">{{ $project->no_of_floors ?? 'G + 9' }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-table-cells"></i>Apt / Floor</span><span class="v">{{ $project->apartments_per_floor ?? '1' }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-vector-square"></i>Apt Size</span><span class="v">{{ $project->area ? $project->area . ' sqft' : '3000+ sft' }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-bed"></i>Bedroom</span><span class="v">{{ $project->beds ?? 3 }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-bath"></i>Bathroom</span><span class="v">{{ $project->baths ?? 3 }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar"></i>Launch Date</span><span class="v">{{ $project->launch_date ?? 'May 2024' }}</span></div>
+      <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar-check"></i>Completion</span><span class="v">{{ $project->expected_completion ?? 'Mar 2027' }}</span></div>
       <div class="spec-actions">
-        <a href="#" class="btn-line">Construction Status</a>
-        <a href="#" class="btn-copper"><i class="fa-solid fa-download"></i>Brochure</a>
+        @if($project->brochure)
+            <a href="{{ Storage::url($project->brochure) }}" target="_blank" class="btn-copper"><i class="fa-solid fa-download"></i>Download Brochure</a>
+        @else
+            <a href="#enquiry" class="btn-copper"><i class="fa-solid fa-envelope"></i>Enquire Now</a>
+        @endif
       </div>
     </div>
   </div>
@@ -77,15 +108,29 @@
     </div>
     <div class="plan-viewer">
       <div class="plan-image" id="planImage">
-        <svg viewBox="0 0 400 300"><rect x="10" y="10" width="380" height="280" fill="none" stroke="#1C1B19" stroke-width="1.5"/><rect x="40" y="40" width="140" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><rect x="200" y="40" width="160" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><rect x="40" y="160" width="320" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><text x="200" y="20" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#6B675E">GROUND FLOOR — LOBBY &amp; DRIVEWAY</text><circle cx="110" cy="90" r="3" fill="#C1622F"/><text x="120" y="94" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">LOBBY</text><circle cx="280" cy="90" r="3" fill="#C1622F"/><text x="290" y="94" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">LOUNGE</text><circle cx="200" cy="210" r="3" fill="#C1622F"/><text x="210" y="214" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">DRIVEWAY / PARKING</text></svg>
+        @php
+          $gImg = isset($project->floor_plans['ground']['image']) ? (\Illuminate\Support\Str::startsWith($project->floor_plans['ground']['image'], ['http://', 'https://']) ? $project->floor_plans['ground']['image'] : Storage::url($project->floor_plans['ground']['image'])) : null;
+        @endphp
+        @if($gImg)
+          <img src="{{ $gImg }}" alt="Ground Floor Plan" style="width: 100%; max-height: 320px; object-fit: contain; border-radius: 8px;">
+        @else
+          <svg viewBox="0 0 400 300"><rect x="10" y="10" width="380" height="280" fill="none" stroke="#1C1B19" stroke-width="1.5"/><rect x="40" y="40" width="140" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><rect x="200" y="40" width="160" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><rect x="40" y="160" width="320" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><text x="200" y="20" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#6B675E">GROUND FLOOR — LOBBY &amp; DRIVEWAY</text><circle cx="110" cy="90" r="3" fill="#C1622F"/><text x="120" y="94" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">LOBBY</text><circle cx="280" cy="90" r="3" fill="#C1622F"/><text x="290" y="94" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">LOUNGE</text><circle cx="200" cy="210" r="3" fill="#C1622F"/><text x="210" y="214" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">DRIVEWAY / PARKING</text></svg>
+        @endif
       </div>
       <div class="plan-info">
         <h5 id="planTitle">Ground Floor</h5>
+        @php
+            $initialGroundRows = $project->floor_plans['ground']['info'] ?? [
+                ['key' => 'Function', 'value' => 'Lobby & driveway'],
+                ['key' => 'Ceiling height', 'value' => '12 ft'],
+                ['key' => 'Parking bays', 'value' => '10'],
+                ['key' => 'Generator room', 'value' => 'Included'],
+            ];
+        @endphp
         <ul id="planList">
-          <li><span>Function</span><span>Lobby &amp; driveway</span></li>
-          <li><span>Ceiling height</span><span>12 ft</span></li>
-          <li><span>Parking bays</span><span>10</span></li>
-          <li><span>Generator room</span><span>Included</span></li>
+          @foreach($initialGroundRows as $r)
+            <li><span>{{ is_array($r) && isset($r['key']) ? $r['key'] : $r[0] }}</span><span>{{ is_array($r) && isset($r['value']) ? $r['value'] : $r[1] }}</span></li>
+          @endforeach
         </ul>
       </div>
     </div>
@@ -96,9 +141,29 @@
   <div class="container">
     <span class="idx">PROPERTY VIDEO</span>
     <h2 class="property-title" style="font-size:clamp(1.8rem,3vw,2.4rem); margin-bottom:24px;">Behind The Framework</h2>
-    <div class="video-frame" id="videoTrigger">
-      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80" alt="Beverly Residence exterior still from property video">
-      <div class="scrim"><div class="play-ring"><i class="fa-solid fa-play"></i></div><h5>Watch the construction story</h5></div>
+    @php
+        $hasCustomPoster = !empty($project->video_thumbnail);
+        $hasVideoFile = !empty($project->video_file);
+        $youtubeThumbUrl = $project->youtube_thumbnail_url;
+        $videoUrl = $project->formatted_video_url ?? 'https://www.youtube.com/embed/L_LUpnjgPso?autoplay=1&rel=0';
+        $isFile = $hasVideoFile ? '1' : '0';
+
+        $posterImageUrl = null;
+        if ($hasCustomPoster) {
+            $posterImageUrl = Storage::url($project->video_thumbnail);
+        } elseif (!$hasVideoFile && $youtubeThumbUrl) {
+            $posterImageUrl = $youtubeThumbUrl;
+        } elseif (!$hasVideoFile) {
+            $posterImageUrl = \Illuminate\Support\Str::startsWith($gallery[0], ['http://', 'https://']) ? $gallery[0] : Storage::url($gallery[0]);
+        }
+    @endphp
+    <div class="video-frame" id="videoTrigger" data-video-url="{{ $videoUrl }}" data-is-file="{{ $isFile }}">
+      @if(!$hasCustomPoster && $hasVideoFile)
+        <video src="{{ Storage::url($project->video_file) }}#t=0.1" preload="metadata" muted style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+      @else
+        <img src="{{ $posterImageUrl }}" alt="{{ $project->title }} video preview">
+      @endif
+      <div class="scrim"><div class="play-ring"><i class="fa-solid fa-play"></i></div><h5>Watch the project story</h5></div>
     </div>
   </div>
 </section>
@@ -106,20 +171,20 @@
 <section class="location-section" id="location">
   <div class="container">
     <span class="idx">LOCATION</span>
-    <h2 class="property-title" style="font-size:clamp(1.8rem,3vw,2.4rem); margin-bottom:24px;">Find Us In Gulshan</h2>
+    <h2 class="property-title" style="font-size:clamp(1.8rem,3vw,2.4rem); margin-bottom:24px;">Find Us In {{ $project->location }}</h2>
     <div class="location-grid">
       <div class="addr-card">
-        <h5>bti Beverly Residence</h5>
-        <p>Plot # 17/A, Road # 126, Gulshan, Dhaka 1212</p>
+        <h5>{{ $project->title }}</h5>
+        <p>{{ $project->address ?? $project->location }}</p>
         <p class="mono" style="margin-top:16px; color:var(--copper); font-size:.8rem;">NEAREST LANDMARK</p>
-        <p>AMZ Hospital — 4 min walk</p>
+        <p>{{ $project->nearest_landmark ?? 'AMZ Hospital — 4 min walk' }}</p>
         <div style="display:flex; gap:10px; margin-top:20px;">
-          <a href="#" class="btn-line" style="font-size:.76rem; padding:9px 16px;"><i class="fa-solid fa-directions"></i> Directions</a>
-          <a href="#" class="btn-copper" style="font-size:.76rem; padding:9px 16px;"><i class="fa-solid fa-phone"></i> Call</a>
+          <a href="{{ $project->map_url ?? '#' }}" target="_blank" class="btn-line" style="font-size:.76rem; padding:9px 16px;"><i class="fa-solid fa-directions"></i> Directions</a>
+          <a href="#enquiry" class="btn-copper" style="font-size:.76rem; padding:9px 16px;"><i class="fa-solid fa-phone"></i> Contact Us</a>
         </div>
       </div>
       <div class="map-embed">
-        <iframe src="https://www.google.com/maps?q=Gulshan%201%20Road%20126%20Dhaka&output=embed" loading="lazy" title="Beverly Residence location map"></iframe>
+        <iframe src="{{ $project->map_url && \Illuminate\Support\Str::contains($project->map_url, 'embed') ? $project->map_url : 'https://www.google.com/maps?q=' . urlencode($project->address ?? $project->location) . '&output=embed' }}" loading="lazy" title="{{ $project->title }} location map"></iframe>
       </div>
     </div>
   </div>
@@ -129,27 +194,25 @@
   <div class="container enquiry-grid">
     <div class="enquiry-form">
       <span class="idx">ENQUIRE</span>
-      <h2 class="property-title" style="font-size:clamp(1.8rem,3vw,2.4rem); margin-bottom:8px;">I'm Interested In This Property</h2>
+      <h2 class="property-title" style="font-size:clamp(1.8rem,3vw,2.4rem); margin-bottom:8px;">I'm Interested In This Project</h2>
       <p style="margin-bottom:28px;">Our team responds to every enquiry within one business day.</p>
       <form id="enquiryForm" onsubmit="return handleEnquirySubmit(event);">
         <div class="field"><label>Name</label><input type="text" required></div>
         <div class="field"><label>Email Address</label><input type="email" required></div>
         <div class="field"><label>Phone Number</label><input type="tel" required></div>
-        <div class="field"><label>Message</label><textarea rows="3">I am interested in your property named "Beverly Residence".</textarea></div>
+        <div class="field"><label>Message</label><textarea rows="3">I am interested in your project named "{{ $project->title }}".</textarea></div>
         <button type="submit" class="btn-copper">Submit <i class="fa-solid fa-arrow-right"></i></button>
       </form>
     </div>
     <div class="enquiry-note">
-      <h5>Why buyers choose Beverly Residence</h5>
-      <p style="margin-bottom:10px;">— A double-height entrance and furnished meet-and-greet lobby for complete privacy on arrival.</p>
-      <p style="margin-bottom:10px;">— One 3,000+ sqft apartment per floor, so neighbours are never a corridor away.</p>
-      <p style="margin-bottom:10px;">— A patterned rooftop walkway designed as a destination, not an afterthought.</p>
-      <p>— Walking distance to Gulshan's restaurants, hospitals and schools.</p>
+      <h5>Why buyers choose {{ $project->title }}</h5>
+      <p style="margin-bottom:10px;">— Double-height entrance and luxury furnished lobby.</p>
+      <p style="margin-bottom:10px;">— Spaciously designed {{ $project->beds }}-bedroom luxury units ({{ $project->area }} sqft).</p>
+      <p style="margin-bottom:10px;">— Prime location at {{ $project->location }}.</p>
+      <p>— Modern amenities and architectural refinement.</p>
     </div>
   </div>
 </section>
-
-
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -163,6 +226,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  /* Category-wise Floor Plan images & Info Rows */
+  @php
+    $plansMap = [];
+    $plansInfoMap = [];
+    $cats = ['ground', 'typical', 'roof', 'unit'];
+    foreach($cats as $c) {
+        if(isset($project->floor_plans[$c]['image'])) {
+            $img = $project->floor_plans[$c]['image'];
+            $plansMap[$c] = \Illuminate\Support\Str::startsWith($img, ['http://', 'https://']) ? $img : Storage::url($img);
+        }
+        if(isset($project->floor_plans[$c]['info']) && is_array($project->floor_plans[$c]['info'])) {
+            $rows = [];
+            foreach($project->floor_plans[$c]['info'] as $row) {
+                if(!empty($row['key'])) {
+                    $rows[] = [$row['key'], $row['value'] ?? ''];
+                }
+            }
+            if(!empty($rows)) {
+                $plansInfoMap[$c] = $rows;
+            }
+        }
+    }
+  @endphp
+  const categoryImages = @json($plansMap);
+  const categoryInfoMap = @json($plansInfoMap);
+
   /* Floor plan tabs */
   const planData = {
     ground:{ title:'Ground Floor', rows:[['Function','Lobby & driveway'],['Ceiling height','12 ft'],['Parking bays','10'],['Generator room','Included']], label:'GROUND FLOOR — LOBBY & DRIVEWAY' },
@@ -174,29 +263,67 @@ document.addEventListener('DOMContentLoaded', () => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.plan-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      const data = planData[tab.dataset.plan];
+      const catKey = tab.dataset.plan;
+      const data = planData[catKey];
       const planTitle = document.getElementById('planTitle');
       const planList = document.getElementById('planList');
-      const planImageText = document.querySelector('#planImage svg text');
+      const planImageContainer = document.getElementById('planImage');
 
       if (planTitle) planTitle.textContent = data.title;
-      if (planList) planList.innerHTML = data.rows.map(r => `<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
-      if (planImageText) planImageText.textContent = data.label;
+
+      const activeRows = (categoryInfoMap && categoryInfoMap[catKey]) ? categoryInfoMap[catKey] : data.rows;
+      if (planList) planList.innerHTML = activeRows.map(r => `<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
+
+      if(categoryImages && categoryImages[catKey]) {
+        planImageContainer.innerHTML = `<img src="${categoryImages[catKey]}" alt="${data.title}" style="width: 100%; max-height: 340px; object-fit: contain; border-radius: 8px;">`;
+      } else {
+        planImageContainer.innerHTML = `<svg viewBox="0 0 400 300"><rect x="10" y="10" width="380" height="280" fill="none" stroke="#1C1B19" stroke-width="1.5"/><rect x="40" y="40" width="140" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><rect x="200" y="40" width="160" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><rect x="40" y="160" width="320" height="100" fill="none" stroke="#1C1B19" stroke-width="1"/><text x="200" y="20" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#6B675E">${data.label}</text><circle cx="110" cy="90" r="3" fill="#C1622F"/><text x="120" y="94" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">LOBBY</text><circle cx="280" cy="90" r="3" fill="#C1622F"/><text x="290" y="94" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">LOUNGE</text><circle cx="200" cy="210" r="3" fill="#C1622F"/><text x="210" y="214" font-family="IBM Plex Mono" font-size="9" fill="#6B675E">DRIVEWAY / PARKING</text></svg>`;
+      }
     });
   });
 
-  /* Video trigger -> open YouTube in a lightweight lightbox */
+  /* Video trigger */
   const videoTrigger = document.getElementById('videoTrigger');
   if (videoTrigger) {
     videoTrigger.addEventListener('click', function(){
+      let videoSrc = this.getAttribute('data-video-url') || 'https://www.youtube.com/embed/L_LUpnjgPso?autoplay=1&rel=0';
+      const isFile = this.getAttribute('data-is-file') === '1';
+
+      if (!isFile && videoSrc) {
+        if (videoSrc.includes('youtube.com/watch')) {
+          try {
+            const urlObj = new URL(videoSrc);
+            const v = urlObj.searchParams.get('v');
+            if (v) videoSrc = `https://www.youtube.com/embed/${v}?autoplay=1&rel=0`;
+          } catch(e) {}
+        } else if (videoSrc.includes('youtu.be/')) {
+          const id = videoSrc.split('youtu.be/')[1].split('?')[0].split('/')[0];
+          if (id) videoSrc = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+        }
+      }
+
       const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,27,25,.94);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;';
-      overlay.innerHTML = `<div style="width:min(900px,100%);aspect-ratio:16/9;position:relative;">
-        <iframe style="width:100%;height:100%;border:0;" src="https://www.youtube.com/embed/j-3nl88O7uI?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      </div>
-      <span style="position:absolute;top:24px;right:32px;color:#fff;font-size:1.8rem;cursor:pointer;" id="closeVid">&times;</span>`;
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+      
+      let playerContent = '';
+      if(isFile) {
+        playerContent = `<video style="width:100%;height:100%;max-height:85vh;border-radius:12px;outline:none;background:#000;" src="${videoSrc}" controls autoplay></video>`;
+      } else {
+        playerContent = `<iframe style="width:100%;height:100%;border:0;border-radius:12px;background:#000;" src="${videoSrc}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+      }
+
+      overlay.innerHTML = `<div style="width:min(920px,95%);aspect-ratio:16/9;position:relative;background:#000;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.8);">
+        ${playerContent}
+        <button type="button" id="closeVid" style="position:absolute;top:-45px;right:0;background:none;border:none;color:#fff;font-size:2.2rem;cursor:pointer;line-height:1;padding:4px;">&times;</button>
+      </div>`;
+
       document.body.appendChild(overlay);
-      overlay.addEventListener('click', (e) => { if(e.target === overlay || e.target.id==='closeVid') overlay.remove(); });
+
+      overlay.addEventListener('click', (e) => {
+        if(e.target === overlay || e.target.id === 'closeVid' || e.target.closest('#closeVid')) {
+          overlay.remove();
+        }
+      });
     });
   }
 

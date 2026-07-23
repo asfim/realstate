@@ -25,7 +25,7 @@
                 <tr>
                     <td>
                         @if($property->image)
-                            <img src="{{ Storage::url($property->image) }}" alt="Img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                            <img src="{{ asset_url($property->image) }}" alt="Img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                         @else
                             <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="width: 60px; height: 60px; border-radius: 8px;">
                                 <i class="bi bi-image"></i>

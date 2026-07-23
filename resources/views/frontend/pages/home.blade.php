@@ -83,7 +83,7 @@
         <div class="project-card" onclick="window.location.href='{{ route('project.featured') }}'" style="cursor:pointer;">
           <div class="project-img-wrap">
             <span class="project-badge">Featured</span>
-            <img src="{{ $property->image ? Storage::url($property->image) : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=75' }}" loading="lazy" alt="{{ $property->title }}">
+            <img src="{{ asset_url($property->image) }}" loading="lazy" alt="{{ $property->title }}">
           </div>
           <div class="project-body">
             <h4>{{ $property->title }}</h4>
@@ -194,7 +194,7 @@
       @forelse($types as $type)
       <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="{{ ($loop->index % 3) * 80 }}">
         <div class="cat-card" onclick="window.location.href='{{ route('properties') }}?type={{ urlencode($type->title) }}'" style="cursor:pointer;">
-          <img src="{{ $type->image ? (\Illuminate\Support\Str::startsWith($type->image, 'http') ? $type->image : Storage::url($type->image)) : 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=700&q=75' }}" loading="lazy" alt="{{ $type->title }}">
+          <img src="{{ asset_url($type->image, 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=700&q=75') }}" loading="lazy" alt="{{ $type->title }}">
           <div class="cat-overlay">
             <h5>
               <i class="{{ $type->icon_class ?? 'fa-solid fa-building' }}"></i>

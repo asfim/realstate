@@ -5,7 +5,7 @@ use App\Http\Controllers\FrontendController;
 
 Route::get('/', [FrontendController::class, 'home'])->name('home');
 Route::get('/projects', [FrontendController::class, 'projects'])->name('projects');
-Route::get('/project/featured', [FrontendController::class, 'projectFeatured'])->name('project.featured');
+Route::get('/project/featured/{featuredProject?}', [FrontendController::class, 'projectFeatured'])->name('project.featured');
 Route::get('/properties', [FrontendController::class, 'properties'])->name('properties');
 Route::get('/services', [FrontendController::class, 'services'])->name('services');
 Route::get('/about', [FrontendController::class, 'about'])->name('about');

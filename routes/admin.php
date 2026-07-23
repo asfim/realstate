@@ -21,6 +21,10 @@ Route::middleware(['admin'])->group(function () {
 
     // Featured Projects
     Route::resource('featured-project', \App\Http\Controllers\Backend\FeaturedProjectController::class);
+    Route::get('featured-project-details', [\App\Http\Controllers\Backend\FeaturedProjectController::class, 'detailsIndex'])->name('featured-project.details.index');
+    Route::get('featured-project-details/{featuredProject}/edit', [\App\Http\Controllers\Backend\FeaturedProjectController::class, 'detailsEdit'])->name('featured-project.details.edit');
+    Route::post('featured-project-details/{featuredProject}', [\App\Http\Controllers\Backend\FeaturedProjectController::class, 'detailsUpdate'])->name('featured-project.details.update');
+
     Route::resource('team-members', \App\Http\Controllers\Backend\TeamMemberController::class);
     Route::resource('testimonials', \App\Http\Controllers\Backend\TestimonialController::class);
 

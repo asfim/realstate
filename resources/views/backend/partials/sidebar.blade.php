@@ -18,6 +18,28 @@
             </a>
         </li>
         <li>
+            <a href="#projectsSubmenu" data-bs-toggle="collapse"
+                class="{{ request()->routeIs('admin.featured-project.*') ? 'active' : '' }} d-flex justify-content-between">
+                <span><i class="bi bi-star-fill"></i> Projects</span>
+                <i class="bi bi-chevron-down small"></i>
+            </a>
+            <ul class="collapse {{ request()->routeIs('admin.featured-project.*') ? 'show' : '' }} sidebar-submenu"
+                id="projectsSubmenu">
+                <li>
+                    <a href="{{ route('admin.featured-project.index') }}"
+                        class="{{ request()->routeIs('admin.featured-project.index') || request()->routeIs('admin.featured-project.create') || request()->routeIs('admin.featured-project.edit') ? 'active' : '' }}">
+                        <i class="bi bi-list-ul"></i> All Projects
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.featured-project.details.index') }}"
+                        class="{{ request()->routeIs('admin.featured-project.details.*') ? 'active' : '' }}">
+                        <i class="bi bi-file-earmark-text"></i> Project Details
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
             <a href="#propertiesSubmenu" data-bs-toggle="collapse"
                 class="{{ request()->routeIs('admin.properties.*') || request()->routeIs('admin.property-types.*') || request()->routeIs('admin.properties.manage.*') ? 'active' : '' }} d-flex justify-content-between">
                 <span><i class="bi bi-building"></i> Properties</span>

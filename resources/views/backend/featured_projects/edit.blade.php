@@ -57,7 +57,7 @@
             @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror
             @if($featuredProject->image)
                 <div class="mt-2">
-                    <img src="{{ Storage::url($featuredProject->image) }}" alt="Current Image" style="height: 100px; border-radius: 8px;">
+                    <img src="{{ asset_url($featuredProject->image) }}" alt="Current Image" style="height: 100px; border-radius: 8px;">
                 </div>
             @endif
         </div>

@@ -5,18 +5,18 @@
   <!-- Top Gallery -->
   <div class="pm-gallery">
     <div class="pm-main-img">
-      <img src="{{ $property->image ? Storage::url($property->image) : (!empty($property->detail->gallery) ? Storage::url($property->detail->gallery[0]) : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=75') }}" alt="{{ $property->title }}">
+      <img src="{{ asset_url($property->image, !empty($property->detail->gallery) ? asset_url($property->detail->gallery[0]) : null) }}" alt="{{ $property->title }}">
     </div>
     @if($property->image || !empty($property->detail->gallery))
     <div class="pm-thumbnails">
       <button class="nav-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
       <div class="thumb-track">
         @if($property->image)
-          <img src="{{ Storage::url($property->image) }}" class="active" alt="Cover Image">
+          <img src="{{ asset_url($property->image) }}" class="active" alt="Cover Image">
         @endif
         @if(!empty($property->detail->gallery))
           @foreach($property->detail->gallery as $imgPath)
-            <img src="{{ Storage::url($imgPath) }}" class="{{ !$property->image && $loop->first ? 'active' : '' }}" alt="Thumb {{ $loop->iteration }}">
+            <img src="{{ asset_url($imgPath) }}" class="{{ !$property->image && $loop->first ? 'active' : '' }}" alt="Thumb {{ $loop->iteration }}">
           @endforeach
         @endif
       </div>
