@@ -1,6 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-luxury {{ request()->routeIs('home') || request()->routeIs('property.details') ? '' : 'navbar-inner-page' }}" id="mainNav">
   <div class="container">
-    <a class="navbar-brand" href="{{ route('home') }}">AURELIA<span>.</span></a>
+    <a class="navbar-brand" href="{{ route('home') }}">
+      @if(setting('footer_logo'))
+        <img src="{{ Storage::url(setting('footer_logo')) }}" alt="Logo" style="height: 40px;">
+      @else
+        AURELIA<span>.</span>
+      @endif
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><i class="fa-solid fa-bars"></i></button>
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">

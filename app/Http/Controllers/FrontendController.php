@@ -2,18 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FeaturedProperty;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
 {
     public function home()
     {
-        return view('frontend.pages.home');
+        $featuredProperties = FeaturedProperty::where('is_active', true)->latest()->take(6)->get();
+        $teamMembers = TeamMember::where('is_active', true)->latest()->take(8)->get();
+        $testimonials = Testimonial::where('is_active', true)->latest()->get();
+        
+        return view('frontend.pages.home', compact('featuredProperties', 'teamMembers', 'testimonials'));
     }
 
     public function projects()
     {
-        return view('frontend.pages.projects');
+        $projects = FeaturedProperty::where('is_active', true)->latest()->get();
+        return view('frontend.pages.projects', compact('projects'));
     }
 
     public function properties()

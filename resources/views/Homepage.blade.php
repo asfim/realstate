@@ -290,7 +290,13 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-luxury" id="mainNav">
   <div class="container">
-    <a class="navbar-brand" href="#hero">AURELIA<span>.</span></a>
+    <a class="navbar-brand" href="#hero">
+      @if(setting('footer_logo'))
+        <img src="{{ Storage::url(setting('footer_logo')) }}" alt="Logo" style="height: 40px;">
+      @else
+        AURELIA<span>.</span>
+      @endif
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><i class="fa-solid fa-bars"></i></button>
     <div class="collapse navbar-collapse" id="navMenu">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
@@ -309,11 +315,16 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
 </nav>
 
 <!-- HERO -->
+@if(setting('hero_status', '1') == '1')
 <section class="hero" id="hero">
+  @if(setting('hero_bg_image'))
+  <div class="hero-bg" style="background-image: url('{{ Storage::url(setting('hero_bg_image')) }}'); background-size: cover; background-position: center; filter: brightness(0.6);"></div>
+  @else
   <div class="hero-bg"></div>
   <video class="hero-video" id="heroVideo" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=75">
     <source src="https://assets.mixkit.co/videos/preview/mixkit-modern-apartment-with-elegant-architecture-39750-large.mp4" type="video/mp4">
   </video>
+  @endif
   <div class="hero-overlay"></div>
   <div class="floating-shape fs1"></div>
   <div class="floating-shape fs2"></div>
@@ -322,10 +333,10 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
     <div class="row">
       <div class="col-lg-9" data-aos="fade-up">
         <span class="eyebrow">Aurelia Estates · Since 2010</span>
-        <h1 class="hero-title">Find Your <span class="accent">Dream Property</span><br>In All The Right Places</h1>
-        <p class="hero-sub">Verified luxury apartments, villas and commercial spaces — backed by transparent pricing, legal support and two decades of trusted delivery.</p>
+        <h1 class="hero-title">{!! setting('hero_title', 'Find Your') !!} <span class="accent">{{ setting('hero_highlight', 'Dream Property') }}</span></h1>
+        <p class="hero-sub">{{ setting('hero_subtitle', 'Verified luxury apartments, villas and commercial spaces — backed by transparent pricing, legal support and two decades of trusted delivery.') }}</p>
         <div class="hero-cta">
-          <a href="#projects" class="btn btn-gold">View Projects</a>
+          <a href="{{ setting('hero_btn_url', '#projects') }}" class="btn btn-gold">{{ setting('hero_btn_text', 'View Projects') }}</a>
           <a href="#contact" class="btn btn-outline-light-glass">Book a Visit</a>
         </div>
       </div>
@@ -338,10 +349,15 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
   </div>
   <div class="scroll-indicator">SCROLL<div class="mouse"></div></div>
 </section>
+@endif
 
 <!-- SEARCH -->
-<div class="container search-panel" data-aos="fade-up">
-  <div class="glass">
+@if(setting('property_search_status', '1') == '1')
+<div class="container search-panel" data-aos="fade-up" style="@if(setting('search_bg_image')) background-image: url('{{ Storage::url(setting('search_bg_image')) }}'); background-size: cover; border-radius: var(--radius); @endif">
+  <div class="glass" style="@if(setting('search_bg_image')) background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); padding: 20px; border-radius: var(--radius); @endif">
+    @if(setting('search_heading'))
+      <h5 class="text-center mb-3 fw-bold">{{ setting('search_heading') }}</h5>
+    @endif
     <form class="row g-3 align-items-end" onsubmit="return false;">
       <div class="col-md-3 col-6">
         <label>Location</label>
@@ -365,6 +381,7 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
     </form>
   </div>
 </div>
+@endif
 
 <!-- FEATURED PROJECTS -->
 <section id="projects">
@@ -692,19 +709,21 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
 </section>
 
 <!-- CTA -->
+@if(setting('cta_status', '1') == '1')
 <section>
   <div class="container">
-    <div class="cta-banner text-center" data-aos="zoom-in">
+    <div class="cta-banner text-center" data-aos="zoom-in" style="@if(setting('cta_bg_image')) background-image: url('{{ Storage::url(setting('cta_bg_image')) }}'); background-size: cover; background-position: center; @endif">
       <span class="eyebrow" style="color:var(--gold-soft);"><i></i>Limited Units Remaining</span>
-      <h2>Ready To Invest In Your Future?</h2>
-      <p class="mb-4" style="color:rgba(255,255,255,.8);">Book a free site visit or speak to our advisors today — no obligation, just clarity.</p>
+      <h2>{{ setting('cta_title', 'Ready To Invest In Your Future?') }}</h2>
+      <p class="mb-4" style="color:rgba(255,255,255,.8);">{{ setting('cta_description', 'Book a free site visit or speak to our advisors today — no obligation, just clarity.') }}</p>
       <div class="d-flex justify-content-center gap-3 flex-wrap">
-        <a href="#contact" class="btn btn-gold">Book Site Visit</a>
+        <a href="{{ setting('cta_btn_link', '#contact') }}" class="btn btn-gold">{{ setting('cta_btn_text', 'Book Site Visit') }}</a>
         <a href="tel:+8801XXXXXXXXX" class="btn btn-outline-light-glass"><i class="fa-solid fa-phone me-2"></i>Call Now</a>
       </div>
     </div>
   </div>
 </section>
+@endif
 
 <!-- CONTACT -->
 <section id="contact">
@@ -715,9 +734,9 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
     </div>
     <div class="row g-4">
       <div class="col-lg-5" data-aos="fade-right">
-        <div class="contact-info-item"><i class="fa-solid fa-location-dot"></i><div><h6>Office Address</h6><p>House 12, Road 7, Gulshan-1, Dhaka 1212, Bangladesh</p></div></div>
-        <div class="contact-info-item"><i class="fa-solid fa-phone"></i><div><h6>Phone</h6><p>+880 1XXX-XXXXXX</p></div></div>
-        <div class="contact-info-item"><i class="fa-solid fa-envelope"></i><div><h6>Email</h6><p>hello@aureliaestates.example</p></div></div>
+        <div class="contact-info-item"><i class="fa-solid fa-location-dot"></i><div><h6>Office Address</h6><p>{{ setting('footer_address', 'House 12, Road 7, Gulshan-1, Dhaka 1212, Bangladesh') }}</p></div></div>
+        <div class="contact-info-item"><i class="fa-solid fa-phone"></i><div><h6>Phone</h6><p>{{ setting('footer_phone', '+880 1XXX-XXXXXX') }}</p></div></div>
+        <div class="contact-info-item"><i class="fa-solid fa-envelope"></i><div><h6>Email</h6><p>{{ setting('footer_email', 'hello@aureliaestates.example') }}</p></div></div>
         <div class="contact-info-item"><i class="fa-solid fa-clock"></i><div><h6>Business Hours</h6><p>Sat–Thu: 10:00 AM – 7:00 PM</p></div></div>
         <div class="map-wrap mt-4">
           <iframe src="https://www.google.com/maps?q=Gulshan%201%20Dhaka&output=embed" width="100%" height="260" style="border:0;" loading="lazy" title="Office location map"></iframe>
@@ -751,13 +770,17 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
   <div class="container">
     <div class="row g-4 mb-4">
       <div class="col-lg-4">
-        <div class="footer-brand mb-3">AURELIA<span>.</span></div>
-        <p style="font-size:.9rem; max-width:300px;">Two decades of building verified, premium properties people are proud to call home.</p>
+        @if(setting('footer_logo'))
+          <img src="{{ Storage::url(setting('footer_logo')) }}" alt="Logo" style="height: 50px; margin-bottom: 15px;">
+        @else
+          <div class="footer-brand mb-3">AURELIA<span>.</span></div>
+        @endif
+        <p style="font-size:.9rem; max-width:300px;">{{ setting('footer_description', 'Two decades of building verified, premium properties people are proud to call home.') }}</p>
         <div class="footer-social mt-3">
-          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          @if(setting('footer_facebook'))<a href="{{ setting('footer_facebook') }}"><i class="fa-brands fa-facebook-f"></i></a>@endif
+          @if(setting('footer_instagram'))<a href="{{ setting('footer_instagram') }}"><i class="fa-brands fa-instagram"></i></a>@endif
+          @if(setting('footer_linkedin'))<a href="{{ setting('footer_linkedin') }}"><i class="fa-brands fa-linkedin-in"></i></a>@endif
+          @if(setting('footer_youtube'))<a href="{{ setting('footer_youtube') }}"><i class="fa-brands fa-youtube"></i></a>@endif
         </div>
       </div>
       <div class="col-lg-2 col-6">
@@ -777,7 +800,7 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
         </form>
       </div>
     </div>
-    <div class="footer-bottom text-center">&copy; <span id="year"></span> Aurelia Estates. All rights reserved.</div>
+    <div class="footer-bottom text-center">&copy; <span id="year"></span> {{ setting('footer_copyright', 'Aurelia Estates. All rights reserved.') }}</div>
   </div>
 </footer>
 

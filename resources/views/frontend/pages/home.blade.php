@@ -1,11 +1,16 @@
 @extends('frontend.layouts.app')
 @section('content')
 <!-- HERO -->
+@if(setting('hero_status', '1') == '1')
 <section class="hero" id="hero">
+  @if(setting('hero_bg_image'))
+  <div class="hero-bg" style="background-image: url('{{ Storage::url(setting('hero_bg_image')) }}'); background-size: cover; background-position: center; filter: brightness(0.6);"></div>
+  @else
   <div class="hero-bg"></div>
   <video class="hero-video" id="heroVideo" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=75">
     <source src="https://assets.mixkit.co/videos/preview/mixkit-modern-apartment-with-elegant-architecture-39750-large.mp4" type="video/mp4">
   </video>
+  @endif
   <div class="hero-overlay"></div>
   <div class="floating-shape fs1"></div>
   <div class="floating-shape fs2"></div>
@@ -14,10 +19,10 @@
     <div class="row">
       <div class="col-lg-9" data-aos="fade-up">
         <span class="eyebrow">Aurelia Estates · Since 2010</span>
-        <h1 class="hero-title">Find Your <span class="accent">Dream Property</span><br>In All The Right Places</h1>
-        <p class="hero-sub">Verified luxury apartments, villas and commercial spaces — backed by transparent pricing, legal support and two decades of trusted delivery.</p>
+        <h1 class="hero-title">{!! setting('hero_title', 'Find Your') !!} <span class="accent">{{ setting('hero_highlight', 'Dream Property') }}</span></h1>
+        <p class="hero-sub">{{ setting('hero_subtitle', 'Verified luxury apartments, villas and commercial spaces — backed by transparent pricing, legal support and two decades of trusted delivery.') }}</p>
         <div class="hero-cta">
-          <a href="#projects" class="btn btn-gold">View Projects</a>
+          <a href="{{ setting('hero_btn_url', '#projects') }}" class="btn btn-gold">{{ setting('hero_btn_text', 'View Projects') }}</a>
           <a href="#contact" class="btn btn-outline-light-glass">Book a Visit</a>
         </div>
       </div>
@@ -30,10 +35,15 @@
   </div>
   <div class="scroll-indicator">SCROLL<div class="mouse"></div></div>
 </section>
+@endif
 
 <!-- SEARCH -->
-<div class="container search-panel" data-aos="fade-up">
-  <div class="glass">
+@if(setting('property_search_status', '1') == '1')
+<div class="container search-panel" data-aos="fade-up" style="@if(setting('search_bg_image')) background-image: url('{{ Storage::url(setting('search_bg_image')) }}'); background-size: cover; border-radius: var(--radius); @endif">
+  <div class="glass" style="@if(setting('search_bg_image')) background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); padding: 20px; border-radius: var(--radius); @endif">
+    @if(setting('search_heading'))
+      <h5 class="text-center mb-3 fw-bold">{{ setting('search_heading') }}</h5>
+    @endif
     <form class="row g-3 align-items-end" onsubmit="return false;">
       <div class="col-md-3 col-6">
         <label>Location</label>
@@ -57,6 +67,7 @@
     </form>
   </div>
 </div>
+@endif
 
 <!-- FEATURED PROJECTS -->
 <section id="projects">
@@ -67,51 +78,30 @@
       <p class="mx-auto" style="max-width:560px;">A curated selection of our most sought-after residential and commercial developments.</p>
     </div>
     <div class="row g-4">
-      <div class="col-lg-4 col-md-6" data-aos="fade-up">
+      @forelse($featuredProperties as $index => $property)
+      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
         <div class="project-card" onclick="window.location.href='{{ route('property.featured.details') }}'" style="cursor:pointer;">
-          <div class="project-img-wrap"><span class="project-badge">New Launch</span><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=75" loading="lazy" alt="Aurelia Heights apartment tower"></div>
+          <div class="project-img-wrap">
+            <span class="project-badge">Featured</span>
+            <img src="{{ $property->image ? Storage::url($property->image) : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=75' }}" loading="lazy" alt="{{ $property->title }}">
+          </div>
           <div class="project-body">
-            <h4>Aurelia Heights</h4>
-            <div class="project-loc"><i class="fa-solid fa-location-dot text-primary"></i> Gulshan, Dhaka</div>
+            <h4>{{ $property->title }}</h4>
+            <div class="project-loc"><i class="fa-solid fa-location-dot text-primary"></i> {{ $property->location }}</div>
             <div class="project-meta">
-              <div><strong>1,850 sqft</strong>Area</div>
-              <div><strong>24 Units</strong>Available</div>
-              <div class="project-price">$340k</div>
+              <div><strong>{{ number_format($property->area) }} sqft</strong>Area</div>
+              <div><strong>{{ $property->beds }} Bed</strong>&nbsp;&bull;&nbsp;<strong>{{ $property->baths }} Bath</strong></div>
+              <div class="project-price">{{ $property->price }}</div>
             </div>
             <a href="{{ route('property.featured.details') }}" class="btn btn-navy w-100 mt-3">View Details</a>
           </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="project-card" onclick="window.location.href='{{ route('property.featured.details') }}'" style="cursor:pointer;">
-          <div class="project-img-wrap"><span class="project-badge">Best Seller</span><img src="https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=75" loading="lazy" alt="The Meridian villa"></div>
-          <div class="project-body">
-            <h4>The Meridian Villas</h4>
-            <div class="project-loc"><i class="fa-solid fa-location-dot text-primary"></i> Bashundhara, Dhaka</div>
-            <div class="project-meta">
-              <div><strong>4,200 sqft</strong>Area</div>
-              <div><strong>8 Units</strong>Available</div>
-              <div class="project-price">$780k</div>
-            </div>
-            <a href="{{ route('property.featured.details') }}" class="btn btn-navy w-100 mt-3">View Details</a>
-          </div>
-        </div>
+      @empty
+      <div class="col-12 text-center text-muted">
+        <p>No featured properties available at the moment.</p>
       </div>
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="project-card" onclick="window.location.href='{{ route('property.featured.details') }}'" style="cursor:pointer;">
-          <div class="project-img-wrap"><span class="project-badge">Featured</span><img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=75" loading="lazy" alt="Skyline Business Bay tower"></div>
-          <div class="project-body">
-            <h4>Skyline Business Bay</h4>
-            <div class="project-loc"><i class="fa-solid fa-location-dot text-primary"></i> Motijheel, Dhaka</div>
-            <div class="project-meta">
-              <div><strong>2,600 sqft</strong>Area</div>
-              <div><strong>16 Units</strong>Available</div>
-              <div class="project-price">$510k</div>
-            </div>
-            <a href="{{ route('property.featured.details') }}" class="btn btn-navy w-100 mt-3">View Details</a>
-          </div>
-        </div>
-      </div>
+      @endforelse
     </div>
   </div>
 
@@ -143,6 +133,7 @@
 </section>
 
 <!-- ABOUT -->
+@if(setting('why_us_status', '1') == '1')
 <section id="about">
   <div class="blueprint-bg"></div>
   <div class="container">
@@ -174,6 +165,7 @@
     <a href="{{ route('about') }}" class="btn btn-navy">More About Us</a>
   </div>
 </section>
+@endif
 
 <!-- JOURNEY -->
 <section style="background:linear-gradient(180deg,transparent,rgba(212,175,55,.06),transparent);">
@@ -277,6 +269,7 @@
 
 
 <!-- TESTIMONIALS -->
+@if(setting('testimonials_status', '1') == '1')
 <section>
   <div class="container-fluid overflow-hidden px-0">
     <div class="text-center mb-5" data-aos="fade-up">
@@ -286,189 +279,46 @@
     
     <div class="marquee-wrapper">
       <div class="marquee-track">
+        @foreach($testimonials as $testimonial)
+        <div class="marquee-card">
+          <div class="top-row">
+            <img src="{{ $testimonial->image ? Storage::url($testimonial->image) : 'https://i.pravatar.cc/150?u='.$testimonial->id }}" alt="{{ $testimonial->name }}">
+            <div class="user-info">
+              <span class="name">{{ $testimonial->name }}</span>
+              <span class="role">{{ $testimonial->role }}</span>
+            </div>
+          </div>
+          <div class="stars">
+            @for($i=0; $i<$testimonial->rating; $i++)<i class="fa-solid fa-star"></i>@endfor
+          </div>
+          <p>"{{ $testimonial->quote }}"</p>
+        </div>
+        @endforeach
 
+        <!-- Duplicate for seamless scroll -->
+        @foreach($testimonials as $testimonial)
         <div class="marquee-card">
           <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=10" alt="Farhana Rahman">
+            <img src="{{ $testimonial->image ? Storage::url($testimonial->image) : 'https://i.pravatar.cc/150?u='.$testimonial->id }}" alt="{{ $testimonial->name }}">
             <div class="user-info">
-              <span class="name">Farhana Rahman</span>
-              <span class="role">Homeowner</span>
+              <span class="name">{{ $testimonial->name }}</span>
+              <span class="role">{{ $testimonial->role }}</span>
             </div>
           </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"From the first site visit to key handover, the process felt effortless. The legal team handled everything transparently."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=11" alt="Imran Chowdhury">
-            <div class="user-info">
-              <span class="name">Imran Chowdhury</span>
-              <span class="role">Investor</span>
-            </div>
+          <div class="stars">
+            @for($i=0; $i<$testimonial->rating; $i++)<i class="fa-solid fa-star"></i>@endfor
           </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"The installment plan made investing in a second property realistic for us. Construction quality exceeded expectations."</p>
+          <p>"{{ $testimonial->quote }}"</p>
         </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=12" alt="Sadia Islam">
-            <div class="user-info">
-              <span class="name">Sadia Islam</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"Every promise on the brochure matched what we received on move-in day. Highly recommend their projects."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=13" alt="Tanvir Ahmed">
-            <div class="user-info">
-              <span class="name">Tanvir Ahmed</span>
-              <span class="role">Business Owner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"Found the perfect commercial space for my startup. The team was professional, fast, and very accommodating."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=14" alt="Nusrat Jahan">
-            <div class="user-info">
-              <span class="name">Nusrat Jahan</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"Aurelia Estates delivered our dream home ahead of schedule. The interior finishing is absolutely premium."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=15" alt="Rakib Hasan">
-            <div class="user-info">
-              <span class="name">Rakib Hasan</span>
-              <span class="role">Investor</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"I have invested in multiple properties with them. The ROI and rental yields are consistently the best in the market."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=16" alt="Mita Akter">
-            <div class="user-info">
-              <span class="name">Mita Akter</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"The amenities provided in our complex are top-notch. It truly feels like living in a luxury resort."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=17" alt="Shahriar Alam">
-            <div class="user-info">
-              <span class="name">Shahriar Alam</span>
-              <span class="role">Architect</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"As a professional, I appreciate their attention to structural integrity and modern architectural aesthetics."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=10" alt="Farhana Rahman">
-            <div class="user-info">
-              <span class="name">Farhana Rahman</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"From the first site visit to key handover, the process felt effortless. The legal team handled everything transparently."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=11" alt="Imran Chowdhury">
-            <div class="user-info">
-              <span class="name">Imran Chowdhury</span>
-              <span class="role">Investor</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"The installment plan made investing in a second property realistic for us. Construction quality exceeded expectations."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=12" alt="Sadia Islam">
-            <div class="user-info">
-              <span class="name">Sadia Islam</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"Every promise on the brochure matched what we received on move-in day. Highly recommend their projects."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=13" alt="Tanvir Ahmed">
-            <div class="user-info">
-              <span class="name">Tanvir Ahmed</span>
-              <span class="role">Business Owner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"Found the perfect commercial space for my startup. The team was professional, fast, and very accommodating."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=14" alt="Nusrat Jahan">
-            <div class="user-info">
-              <span class="name">Nusrat Jahan</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"Aurelia Estates delivered our dream home ahead of schedule. The interior finishing is absolutely premium."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=15" alt="Rakib Hasan">
-            <div class="user-info">
-              <span class="name">Rakib Hasan</span>
-              <span class="role">Investor</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"I have invested in multiple properties with them. The ROI and rental yields are consistently the best in the market."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=16" alt="Mita Akter">
-            <div class="user-info">
-              <span class="name">Mita Akter</span>
-              <span class="role">Homeowner</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"The amenities provided in our complex are top-notch. It truly feels like living in a luxury resort."</p>
-        </div>
-        <div class="marquee-card">
-          <div class="top-row">
-            <img src="https://i.pravatar.cc/150?img=17" alt="Shahriar Alam">
-            <div class="user-info">
-              <span class="name">Shahriar Alam</span>
-              <span class="role">Architect</span>
-            </div>
-          </div>
-          <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-          <p>"As a professional, I appreciate their attention to structural integrity and modern architectural aesthetics."</p>
-        </div>
+        @endforeach
       </div>
     </div>
   </div>
 </section>
+@endif
 
 <!-- TEAM -->
+@if(setting('team_status', '1') == '1')
 <section style="background:linear-gradient(180deg,transparent,rgba(37,99,235,.05),transparent);">
   <div class="container">
     <div class="text-center mb-5" data-aos="fade-up">
@@ -476,21 +326,32 @@
       <h2 class="section-title">The People Behind Aurelia</h2>
     </div>
     <div class="row g-4">
-      <div class="col-lg-3 col-md-6" data-aos="fade-up">
-        <div class="team-card"><div class="team-img-wrap"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=75" loading="lazy" alt="CEO portrait"><div class="team-social"><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-solid fa-envelope"></i></a></div></div><div class="team-body"><h5>Rashed Karim</h5><span>Chief Executive Officer</span></div></div>
+      @forelse($teamMembers as $index => $member)
+      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ $index * 80 }}">
+        <div class="team-card">
+          <div class="team-img-wrap">
+            <img src="{{ $member->image ? Storage::url($member->image) : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=500&q=75' }}" loading="lazy" alt="{{ $member->name }}">
+            <div class="team-social">
+              @if($member->linkedin) <a href="{{ $member->linkedin }}" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a> @endif
+              @if($member->facebook) <a href="{{ $member->facebook }}" target="_blank"><i class="fa-brands fa-facebook-f"></i></a> @endif
+              @if($member->email) <a href="mailto:{{ $member->email }}"><i class="fa-solid fa-envelope"></i></a> @endif
+            </div>
+          </div>
+          <div class="team-body">
+            <h5>{{ $member->name }}</h5>
+            <span>{{ $member->role }}</span>
+          </div>
+        </div>
       </div>
-      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="80">
-        <div class="team-card"><div class="team-img-wrap"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=500&q=75" loading="lazy" alt="Sales Manager portrait"><div class="team-social"><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-solid fa-envelope"></i></a></div></div><div class="team-body"><h5>Nusrat Jahan</h5><span>Sales Manager</span></div></div>
+      @empty
+      <div class="col-12 text-center text-muted">
+        <p>No team members listed at the moment.</p>
       </div>
-      <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="160">
-        <div class="team-card"><div class="team-img-wrap"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=75" loading="lazy" alt="Architect portrait"><div class="team-social"><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-solid fa-envelope"></i></a></div></div><div class="team-body"><h5>Tanvir Ahmed</h5><span>Lead Architect</span></div></div>
-      </div>
-      <div class="col-lg-3 col-md-6" data-aos="fade-up">
-        <div class="team-card"><div class="team-img-wrap"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=75" loading="lazy" alt="Engineer portrait"><div class="team-social"><a href="#"><i class="fa-brands fa-linkedin-in"></i></a><a href="#"><i class="fa-solid fa-envelope"></i></a></div></div><div class="team-body"><h5>Farhana Rahman</h5><span>Civil Engineer</span></div></div>
-      </div>
+      @endforelse
     </div>
   </div>
 </section>
+@endif
 
 <!-- STATS -->
 <section class="stats-section">
@@ -533,18 +394,22 @@
 </section>
 
 <!-- CTA -->
+@if(setting('cta_status', '1') == '1')
 <section>
   <div class="container">
-    <div class="cta-banner text-center" data-aos="zoom-in">
+    <div class="cta-banner text-center" data-aos="zoom-in" style="@if(setting('cta_bg_image')) background-image: url('{{ Storage::url(setting('cta_bg_image')) }}'); background-size: cover; background-position: center; @endif">
       <span class="eyebrow" style="color:var(--gold-soft);"><i></i>Limited Units Remaining</span>
-      <h2>Ready To Invest In Your Future?</h2>
-      <p class="mb-4" style="color:rgba(255,255,255,.8);">Book a free site visit or speak to our advisors today — no obligation, just clarity.</p>
+      <h2>{{ setting('cta_title', 'Ready To Invest In Your Future?') }}</h2>
+      <p class="mb-4" style="color:rgba(255,255,255,.8);">{{ setting('cta_description', 'Book a free site visit or speak to our advisors today — no obligation, just clarity.') }}</p>
       <div class="d-flex justify-content-center gap-3 flex-wrap">
-        <a href="#contact" class="btn btn-gold">Book Site Visit</a>
-        <a href="tel:+8801XXXXXXXXX" class="btn btn-outline-light-glass"><i class="fa-solid fa-phone me-2"></i>Call Now</a>
+        @if(setting('cta_btn_text'))
+        <a href="{{ setting('cta_btn_link', '#contact') }}" class="btn btn-gold">{{ setting('cta_btn_text') }}</a>
+        @endif
+        <a href="tel:{{ setting('footer_phone', '+8801XXXXXXXXX') }}" class="btn btn-outline-light-glass"><i class="fa-solid fa-phone me-2"></i>Call Now</a>
       </div>
     </div>
   </div>
 </section>
+@endif
 
 @endsection

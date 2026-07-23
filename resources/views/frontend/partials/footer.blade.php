@@ -2,13 +2,17 @@
   <div class="container">
     <div class="row g-4 mb-4">
       <div class="col-lg-4">
-        <div class="footer-brand mb-3">AURELIA<span>.</span></div>
-        <p style="font-size:.9rem; max-width:300px;">Two decades of building verified, premium properties people are proud to call home.</p>
+        @if(setting('footer_logo'))
+          <img src="{{ Storage::url(setting('footer_logo')) }}" alt="Logo" style="height: 50px; margin-bottom: 15px;">
+        @else
+          <div class="footer-brand mb-3">AURELIA<span>.</span></div>
+        @endif
+        <p style="font-size:.9rem; max-width:300px;">{{ setting('footer_description', 'Two decades of building verified, premium properties people are proud to call home.') }}</p>
         <div class="footer-social mt-3">
-          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          @if(setting('footer_facebook'))<a href="{{ setting('footer_facebook') }}"><i class="fa-brands fa-facebook-f"></i></a>@endif
+          @if(setting('footer_instagram'))<a href="{{ setting('footer_instagram') }}"><i class="fa-brands fa-instagram"></i></a>@endif
+          @if(setting('footer_linkedin'))<a href="{{ setting('footer_linkedin') }}"><i class="fa-brands fa-linkedin-in"></i></a>@endif
+          @if(setting('footer_youtube'))<a href="{{ setting('footer_youtube') }}"><i class="fa-brands fa-youtube"></i></a>@endif
         </div>
       </div>
       <div class="col-lg-2 col-6">
@@ -28,7 +32,7 @@
         </form>
       </div>
     </div>
-    <div class="footer-bottom text-center">&copy; <span id="year"></span> Aurelia Estates. All rights reserved.</div>
+    <div class="footer-bottom text-center">&copy; <span id="year"></span> {{ setting('footer_copyright', 'Aurelia Estates. All rights reserved.') }}</div>
   </div>
 </footer>
 
