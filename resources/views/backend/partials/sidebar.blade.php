@@ -86,6 +86,20 @@
                 @endif
             </a>
         </li>
+        @php
+            $subscribersCount = \App\Models\Subscriber::count();
+        @endphp
+        <li>
+            <a href="{{ route('admin.newsletters.index') }}" class="{{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }} d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-envelope-check-fill"></i>
+                    Newsletters
+                </span>
+                @if($subscribersCount > 0)
+                    <span class="badge bg-gold rounded-pill">{{ $subscribersCount }}</span>
+                @endif
+            </a>
+        </li>
         <li>
             <a href="#servicesSubmenu" data-bs-toggle="collapse"
                 class="{{ request()->routeIs('admin.services.*') || request()->routeIs('admin.amenities.*') ? 'active' : '' }} d-flex justify-content-between">

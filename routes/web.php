@@ -16,4 +16,5 @@ Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::get('/property/{property}/details', [FrontendController::class, 'propertyDetails'])->name('property.details');
 Route::get('/property/{property}/construction-status', [FrontendController::class, 'constructionStatus'])->name('property.construction.status');
 Route::post('/enquiry/submit', [FrontendController::class, 'submitEnquiry'])->name('enquiry.submit');
+Route::post('/newsletter/subscribe', [FrontendController::class, 'subscribeNewsletter'])->name('newsletter.subscribe');
 

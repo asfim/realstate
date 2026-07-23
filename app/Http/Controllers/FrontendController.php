@@ -123,4 +123,28 @@ class FrontendController extends Controller
 
         return back()->with('success', 'Thank you! Your enquiry has been submitted successfully.');
     }
+
+    public function subscribeNewsletter(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        $subscriber = \App\Models\Subscriber::firstOrCreate(
+            ['email' => $validated['email']]
+        );
+
+        $msg = $subscriber->wasRecentlyCreated 
+            ? 'Thank you for subscribing to our newsletter!' 
+            : 'You are already subscribed to our newsletter.';
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $msg
+            ]);
+        }
+
+        return back()->with('success', $msg);
+    }
 }

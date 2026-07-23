@@ -19,6 +19,7 @@ use App\Http\Controllers\Backend\GalleryController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\FaqController;
 use App\Http\Controllers\Backend\ContactSettingController;
+use App\Http\Controllers\Backend\NewsletterController;
 
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AdminAuthController::class, 'login'])->name('login.submit');
@@ -60,6 +61,9 @@ Route::middleware(['admin'])->group(function () {
     Route::get('submissions', [SubmissionController::class, 'index'])->name('submissions.index');
     Route::get('submissions/{submission}', [SubmissionController::class, 'show'])->name('submissions.show');
     Route::delete('submissions/{submission}', [SubmissionController::class, 'destroy'])->name('submissions.destroy');
+
+    // Newsletters Management
+    Route::resource('newsletters', NewsletterController::class)->only(['index', 'destroy']);
 
     // Services Management
     Route::resource('services', ServiceController::class);

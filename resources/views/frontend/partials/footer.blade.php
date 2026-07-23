@@ -28,9 +28,11 @@
       <div class="col-lg-4">
         <h6>Newsletter</h6>
         <p style="font-size:.88rem;">Get new launches and offers in your inbox.</p>
-        <form class="d-flex newsletter-form" onsubmit="event.preventDefault(); this.reset(); alert('Subscribed successfully.');">
-          <input type="email" placeholder="Your email" required class="form-control">
-          <button type="submit">Join</button>
+        <div id="newsletterAlert" class="alert d-none py-2 px-3 small mb-2"></div>
+        <form class="d-flex newsletter-form" id="newsletterForm">
+          @csrf
+          <input type="email" name="email" placeholder="Your email" required class="form-control me-1">
+          <button type="submit" id="newsletterBtn">Join</button>
         </form>
       </div>
     </div>
@@ -40,3 +42,49 @@
 
 <a href="https://wa.me/8801XXXXXXXXX" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
 <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const btn = document.getElementById('newsletterBtn');
+    const alertBox = document.getElementById('newsletterAlert');
+    
+    const origText = btn.textContent;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    alertBox.className = 'alert d-none py-2 px-3 small mb-2';
+
+    const formData = new FormData(form);
+
+    fetch('{{ route("newsletter.subscribe") }}', {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+        'Accept': 'application/json'
+      },
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      btn.textContent = origText;
+      btn.disabled = false;
+      if (data.success) {
+        alertBox.className = 'alert alert-success py-2 px-3 small mb-2';
+        alertBox.textContent = data.message;
+        form.reset();
+      } else {
+        alertBox.className = 'alert alert-danger py-2 px-3 small mb-2';
+        alertBox.textContent = data.message || 'Error subscribing.';
+      }
+    })
+    .catch(err => {
+      btn.textContent = origText;
+      btn.disabled = false;
+      alertBox.className = 'alert alert-danger py-2 px-3 small mb-2';
+      alertBox.textContent = 'Failed to subscribe. Please try again.';
+    });
+  });
+});
+</script>
