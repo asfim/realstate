@@ -65,7 +65,8 @@ class FrontendController extends Controller
 
     public function gallery()
     {
-        return view('frontend.pages.gallery');
+        $galleries = \App\Models\Gallery::where('is_active', true)->orderBy('sort_order', 'asc')->get();
+        return view('frontend.pages.gallery', compact('galleries'));
     }
 
     public function blog()

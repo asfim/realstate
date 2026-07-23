@@ -53,4 +53,8 @@ Route::middleware(['admin'])->group(function () {
     Route::get('about-settings', [\App\Http\Controllers\Backend\AboutSettingController::class, 'index'])->name('about_settings.index');
     Route::post('about-settings', [\App\Http\Controllers\Backend\AboutSettingController::class, 'update'])->name('about_settings.update');
     Route::resource('journeys', \App\Http\Controllers\Backend\JourneyController::class);
+
+    // Gallery Management
+    Route::resource('galleries', \App\Http\Controllers\Backend\GalleryController::class);
+    Route::post('gallery-settings', [\App\Http\Controllers\Backend\GalleryController::class, 'updateSettings'])->name('galleries.updateSettings');
 });

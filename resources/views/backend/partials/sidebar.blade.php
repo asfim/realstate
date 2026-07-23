@@ -137,6 +137,12 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <a href="{{ route('admin.galleries.index') }}" class="{{ request()->routeIs('admin.galleries.*') ? 'active' : '' }}">
+                <i class="bi bi-images"></i>
+                Media Gallery
+            </a>
+        </li>
         
         <li>
             <a href="{{ route('admin.settings.footer') }}"

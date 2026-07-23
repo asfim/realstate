@@ -4,46 +4,52 @@
 <!-- PAGE HEADER -->
 <div class="page-header">
   <div class="container">
-    <h1 data-aos="fade-up">Media Gallery</h1>
-    <p data-aos="fade-up" data-aos-delay="100">Take a visual tour of our finest properties.</p>
+    <h1 data-aos="fade-up">{{ setting('gallery_title', 'Media Gallery') }}</h1>
+    <p data-aos="fade-up" data-aos-delay="100">{{ setting('gallery_subtitle', 'Take a visual tour of our finest properties.') }}</p>
   </div>
 </div>
-<!-- VIDEO TOUR -->
+
+<!-- VIRTUAL VIDEO TOUR -->
 <section>
   <div class="container">
     <div class="text-center mb-5" data-aos="fade-up">
-      <span class="eyebrow">Virtual Experience</span>
-      <h2 class="section-title">Take A Virtual Tour</h2>
+      <span class="eyebrow">{{ setting('gallery_tour_eyebrow', 'Virtual Experience') }}</span>
+      <h2 class="section-title">{{ setting('gallery_tour_title', 'Take A Virtual Tour') }}</h2>
     </div>
     <div class="video-tour" data-aos="zoom-in">
-      <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=75" loading="lazy" alt="Aurelia Heights aerial view">
+      <img src="{{ asset_url(setting('gallery_tour_image'), 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=75') }}" loading="lazy" alt="{{ setting('gallery_tour_video_title') }}">
       <div class="overlay">
-        <div class="play-btn" id="playTourBtn"><i class="fa-solid fa-play"></i></div>
-        <h4 class="mb-0">Explore Aurelia Heights in 360°</h4>
+        <a href="{{ setting('gallery_tour_video_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ') }}" target="_blank" class="play-btn" id="playTourBtn" style="text-decoration:none;">
+          <i class="fa-solid fa-play"></i>
+        </a>
+        <h4 class="mb-0">{{ setting('gallery_tour_video_title', 'Explore Aurelia Heights in 360°') }}</h4>
       </div>
     </div>
   </div>
 </section>
 
-<!-- GALLERY -->
+<!-- PHOTO GALLERY -->
 <section id="gallery" style="background:linear-gradient(180deg,transparent,rgba(212,175,55,.06),transparent);">
   <div class="container">
     <div class="text-center mb-5" data-aos="fade-up">
-      <span class="eyebrow">Gallery</span>
-      <h2 class="section-title">A Closer Look</h2>
+      <span class="eyebrow">{{ setting('gallery_section_eyebrow', 'Gallery') }}</span>
+      <h2 class="section-title">{{ setting('gallery_section_title', 'A Closer Look') }}</h2>
     </div>
     <div class="gallery-grid" data-aos="fade-up">
-      <div class="gallery-item" onclick="openLightbox(this)"><img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=700&q=75" loading="lazy" alt="Aerial drone view of residential complex"><span class="zoom-tag"><i class="fa-solid fa-expand"></i></span></div>
-      <div class="gallery-item" onclick="openLightbox(this)"><img src="https://images.unsplash.com/photo-1521783988139-89397d761dce?auto=format&fit=crop&w=700&q=75" loading="lazy" alt="Modern kitchen interior"><span class="zoom-tag"><i class="fa-solid fa-expand"></i></span></div>
-      <div class="gallery-item" onclick="openLightbox(this)"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=700&q=75" loading="lazy" alt="Luxury bedroom suite"><span class="zoom-tag"><i class="fa-solid fa-expand"></i></span></div>
-      <div class="gallery-item" onclick="openLightbox(this)"><img src="https://images.unsplash.com/photo-1524230507669-5ff97982bb5e?auto=format&fit=crop&w=700&q=75" loading="lazy" alt="Resort-style swimming pool"><span class="zoom-tag"><i class="fa-solid fa-expand"></i></span></div>
-      <div class="gallery-item" onclick="openLightbox(this)"><img src="https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=700&q=75" loading="lazy" alt="Handover of new home keys"><span class="zoom-tag"><i class="fa-solid fa-expand"></i></span></div>
-      <div class="gallery-item" onclick="openLightbox(this)"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=700&q=75" loading="lazy" alt="Villa under construction"><span class="zoom-tag"><i class="fa-solid fa-expand"></i></span></div>
+      @forelse($galleries as $photo)
+      <div class="gallery-item" onclick="openLightbox(this)">
+        <img src="{{ asset_url($photo->image) }}" loading="lazy" alt="{{ $photo->title }}">
+        <span class="zoom-tag"><i class="fa-solid fa-expand"></i></span>
+      </div>
+      @empty
+      <div class="col-12 text-center text-muted py-4">
+        <p>No photos uploaded to the gallery yet.</p>
+      </div>
+      @endforelse
     </div>
   </div>
 </section>
 <div id="lightboxOverlay"><span class="lightbox-close" onclick="closeLightbox()">&times;</span><img id="lightboxImg" src="" alt="Enlarged gallery photo"></div>
-
 
 <!-- GENERIC CTA -->
 <section style="padding:60px 0;">
