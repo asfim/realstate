@@ -85,8 +85,26 @@ class FrontendController extends Controller
         return view('frontend.pages.construction-status', compact('property'));
     }
 
-    // public function propertyFeatured()
-    // {
-    //     return view('frontend.pages.property-featured');
-    // }
+    public function submitEnquiry(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:50',
+            'message' => 'nullable|string|max:2000',
+            'featured_project_id' => 'nullable|exists:featured_projects,id',
+            'property_id' => 'nullable|exists:properties,id',
+        ]);
+
+        \App\Models\Submission::create($validated);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Thank you! Your enquiry has been submitted successfully. Our team will contact you shortly.'
+            ]);
+        }
+
+        return back()->with('success', 'Thank you! Your enquiry has been submitted successfully.');
+    }
 }

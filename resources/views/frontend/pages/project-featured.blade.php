@@ -191,25 +191,101 @@
 </section>
 
 <section class="enquiry-section" id="enquiry">
-  <div class="container enquiry-grid">
-    <div class="enquiry-form">
-      <span class="idx">ENQUIRE</span>
-      <h2 class="property-title" style="font-size:clamp(1.8rem,3vw,2.4rem); margin-bottom:8px;">I'm Interested In This Project</h2>
-      <p style="margin-bottom:28px;">Our team responds to every enquiry within one business day.</p>
-      <form id="enquiryForm" onsubmit="return handleEnquirySubmit(event);">
-        <div class="field"><label>Name</label><input type="text" required></div>
-        <div class="field"><label>Email Address</label><input type="email" required></div>
-        <div class="field"><label>Phone Number</label><input type="tel" required></div>
-        <div class="field"><label>Message</label><textarea rows="3">I am interested in your project named "{{ $project->title }}".</textarea></div>
-        <button type="submit" class="btn-copper">Submit <i class="fa-solid fa-arrow-right"></i></button>
-      </form>
-    </div>
-    <div class="enquiry-note">
-      <h5>Why buyers choose {{ $project->title }}</h5>
-      <p style="margin-bottom:10px;">— Double-height entrance and luxury furnished lobby.</p>
-      <p style="margin-bottom:10px;">— Spaciously designed {{ $project->beds }}-bedroom luxury units ({{ $project->area }} sqft).</p>
-      <p style="margin-bottom:10px;">— Prime location at {{ $project->location }}.</p>
-      <p>— Modern amenities and architectural refinement.</p>
+  <div class="container">
+    <div class="enquiry-card" data-aos="fade-up">
+      <div class="row g-0">
+        <!-- Left: Form Column -->
+        <div class="col-lg-7 p-4 p-md-5">
+          <div class="enquiry-form-header">
+            <span class="idx"><i class="fa-solid fa-paper-plane me-1"></i> ENQUIRE</span>
+            <h2 class="property-title">Schedule a Private Tour</h2>
+            <p class="text-muted">Interested in {{ $project->title }}? Fill in your details below and our senior advisor will contact you shortly.</p>
+          </div>
+
+          <form id="enquiryForm" action="{{ route('enquiry.submit') }}" method="POST" onsubmit="return handleEnquirySubmit(event);" class="enquiry-form-body mt-4">
+            @csrf
+            <input type="hidden" name="featured_project_id" value="{{ $project->id }}">
+            <div id="enquiryAlert" class="alert alert-success d-none mb-3" role="alert"></div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="input-group-custom">
+                  <label><i class="fa-regular fa-user me-1"></i> Full Name *</label>
+                  <input type="text" name="name" class="form-control-custom" placeholder="e.g. Tanvir Ahmed" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group-custom">
+                  <label><i class="fa-regular fa-envelope me-1"></i> Email Address *</label>
+                  <input type="email" name="email" class="form-control-custom" placeholder="name@example.com" required>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group-custom">
+                  <label><i class="fa-solid fa-phone me-1"></i> Phone Number *</label>
+                  <input type="tel" name="phone" class="form-control-custom" placeholder="+880 1700 000000" required>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group-custom">
+                  <label><i class="fa-regular fa-comment-dots me-1"></i> Message</label>
+                  <textarea name="message" class="form-control-custom" rows="3" placeholder="Tell us about your preferences...">I am interested in exploring units at "{{ $project->title }}". Please send me full pricing details and schedule a site visit.</textarea>
+                </div>
+              </div>
+              <div class="col-md-12 mt-4">
+                <button type="submit" id="enquirySubmitBtn" class="btn-enquiry-submit">
+                  <span>Submit Inquiry</span>
+                  <i class="fa-solid fa-arrow-right-long ms-2"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Right: Concierge & Highlights Column -->
+        <div class="col-lg-5 enquiry-side-panel p-4 p-md-5 d-flex flex-column justify-content-between">
+          <div>
+            <div class="side-badge mb-3">
+              <i class="fa-solid fa-bolt me-1"></i> Fast Response Guaranteed
+            </div>
+            <h4 class="side-title">Why Buyers Choose {{ $project->title }}</h4>
+            <ul class="side-benefits-list">
+              <li>
+                <div class="icon-box"><i class="fa-solid fa-building-circle-check"></i></div>
+                <div>
+                  <strong>Architectural Excellence</strong>
+                  <p>Double-height entrance and luxury furnished lobby.</p>
+                </div>
+              </li>
+              <li>
+                <div class="icon-box"><i class="fa-solid fa-ruler-combined"></i></div>
+                <div>
+                  <strong>Spacious Living Units</strong>
+                  <p>Spaciously designed {{ $project->beds }}-bedroom luxury units ({{ $project->area }} sqft).</p>
+                </div>
+              </li>
+              <li>
+                <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
+                <div>
+                  <strong>Prime Location</strong>
+                  <p>Located in high-demand area at {{ $project->location }}.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="advisor-contact-card mt-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="advisor-avatar">
+                <i class="fa-solid fa-headset"></i>
+              </div>
+              <div>
+                <span class="d-block small text-uppercase tracking-wider text-muted" style="font-size:0.75rem;">Direct Sales Concierge</span>
+                <strong class="d-block fs-6" style="color:#FFF;">+880 1800-AURELIA</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -327,15 +403,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const form = document.getElementById('enquiryForm');
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      form.innerHTML = `<div style="padding:20px 0;"><i class="fa-solid fa-circle-check" style="color:#C1622F;font-size:2rem;"></i><h5 style="font-family:var(--font-display);margin-top:12px;">Thank you</h5><p style="font-size:.9rem;">We'll be in touch within one business day.</p></div>`;
-      return false;
-    });
-  }
 });
+
+function handleEnquirySubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('enquiryForm');
+  const alertBox = document.getElementById('enquiryAlert');
+  const submitBtn = document.getElementById('enquirySubmitBtn');
+
+  if(!form) return false;
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span>Submitting...</span> <i class="fa-solid fa-spinner fa-spin ms-2"></i>';
+
+  const formData = new FormData(form);
+
+  fetch('{{ route("enquiry.submit") }}', {
+    method: 'POST',
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}',
+      'Accept': 'application/json'
+    },
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success) {
+      alertBox.classList.remove('d-none');
+      alertBox.className = 'alert d-flex align-items-center mb-4 border-0 p-3 text-white';
+      alertBox.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+      alertBox.style.borderRadius = '12px';
+      alertBox.style.boxShadow = '0 10px 25px rgba(16,185,129,0.3)';
+      alertBox.innerHTML = '<i class="fa-solid fa-circle-check me-3 fs-3"></i> <div><strong class="d-block mb-1">Enquiry Submitted!</strong><span style="font-size:0.9rem; opacity:0.95;">' + data.message + '</span></div>';
+      form.reset();
+    } else {
+      alertBox.classList.remove('d-none');
+      alertBox.className = 'alert alert-danger mb-3';
+      alertBox.innerText = 'Something went wrong. Please try again.';
+    }
+  })
+  .catch(err => {
+    alertBox.classList.remove('d-none');
+    alertBox.className = 'alert alert-danger mb-3';
+    alertBox.innerText = 'Server error. Please try again.';
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span>Submit Inquiry</span> <i class="fa-solid fa-arrow-right-long ms-2"></i>';
+  });
+
+  return false;
+}
 </script>
 </div>
 @endsection

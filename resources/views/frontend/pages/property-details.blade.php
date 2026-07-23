@@ -107,11 +107,14 @@
 
         <div class="pm-box">
           <h3 class="pm-subtitle">I am interested in this property</h3>
-          <form class="pm-form" onsubmit="alert('Thank you! Our sales team will contact you shortly.'); return false;">
-            <input type="text" class="form-control" placeholder="Name" required>
-            <input type="email" class="form-control" placeholder="Email Address" required>
-            <input type="tel" class="form-control" placeholder="Phone Number" required>
-            <textarea class="form-control" rows="3" required>I am interested in your property named "{{ $property->title }}".</textarea>
+          <form class="pm-form" action="{{ route('enquiry.submit') }}" method="POST" onsubmit="return handlePropertyEnquiry(event, this);">
+            @csrf
+            <input type="hidden" name="property_id" value="{{ $property->id }}">
+            <div class="prop-alert alert alert-success d-none mb-3" role="alert"></div>
+            <input type="text" name="name" class="form-control" placeholder="Name" required>
+            <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+            <input type="tel" name="phone" class="form-control" placeholder="Phone Number" required>
+            <textarea name="message" class="form-control" rows="3" required>I am interested in your property named "{{ $property->title }}".</textarea>
             <button type="submit" class="btn btn-gold w-100 mt-2">Submit <i class="fa-solid fa-arrow-right ms-2"></i></button>
           </form>
         </div>
@@ -122,12 +125,7 @@
   </div>
 </div>
 
-<!-- Floating Action Buttons -->
-<div class="pm-fabs">
-  <a href="#" class="pm-fab"><i class="fa-solid fa-phone"></i></a>
-  <a href="#" class="pm-fab"><i class="fa-brands fa-whatsapp"></i></a>
-  <a href="#" class="pm-fab"><i class="fa-regular fa-message"></i></a>
-</div>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -148,11 +146,15 @@ document.addEventListener('DOMContentLoaded', () => {
     mainImg.src = src;
     currentIndex = index;
 
-    thumbs[index].scrollIntoView({
-      behavior: 'smooth',
-      inline: 'center',
-      block: 'nearest'
-    });
+    const trackWrap = document.querySelector('.thumb-track-wrap');
+    if (trackWrap && thumbs[index]) {
+      const thumb = thumbs[index];
+      const targetLeft = thumb.offsetLeft - (trackWrap.clientWidth / 2) + (thumb.clientWidth / 2);
+      trackWrap.scrollTo({
+        left: Math.max(0, targetLeft),
+        behavior: 'smooth'
+      });
+    }
   }
 
   thumbs.forEach((thumb, index) => {
@@ -200,5 +202,52 @@ document.addEventListener('DOMContentLoaded', () => {
     gallery.addEventListener('mouseleave', startAutoSlide);
   }
 });
+
+function handlePropertyEnquiry(e, form) {
+  e.preventDefault();
+  const alertBox = form.querySelector('.prop-alert');
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = 'Submitting... <i class="fa-solid fa-spinner fa-spin ms-2"></i>';
+
+  const formData = new FormData(form);
+
+  fetch('{{ route("enquiry.submit") }}', {
+    method: 'POST',
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}',
+      'Accept': 'application/json'
+    },
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success) {
+      alertBox.classList.remove('d-none');
+      alertBox.className = 'prop-alert alert d-flex align-items-center mb-3 border-0 p-3 text-white';
+      alertBox.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+      alertBox.style.borderRadius = '12px';
+      alertBox.style.boxShadow = '0 10px 25px rgba(16,185,129,0.3)';
+      alertBox.innerHTML = '<i class="fa-solid fa-circle-check me-3 fs-3"></i> <div><strong class="d-block mb-1">Enquiry Submitted!</strong><span style="font-size:0.9rem; opacity:0.95;">' + data.message + '</span></div>';
+      form.reset();
+    } else {
+      alertBox.classList.remove('d-none');
+      alertBox.className = 'alert alert-danger mb-3';
+      alertBox.innerText = 'Something went wrong. Please try again.';
+    }
+  })
+  .catch(err => {
+    alertBox.classList.remove('d-none');
+    alertBox.className = 'alert alert-danger mb-3';
+    alertBox.innerText = 'Server error. Please try again.';
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = 'Submit <i class="fa-solid fa-arrow-right ms-2"></i>';
+  });
+
+  return false;
+}
 </script>
 @endsection

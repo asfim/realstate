@@ -72,6 +72,19 @@
                     </a>
                 </li>
             </ul>
+        @php
+            $unreadSubmissionsCount = \App\Models\Submission::where('is_read', false)->count();
+        @endphp
+        <li>
+            <a href="{{ route('admin.submissions.index') }}" class="{{ request()->routeIs('admin.submissions.*') ? 'active' : '' }} d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-inbox-fill"></i>
+                    Submissions
+                </span>
+                @if($unreadSubmissionsCount > 0)
+                    <span class="badge bg-danger rounded-pill">{{ $unreadSubmissionsCount }}</span>
+                @endif
+            </a>
         </li>
         
         <li>

@@ -37,4 +37,9 @@ Route::middleware(['admin'])->group(function () {
     // Manage Property Details & Construction Status Routes
     Route::get('properties-manage', [\App\Http\Controllers\Backend\PropertyController::class, 'manageIndex'])->name('properties.manage.index');
     Route::get('properties-manage/{property}/edit', [\App\Http\Controllers\Backend\PropertyController::class, 'manageEdit'])->name('properties.manage.edit');
+
+    // Submissions Management
+    Route::get('submissions', [\App\Http\Controllers\Backend\SubmissionController::class, 'index'])->name('submissions.index');
+    Route::get('submissions/{submission}', [\App\Http\Controllers\Backend\SubmissionController::class, 'show'])->name('submissions.show');
+    Route::delete('submissions/{submission}', [\App\Http\Controllers\Backend\SubmissionController::class, 'destroy'])->name('submissions.destroy');
 });
