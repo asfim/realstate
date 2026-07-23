@@ -1,12 +1,16 @@
 @extends('frontend.layouts.app')
 @section('content')
 
+@php
+  $isFiltered = request()->filled('type') || request()->filled('location') || request()->filled('budget') || request()->filled('beds');
+@endphp
+
 <!-- PAGE HEADER -->
 <div class="page-header">
   <div class="container">
-    @if(request('type'))
-      <h1 data-aos="fade-up">{{ request('type') }} Listings</h1>
-      <p data-aos="fade-up" data-aos-delay="100">Explore premium {{ strtolower(request('type')) }} units in choice locations.</p>
+    @if($isFiltered)
+      <h1 data-aos="fade-up">Property Search Results</h1>
+      <p data-aos="fade-up" data-aos-delay="100">Showing properties matching your search criteria.</p>
     @else
       <h1 data-aos="fade-up">Property Categories</h1>
       <p data-aos="fade-up" data-aos-delay="100">Find the perfect property type that fits your lifestyle.</p>
@@ -14,29 +18,43 @@
   </div>
 </div>
 
-@if(request('type'))
-<!-- PROPERTIES LIST BY TYPE -->
+@if($isFiltered)
+<!-- PROPERTIES LIST BY FILTER -->
 <section id="categories">
   <div class="container">
-    <div class="mb-4" data-aos="fade-up">
+    <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2" data-aos="fade-up">
       <a href="{{ route('properties') }}" class="btn btn-navy btn-sm px-3">
-        <i class="fa-solid fa-arrow-left me-2"></i>Back to Categories
+        <i class="fa-solid fa-arrow-left me-2"></i>Clear Filters & View All Categories
       </a>
+      <div class="text-muted small">
+        Found <strong>{{ $properties->count() }}</strong> property listings
+      </div>
     </div>
 
     <div class="row g-4">
       @forelse($properties as $index => $property)
-      <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="{{ $index * 100 }}">
+      <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="{{ ($index % 3) * 100 }}">
         <div class="cat-card" onclick="window.location.href='{{ route('property.details', $property->id) }}'" style="cursor:pointer;">
           <img src="{{ asset_url($property->image) }}" loading="lazy" alt="{{ $property->title }}">
           <div class="cat-overlay">
-            <h5><i class="fa-solid fa-building"></i>{{ $property->title }}</h5>
+            <h5><i class="fa-solid fa-building me-2"></i>{{ $property->title }}</h5>
+            @if($property->location || $property->price)
+              <small class="d-block text-white-50 mt-1">
+                <i class="fa-solid fa-location-dot me-1"></i> {{ $property->location }} 
+                @if($property->price) 
+                  | {{ is_numeric($property->price) ? '$' . number_format((float)$property->price) : $property->price }} 
+                @endif
+              </small>
+            @endif
           </div>
         </div>
       </div>
       @empty
       <div class="col-12 text-center text-muted py-5">
-        <p>No {{ strtolower(request('type')) }} listings available at the moment. Please check back later.</p>
+        <i class="fa-solid fa-building-circle-exclamation display-4 mb-3 d-block text-secondary"></i>
+        <h5>No properties matched your criteria.</h5>
+        <p class="text-muted">Try adjusting your location, property type, budget, or bedroom filters.</p>
+        <a href="{{ route('properties') }}" class="btn btn-gold btn-sm mt-2">Reset Filters</a>
       </div>
       @endforelse
     </div>

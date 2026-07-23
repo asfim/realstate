@@ -44,25 +44,51 @@
     @if(setting('search_heading'))
       <h5 class="text-center mb-3 fw-bold">{{ setting('search_heading') }}</h5>
     @endif
-    <form class="row g-3 align-items-end" onsubmit="return false;">
-      <div class="col-md-3 col-6">
-        <label>Location</label>
-        <select class="form-select"><option>Any Location</option><option>Dhaka</option><option>Chattogram</option><option>Sylhet</option><option>Cox's Bazar</option></select>
+    <form action="{{ route('properties') }}" method="GET" class="row g-3 align-items-end">
+      <div class="col-lg-4 col-md-4 col-6">
+        <label class="form-label fw-bold small text-muted text-uppercase mb-1">Location</label>
+        <select name="location" class="form-select">
+          <option value="">Any Location</option>
+          <option value="Dhaka">Dhaka</option>
+          <option value="Chattogram">Chattogram</option>
+          <option value="Sylhet">Sylhet</option>
+          <option value="Cox's Bazar">Cox's Bazar</option>
+          <option value="Gulshan">Gulshan</option>
+          <option value="Banani">Banani</option>
+          <option value="Dhanmondi">Dhanmondi</option>
+          <option value="Uttara">Uttara</option>
+        </select>
       </div>
-      <div class="col-md-3 col-6">
-        <label>Property Type</label>
-        <select class="form-select"><option>Any Type</option><option>Apartment</option><option>Villa</option><option>Duplex</option><option>Commercial</option><option>Office</option><option>Land</option></select>
+      <div class="col-lg-4 col-md-4 col-6">
+        <label class="form-label fw-bold small text-muted text-uppercase mb-1">Property Type</label>
+        <select name="type" class="form-select">
+          <option value="">Any Type</option>
+          @if(isset($allPropertyTypes) && count($allPropertyTypes) > 0)
+            @foreach($allPropertyTypes as $pt)
+              <option value="{{ $pt->title }}">{{ $pt->title }}</option>
+            @endforeach
+          @else
+            <option value="Apartment">Apartment</option>
+            <option value="Villa">Villa</option>
+            <option value="Duplex">Duplex</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Office">Office</option>
+            <option value="Land">Land</option>
+          @endif
+        </select>
       </div>
-      <div class="col-md-2 col-6">
-        <label>Budget</label>
-        <select class="form-select"><option>Any Budget</option><option>Under $200k</option><option>$200k–$500k</option><option>$500k+</option></select>
+      <div class="col-lg-2 col-md-2 col-6">
+        <label class="form-label fw-bold small text-muted text-uppercase mb-1">Bedrooms</label>
+        <select name="beds" class="form-select">
+          <option value="">Any</option>
+          <option value="1">1 Bed</option>
+          <option value="2">2 Beds</option>
+          <option value="3">3 Beds</option>
+          <option value="4">4+ Beds</option>
+        </select>
       </div>
-      <div class="col-md-2 col-6">
-        <label>Bedrooms</label>
-        <select class="form-select"><option>Any</option><option>1</option><option>2</option><option>3</option><option>4+</option></select>
-      </div>
-      <div class="col-md-2 col-12">
-        <button class="btn btn-navy search-btn" type="submit"><i class="fa-solid fa-magnifying-glass me-2"></i>Search</button>
+      <div class="col-lg-2 col-md-2 col-12">
+        <button class="btn btn-navy search-btn w-100" type="submit"><i class="fa-solid fa-magnifying-glass me-2"></i>Search</button>
       </div>
     </form>
   </div>

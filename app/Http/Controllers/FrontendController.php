@@ -16,8 +16,9 @@ class FrontendController extends Controller
         $teamMembers = TeamMember::where('is_active', true)->latest()->take(8)->get();
         $testimonials = Testimonial::where('is_active', true)->latest()->get();
         $types = \App\Models\PropertyType::take(3)->get();
+        $allPropertyTypes = \App\Models\PropertyType::all();
 
-        return view('frontend.pages.home', compact('featuredProperties', 'teamMembers', 'testimonials', 'types'));
+        return view('frontend.pages.home', compact('featuredProperties', 'teamMembers', 'testimonials', 'types', 'allPropertyTypes'));
     }
 
     public function projects()
@@ -40,9 +41,33 @@ class FrontendController extends Controller
     public function properties(Request $request)
     {
         $query = Property::where('is_active', true);
+
         if ($request->filled('type')) {
-            $query->where('type', $request->type);
+            $query->where('type', 'like', '%' . $request->type . '%');
         }
+
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        if ($request->filled('beds')) {
+            if ($request->beds == '4') {
+                $query->where('beds', '>=', 4);
+            } else {
+                $query->where('beds', $request->beds);
+            }
+        }
+
+        if ($request->filled('budget')) {
+            if ($request->budget == 'under_200k') {
+                $query->where('price', '<=', 200000);
+            } elseif ($request->budget == '200k_500k') {
+                $query->whereBetween('price', [200000, 500000]);
+            } elseif ($request->budget == '500k_plus') {
+                $query->where('price', '>=', 500000);
+            }
+        }
+
         $properties = $query->latest()->get();
         $types = \App\Models\PropertyType::all();
         return view('frontend.pages.properties', compact('properties', 'types'));
