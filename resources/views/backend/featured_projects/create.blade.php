@@ -2,14 +2,14 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0 fw-bold">Add Featured Property</h4>
-    <a href="{{ route('admin.featured-properties.index') }}" class="btn btn-outline-secondary btn-sm">
+    <h4 class="mb-0 fw-bold">Add Featured Project</h4>
+    <a href="{{ route('admin.featured-project.index') }}" class="btn btn-outline-secondary btn-sm">
         <i class="bi bi-arrow-left"></i> Back to List
     </a>
 </div>
 
 <div class="card p-4">
-    <form action="{{ route('admin.featured-properties.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.featured-project.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
         <div class="form-check form-switch mb-4">

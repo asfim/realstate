@@ -27,7 +27,7 @@
                 <div class="text-muted small fw-bold px-3 py-2 text-uppercase">Dynamic Sections</div>
                 
                 <!-- Links to Future CRUD pages -->
-                <a href="{{ route('admin.featured-properties.index') }}" class="nav-link text-start mb-1 text-muted">
+                <a href="{{ route('admin.featured-project.index') }}" class="nav-link text-start mb-1 text-muted">
                     <i class="bi bi-house-heart me-2"></i> Featured Properties <i class="bi bi-box-arrow-up-right float-end"></i>
                 </a>
                 <a href="{{ route('admin.team-members.index') }}" class="nav-link text-start mb-1 text-muted">

@@ -19,8 +19,8 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/settings/other', [\App\Http\Controllers\Backend\SettingController::class, 'other'])->name('settings.other');
     Route::post('/settings/update', [\App\Http\Controllers\Backend\SettingController::class, 'update'])->name('settings.update');
 
-    // Featured Properties
-    Route::resource('featured-properties', \App\Http\Controllers\Backend\FeaturedPropertyController::class);
+    // Featured Projects
+    Route::resource('featured-project', \App\Http\Controllers\Backend\FeaturedProjectController::class);
     Route::resource('team-members', \App\Http\Controllers\Backend\TeamMemberController::class);
     Route::resource('testimonials', \App\Http\Controllers\Backend\TestimonialController::class);
 

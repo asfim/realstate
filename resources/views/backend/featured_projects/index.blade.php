@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0 fw-bold">Featured Properties</h4>
-    <a href="{{ route('admin.featured-properties.create') }}" class="btn btn-gold">
-        <i class="bi bi-plus-lg me-1"></i> Add Property
+    <h4 class="mb-0 fw-bold">Featured Projects</h4>
+    <a href="{{ route('admin.featured-project.create') }}" class="btn btn-gold">
+        <i class="bi bi-plus-lg me-1"></i> Add Project
     </a>
 </div>
 
@@ -22,11 +22,11 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($properties as $property)
+                @forelse($projects as $project)
                 <tr>
                     <td>
-                        @if($property->image)
-                            <img src="{{ Storage::url($property->image) }}" alt="Img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                        @if($project->image)
+                            <img src="{{ Storage::url($project->image) }}" alt="Img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                         @else
                             <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="width: 60px; height: 60px; border-radius: 8px;">
                                 <i class="bi bi-image"></i>
@@ -34,26 +34,26 @@
                         @endif
                     </td>
                     <td>
-                        <div class="fw-bold">{{ $property->title }}</div>
-                        <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ $property->location }}</div>
+                        <div class="fw-bold">{{ $project->title }}</div>
+                        <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ $project->location }}</div>
                     </td>
-                    <td class="fw-bold text-success">{{ $property->price }}</td>
+                    <td class="fw-bold text-success">{{ $project->price }}</td>
                     <td class="small text-muted">
-                        <div>{{ $property->beds }} Beds &bull; {{ $property->baths }} Baths</div>
-                        <div>{{ $property->area }} sqft</div>
+                        <div>{{ $project->beds }} Beds &bull; {{ $project->baths }} Baths</div>
+                        <div>{{ $project->area }} sqft</div>
                     </td>
                     <td>
-                        @if($property->is_active)
+                        @if($project->is_active)
                             <span class="badge bg-success">Active</span>
                         @else
                             <span class="badge bg-secondary">Hidden</span>
                         @endif
                     </td>
                     <td class="text-end">
-                        <a href="{{ route('admin.featured-properties.edit', $property->id) }}" class="btn btn-sm btn-outline-secondary">
+                        <a href="{{ route('admin.featured-project.edit', $project->id) }}" class="btn btn-sm btn-outline-secondary">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <form action="{{ route('admin.featured-properties.destroy', $property->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this property?');">
+                        <form action="{{ route('admin.featured-project.destroy', $project->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this project?');">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-outline-danger">
@@ -65,7 +65,7 @@
                 @empty
                 <tr>
                     <td colspan="6" class="text-center py-4 text-muted">
-                        No featured properties added yet.
+                        No featured projects added yet.
                     </td>
                 </tr>
                 @endforelse

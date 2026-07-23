@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FeaturedProperty;
+use App\Models\FeaturedProject;
 use App\Models\Property;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
@@ -12,7 +12,7 @@ class FrontendController extends Controller
 {
     public function home()
     {
-        $featuredProperties = FeaturedProperty::where('is_active', true)->latest()->take(6)->get();
+        $featuredProperties = FeaturedProject::where('is_active', true)->latest()->take(6)->get();
         $teamMembers = TeamMember::where('is_active', true)->latest()->take(8)->get();
         $testimonials = Testimonial::where('is_active', true)->latest()->get();
         $types = \App\Models\PropertyType::take(3)->get();
@@ -22,7 +22,7 @@ class FrontendController extends Controller
 
     public function projects()
     {
-        $projects = FeaturedProperty::where('is_active', true)->latest()->get();
+        $projects = FeaturedProject::where('is_active', true)->latest()->get();
         return view('frontend.pages.projects', compact('projects'));
     }
 

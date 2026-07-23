@@ -58,7 +58,7 @@
       <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar"></i>Launch Date</span><span class="v">May 2024</span></div>
       <div class="spec-row"><span class="k mono"><i class="fa-solid fa-calendar-check"></i>Completion</span><span class="v">Mar 2027</span></div>
       <div class="spec-actions">
-        <a href="{{ route('') }}" class="btn-line">Construction Status</a>
+        <a href="#" class="btn-line">Construction Status</a>
         <a href="#" class="btn-copper"><i class="fa-solid fa-download"></i>Brochure</a>
       </div>
     </div>
