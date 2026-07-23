@@ -150,5 +150,6 @@ function handleContactSubmit(e){
   return false;
 }
 </script>
+@stack('scripts')
 </body>
 </html>

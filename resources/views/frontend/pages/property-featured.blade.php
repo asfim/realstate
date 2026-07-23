@@ -151,60 +151,64 @@
 
 
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  /* Hero thumbnail switcher */
+  const heroMainImg = document.getElementById('heroMainImg');
+  document.querySelectorAll('.thumb-rail .thumb').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.thumb-rail .thumb').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      if (heroMainImg) heroMainImg.src = t.dataset.src;
+    });
+  });
+
+  /* Floor plan tabs */
+  const planData = {
+    ground:{ title:'Ground Floor', rows:[['Function','Lobby & driveway'],['Ceiling height','12 ft'],['Parking bays','10'],['Generator room','Included']], label:'GROUND FLOOR — LOBBY & DRIVEWAY' },
+    typical:{ title:'Typical Floor', rows:[['Function','Single 3-bed apartment'],['Carpet area','3,050 sft'],['Balconies','2'],['Orientation','North-East']], label:'TYPICAL FLOOR — 1 APARTMENT' },
+    roof:{ title:'Roof Floor', rows:[['Function','Rooftop walkway & lounge'],['Open area','1,800 sft'],['Features','Pool deck, garden'],['Access','Private lift']], label:'ROOF FLOOR — AMENITY DECK' },
+    unit:{ title:'Unit Plan', rows:[['Bedrooms','3'],['Bathrooms','3'],['Living + dining','620 sft'],['Kitchen','180 sft']], label:'UNIT PLAN — 3 BED APARTMENT' }
+  };
+  document.querySelectorAll('.plan-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.plan-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const data = planData[tab.dataset.plan];
+      const planTitle = document.getElementById('planTitle');
+      const planList = document.getElementById('planList');
+      const planImageText = document.querySelector('#planImage svg text');
+      
+      if (planTitle) planTitle.textContent = data.title;
+      if (planList) planList.innerHTML = data.rows.map(r => `<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
+      if (planImageText) planImageText.textContent = data.label;
+    });
+  });
+
+  /* Video trigger -> open YouTube in a lightweight lightbox */
+  const videoTrigger = document.getElementById('videoTrigger');
+  if (videoTrigger) {
+    videoTrigger.addEventListener('click', function(){
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,27,25,.94);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;';
+      overlay.innerHTML = `<div style="width:min(900px,100%);aspect-ratio:16/9;position:relative;">
+        <iframe style="width:100%;height:100%;border:0;" src="https://www.youtube.com/embed/j-3nl88O7uI?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+      <span style="position:absolute;top:24px;right:32px;color:#fff;font-size:1.8rem;cursor:pointer;" id="closeVid">&times;</span>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', (e) => { if(e.target === overlay || e.target.id==='closeVid') overlay.remove(); });
+    });
+  }
+
+  const form = document.getElementById('enquiryForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      form.innerHTML = `<div style="padding:20px 0;"><i class="fa-solid fa-circle-check" style="color:#C1622F;font-size:2rem;"></i><h5 style="font-family:var(--font-display);margin-top:12px;">Thank you</h5><p style="font-size:.9rem;">We'll be in touch within one business day.</p></div>`;
+      return false;
+    });
+  }
+});
+</script>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-
-
-
-/* Hero thumbnail switcher */
-const heroMainImg = document.getElementById('heroMainImg');
-document.querySelectorAll('.thumb-rail .thumb').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.thumb-rail .thumb').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    heroMainImg.src = t.dataset.src;
-  });
-});
-
-/* Floor plan tabs */
-const planData = {
-  ground:{ title:'Ground Floor', rows:[['Function','Lobby & driveway'],['Ceiling height','12 ft'],['Parking bays','10'],['Generator room','Included']], label:'GROUND FLOOR — LOBBY &amp; DRIVEWAY' },
-  typical:{ title:'Typical Floor', rows:[['Function','Single 3-bed apartment'],['Carpet area','3,050 sft'],['Balconies','2'],['Orientation','North-East']], label:'TYPICAL FLOOR — 1 APARTMENT' },
-  roof:{ title:'Roof Floor', rows:[['Function','Rooftop walkway & lounge'],['Open area','1,800 sft'],['Features','Pool deck, garden'],['Access','Private lift']], label:'ROOF FLOOR — AMENITY DECK' },
-  unit:{ title:'Unit Plan', rows:[['Bedrooms','3'],['Bathrooms','3'],['Living + dining','620 sft'],['Kitchen','180 sft']], label:'UNIT PLAN — 3 BED APARTMENT' }
-};
-document.querySelectorAll('.plan-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.plan-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    const data = planData[tab.dataset.plan];
-    document.getElementById('planTitle').textContent = data.title;
-    document.getElementById('planList').innerHTML = data.rows.map(r => `<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('');
-    document.querySelector('#planImage svg text').textContent = data.label.replace('&amp;','&');
-  });
-});
-
-/* Video trigger -> open YouTube in a lightweight lightbox */
-document.getElementById('videoTrigger').addEventListener('click', function(){
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,27,25,.94);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;';
-  overlay.innerHTML = `<div style="width:min(900px,100%);aspect-ratio:16/9;position:relative;">
-    <iframe style="width:100%;height:100%;border:0;" src="https://www.youtube.com/embed/j-3nl88O7uI?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  </div>
-  <span style="position:absolute;top:24px;right:32px;color:#fff;font-size:1.8rem;cursor:pointer;" id="closeVid">&times;</span>`;
-  document.body.appendChild(overlay);
-  overlay.addEventListener('click', (e) => { if(e.target === overlay || e.target.id==='closeVid') overlay.remove(); });
-});
-
-function handleEnquirySubmit(e){
-  e.preventDefault();
-  const form = e.target;
-  form.innerHTML = '<div style="padding:20px 0;"><i class="fa-solid fa-circle-check" style="color:#C1622F;font-size:2rem;"></i><h5 style="font-family:var(--font-display);margin-top:12px;">Thank you</h5><p style="font-size:.9rem;">We\\'ll be in touch within one business day.</p></div>';
-  return false;
-}
-
-</script>
-@endpush

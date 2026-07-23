@@ -586,3 +586,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   transform: translateY(-3px) !important;
   box-shadow: 0 18px 40px -10px rgba(212,175,55,.75) !important;
 }
+
+/* Custom cursor */
+.cursor-dot{ position:fixed; top:0; left:0; width:10px; height:10px; background:var(--gold, #D4AF37); border-radius:50%; pointer-events:none; z-index:1600; transform:translate(-50%,-50%); transition:transform .15s ease, opacity .3s; display:none; }
+.cursor-ring{ position:fixed; top:0; left:0; width:36px; height:36px; border:1.5px solid rgba(212,175,55,.6); border-radius:50%; pointer-events:none; z-index:1599; transform:translate(-50%,-50%); transition:transform .12s linear, width .25s, height .25s, border-color .25s; display:none; }
+@media (hover:hover) and (pointer:fine){ .cursor-dot, .cursor-ring{ display:block; } }
