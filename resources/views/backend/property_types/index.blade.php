@@ -1,7 +1,7 @@
 @extends('backend.layouts.app')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 page-title-row">
     <h4 class="mb-0 fw-bold">Property Types Management</h4>
     <a href="{{ route('admin.property-types.create') }}" class="btn btn-navy">
         <i class="bi bi-plus-lg me-1"></i> Add Property Type

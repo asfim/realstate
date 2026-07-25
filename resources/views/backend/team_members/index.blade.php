@@ -1,7 +1,7 @@
 @extends('backend.layouts.app')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 page-title-row">
     <h4 class="mb-0 fw-bold">Team Members</h4>
     <a href="{{ route('admin.team-members.create') }}" class="btn btn-navy">
         <i class="bi bi-plus-lg"></i> Add Team Member
@@ -9,7 +9,7 @@
 </div>
 
 <div class="card p-4">
-    <table class="table table-hover align-middle">
+    <div class="table-responsive"><table class="table table-hover align-middle">
         <thead class="table-light">
             <tr>
                 <th>Image</th>
@@ -55,6 +55,6 @@
             </tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 </div>
 @endsection

@@ -1,7 +1,7 @@
 @extends('backend.layouts.app')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 page-title-row">
     <h4 class="mb-0 fw-bold">Dashboard Overview</h4>
     <div class="text-muted small">
         <i class="bi bi-calendar-event me-1"></i> {{ date('F d, Y') }}

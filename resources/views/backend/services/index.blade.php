@@ -1,7 +1,7 @@
 @extends('backend.layouts.app')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 page-title-row">
     <div>
         <h4 class="mb-0 fw-bold">Services Management</h4>
         <p class="text-muted small mb-0">Manage services displayed on the /services page and homepage</p>
