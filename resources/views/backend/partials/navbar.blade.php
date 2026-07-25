@@ -2,7 +2,7 @@
     <button class="btn-toggle" id="sidebarToggle">
         <i class="bi bi-list"></i>
     </button>
-    
+
     <div class="dropdown">
         <a href="#" class="user-dropdown dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::guard('admin')->user()->name) }}&background=D4AF37&color=fff" alt="Admin" class="rounded-circle" width="35" height="35">
