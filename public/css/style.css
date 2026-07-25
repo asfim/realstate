@@ -741,3 +741,221 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   justify-content: center;
   font-size: 1.2rem;
 }
+
+/* ============================================================
+   RESPONSIVE — Tablet (max 991px)
+   ============================================================ */
+@media (max-width: 991.98px) {
+
+  /* Navbar */
+  .navbar-luxury .navbar-collapse {
+    background: rgba(15,23,42,.97);
+    backdrop-filter: blur(14px);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 12px;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .navbar-luxury .nav-link { margin-inline: 0; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.07); font-size: 1rem; }
+  .navbar-luxury .nav-link:last-child { border-bottom: none; }
+  .navbar-inner-page:not(.scrolled) .navbar-collapse { background: rgba(15,23,42,.97); }
+  .navbar-inner-page:not(.scrolled) .nav-link { color: rgba(255,255,255,.9) !important; }
+  .navbar-luxury .nav-item.ms-lg-3 { margin-top: 10px; }
+  .navbar-luxury .nav-item.ms-lg-3 .btn { width: 100%; text-align: center; }
+
+  /* Hero */
+  .hero-title { font-size: clamp(2rem, 7vw, 3rem); }
+  .hero-sub { font-size: 1rem; }
+  .hero-cta { gap: 12px; }
+  .hero-cta .btn { width: 100%; text-align: center; }
+  .floating-stats .row > div { margin-bottom: 12px; }
+  .stat-card { text-align: center; }
+
+  /* Search panel */
+  .search-panel { margin-top: -40px; }
+  .search-panel .glass { padding: 18px; }
+  .search-btn { margin-top: 10px; width: 100%; }
+
+  /* Project / Property cards — 2 columns */
+  .project-body h4 { font-size: 1rem; }
+
+  /* About section */
+  .about-badge-card { bottom: -10px; right: -10px; padding: 14px 18px; max-width: 170px; }
+  .about-badge-card strong { font-size: 1.3rem; }
+
+  /* Gallery */
+  .gallery-grid { column-count: 2; }
+
+  /* Stats section */
+  .stats-section .stat-block { margin-bottom: 20px; }
+
+  /* Team card */
+  .team-img-wrap { aspect-ratio: 1/1; }
+
+  /* CTA banner */
+  .cta-banner { padding: clamp(32px, 5vw, 60px); text-align: center; }
+  .cta-banner .d-flex { flex-direction: column; gap: 16px; }
+
+  /* Footer */
+  .newsletter-form { flex-direction: column; }
+  .newsletter-form input { border-radius: 12px; margin-bottom: 8px; }
+  .newsletter-form button { border-radius: 12px; width: 100%; }
+
+  /* Page header */
+  .page-header { padding: 130px 0 60px; }
+  .page-header h1 { font-size: clamp(2rem, 6vw, 3rem); }
+
+  /* Property dossier — inner page */
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-side { grid-template-columns: 1fr 1fr; grid-template-rows: none; }
+  .overview-grid, .plan-viewer, .location-grid, .enquiry-grid { grid-template-columns: 1fr; }
+  .header-links { display: none; }
+  .enquiry-dock { display: none; }
+
+  /* Newsletter strip */
+  .newsletter-strip .container { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .news-form { flex-wrap: wrap; }
+  .news-form input { min-width: 0; flex: 1; }
+}
+
+/* ============================================================
+   RESPONSIVE — Mobile (max 767px)
+   ============================================================ */
+@media (max-width: 767.98px) {
+
+  section { padding: clamp(48px, 10vw, 80px) 0; }
+
+  /* Hero */
+  .hero { min-height: 100svh; }
+  .hero-content { padding-top: 80px; }
+  .hero-title { font-size: clamp(1.8rem, 8vw, 2.6rem); line-height: 1.2; }
+  .hero-sub { font-size: .95rem; margin-bottom: 24px; }
+  .hero-cta { flex-direction: column; gap: 10px; margin-bottom: 36px; }
+  .hero-cta .btn { width: 100%; }
+  .floating-stats { margin-top: 30px; }
+  .scroll-indicator { display: none; }
+  .fs1, .fs2 { display: none; }
+
+  /* Search panel */
+  .search-panel { margin-top: -20px; }
+  .search-panel .glass { padding: 16px; border-radius: 16px; }
+  .search-panel label { font-size: .68rem; }
+
+  /* Section titles */
+  .section-title { font-size: clamp(1.5rem, 6vw, 2rem); }
+  .eyebrow { font-size: .72rem; }
+
+  /* Feature icon cards — single column */
+  .feature-icon-card { padding: 24px 18px; }
+
+  /* About */
+  .about-img-wrap { margin-bottom: 48px; }
+  .about-badge-card { bottom: -20px; right: 10px; max-width: 150px; padding: 12px 14px; }
+  .about-badge-card strong { font-size: 1.2rem; }
+
+  /* Journey timeline — already handled above */
+
+  /* Category cards */
+  .cat-card { aspect-ratio: 4/3; }
+
+  /* Amenities */
+  .amenity-item { padding: 14px 8px; }
+  .amenity-item i { width: 44px; height: 44px; font-size: 1rem; }
+
+  /* Gallery */
+  .gallery-grid { column-count: 2; }
+
+  /* Video tour */
+  .play-btn { width: 64px; height: 64px; font-size: 1.2rem; }
+
+  /* Testimonials */
+  .testimonial-card { padding: 24px 16px; }
+  .testimonial-text { font-size: 1rem; }
+
+  /* Stats section */
+  .stats-section .stat-block strong { font-size: clamp(1.6rem, 7vw, 2.4rem); }
+
+  /* Team cards — 2 cols on mobile */
+  .team-img-wrap { aspect-ratio: 3/3.5; }
+  .team-body h5 { font-size: .9rem; }
+  .team-body span { font-size: .76rem; }
+
+  /* Blog cards */
+  .blog-body h5 { font-size: .98rem; }
+  .blog-date { font-size: .72rem; }
+
+  /* FAQ */
+  .accordion-button { padding: 16px 18px; font-size: .9rem; }
+
+  /* CTA Banner */
+  .cta-banner { padding: 36px 24px; border-radius: 16px; }
+  .cta-banner h2 { font-size: clamp(1.5rem, 6vw, 2rem); }
+  .cta-banner .btn { width: 100%; }
+
+  /* Footer */
+  .site-footer { padding: 50px 0 20px; }
+  .footer-social { margin-top: 12px; flex-wrap: wrap; }
+  .footer-social a { margin-bottom: 8px; }
+
+  /* Page header */
+  .page-header { padding: 120px 0 50px; }
+  .page-header h1 { font-size: clamp(1.7rem, 8vw, 2.5rem); }
+  .page-header p { font-size: .95rem; }
+
+  /* WhatsApp & Back to top — avoid overlap */
+  .whatsapp-float { bottom: 90px; left: 16px; width: 48px; height: 48px; font-size: 1.3rem; }
+  .back-to-top { bottom: 16px; right: 16px; width: 44px; height: 44px; font-size: .9rem; }
+
+  /* Marquee cards */
+  .marquee-card { width: 280px; padding: 18px; }
+  .marquee-card img { width: 44px; height: 44px; }
+  .marquee-card p { font-size: .85rem; }
+
+  /* Property modal thumbnails */
+  .pm-main-img img { height: 55vw; min-height: 200px; }
+  .pm-thumbnails { bottom: 10px; padding: 6px 10px; gap: 6px; }
+  .thumb-track-wrap { width: calc(100vw - 110px); }
+  .thumb-track img { width: 72px; height: 50px; }
+  .nav-btn { width: 30px; height: 30px; min-width: 30px; font-size: .8rem; }
+  .pm-title { font-size: clamp(1.4rem, 6vw, 2rem); }
+  .pm-subtitle { font-size: 1.1rem; }
+
+  /* Property dossier inner page */
+  .hero-side { grid-template-columns: 1fr; }
+  .spec-actions { flex-direction: column; }
+  .plan-tabs { gap: 6px; }
+  .plan-tab { padding: 8px 14px; font-size: .74rem; }
+
+  /* Enquiry section */
+  .enquiry-section { padding: 48px 0; }
+  .enquiry-card { border-radius: 14px; }
+  .enquiry-side-panel { border-radius: 0 0 14px 14px; }
+
+  /* Newsletter strip */
+  .newsletter-strip { padding: 30px 0; }
+  .newsletter-strip h4 { font-size: 1.1rem; }
+  .news-form { flex-direction: column; }
+  .news-form input { min-width: 0; width: 100%; }
+  .news-form .btn-copper { width: 100%; text-align: center; justify-content: center; }
+}
+
+/* ============================================================
+   RESPONSIVE — Small Mobile (max 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+  .hero-title { font-size: clamp(1.6rem, 9vw, 2.2rem); }
+  .gallery-grid { column-count: 1; }
+  .project-meta { flex-direction: column; gap: 8px; }
+  .stat-card strong { font-size: 1.6rem; }
+  .search-panel .glass { border-radius: 12px; }
+  .cta-banner h2 { font-size: 1.4rem; }
+  .pm-fabs { display: none; }
+  .footer-social { display: flex; flex-wrap: wrap; gap: 8px; }
+}
+
+/* ============================================================
+   UTILITY — Prevent horizontal overflow globally
+   ============================================================ */
+html, body { overflow-x: hidden; }
+img { max-width: 100%; height: auto; }
+.container { padding-inline: clamp(14px, 4vw, 24px); }

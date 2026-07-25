@@ -19,6 +19,8 @@ class AdminMiddleware
             return redirect()->route('admin.login')->with('error', 'Please login to access the admin panel.');
         }
 
+        \Illuminate\Support\Facades\Auth::shouldUse('admin');
+
         return $next($request);
     }
 }
