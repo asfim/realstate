@@ -11,6 +11,79 @@
             </a>
         </li>
 
+        {{-- ── ERP Real Estate Core ────────────────────── --}}
+        <li class="sidebar-heading px-3 mt-3 mb-1 text-uppercase text-xs" style="color: var(--primary); font-size: 0.72rem; letter-spacing: 1px; font-weight: 700;">
+            <i class="bi bi-shield-check me-1"></i> ERP Real Estate Core
+        </li>
+
+        @can('erp.dashboard.view')
+            <li>
+                <a href="{{ route('erp.dashboard') }}" class="{{ request()->routeIs('erp.dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2 text-warning"></i>
+                    ERP Dashboard
+                </a>
+            </li>
+        @endcan
+
+        @can('erp.projects.view')
+            <li>
+                <a href="#erpProjectsSubmenu" data-bs-toggle="collapse"
+                    class="{{ request()->routeIs('erp.projects.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <span><i class="bi bi-buildings"></i> ERP Projects</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <ul class="collapse {{ request()->routeIs('erp.projects.*') ? 'show' : '' }} sidebar-submenu"
+                    id="erpProjectsSubmenu">
+                    <li>
+                        <a href="{{ route('erp.projects.index') }}" class="{{ request()->routeIs('erp.projects.index') ? 'active' : '' }}">
+                            <i class="bi bi-list-ul"></i> All Projects
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.projects.create') }}" class="{{ request()->routeIs('erp.projects.create') ? 'active' : '' }}">
+                            <i class="bi bi-plus-circle"></i> Create Project
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
+
+        @can('erp.units.view')
+            <li>
+                <a href="#erpUnitsSubmenu" data-bs-toggle="collapse"
+                    class="{{ request()->routeIs('erp.units.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <span><i class="bi bi-grid-3x3-gap"></i> Unit Inventory</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <ul class="collapse {{ request()->routeIs('erp.units.*') ? 'show' : '' }} sidebar-submenu"
+                    id="erpUnitsSubmenu">
+                    <li>
+                        <a href="{{ route('erp.units.index') }}" class="{{ request()->routeIs('erp.units.index') ? 'active' : '' }}">
+                            <i class="bi bi-collection"></i> Inventory Master
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.units.create') }}" class="{{ request()->routeIs('erp.units.create') ? 'active' : '' }}">
+                            <i class="bi bi-plus-square"></i> Add New Unit
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
+
+        @can('erp.companies.view')
+            <li>
+                <a href="{{ route('erp.companies.index') }}" class="{{ request()->routeIs('erp.companies.*') ? 'active' : '' }}">
+                    <i class="bi bi-building-gear"></i>
+                    Companies & Branches
+                </a>
+            </li>
+        @endcan
+
+        <li class="sidebar-heading px-3 mt-3 mb-1 text-uppercase text-xs" style="color: var(--text-light); font-size: 0.72rem; letter-spacing: 1px; font-weight: 600;">
+            CMS & Public Website
+        </li>
+
         @can('homepage-settings.view')
             <li>
                 <a href="{{ route('admin.homepage_settings.index') }}"
