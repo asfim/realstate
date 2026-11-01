@@ -101,3 +101,4 @@ class BookingController extends Controller
         return view('erp.bookings.show', compact('booking'));
     }
 }
+

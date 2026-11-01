@@ -119,3 +119,4 @@
     {{ $journals->links() }}
 </div>
 @endsection
+

@@ -186,3 +186,4 @@ function calculateTotals() {
 }
 </script>
 @endsection
+

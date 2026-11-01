@@ -35,3 +35,4 @@ class PaymentAllocation extends Model
         return $this->belongsTo(Installment::class, 'installment_id');
     }
 }
+

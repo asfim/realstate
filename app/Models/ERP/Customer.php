@@ -48,3 +48,4 @@ class Customer extends Model
         return $this->hasMany(UnitHold::class, 'customer_id');
     }
 }
+

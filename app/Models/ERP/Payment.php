@@ -63,3 +63,4 @@ class Payment extends Model
         return $this->hasMany(PaymentAllocation::class, 'payment_id');
     }
 }
+

@@ -49,3 +49,4 @@ class Installment extends Model
         return max(0, (float)$this->amount - (float)$this->paid_amount);
     }
 }
+

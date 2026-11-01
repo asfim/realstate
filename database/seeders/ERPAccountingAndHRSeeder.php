@@ -487,3 +487,4 @@ class ERPAccountingAndHRSeeder extends Seeder
         $payrollRun->update(['journal_id' => $salaryJournal->id]);
     }
 }
+

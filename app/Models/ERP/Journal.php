@@ -76,3 +76,4 @@ class Journal extends Model
         return $this->belongsTo(Journal::class, 'reversed_journal_id');
     }
 }
+

@@ -54,3 +54,4 @@ class PayrollController extends Controller
         return view('erp.payroll.show', compact('payrollRun'));
     }
 }
+

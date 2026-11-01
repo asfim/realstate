@@ -40,3 +40,4 @@ class FiscalPeriod extends Model
         return $this->hasMany(Journal::class, 'fiscal_period_id');
     }
 }
+

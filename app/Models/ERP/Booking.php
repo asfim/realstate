@@ -88,3 +88,4 @@ class Booking extends Model
         return max(0, (float) $this->contract_price - $this->total_paid);
     }
 }
+

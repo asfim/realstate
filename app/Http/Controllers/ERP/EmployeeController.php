@@ -143,3 +143,4 @@ class EmployeeController extends Controller
             ->with('success', 'Staff details updated successfully.');
     }
 }
+

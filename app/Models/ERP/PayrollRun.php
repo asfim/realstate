@@ -62,3 +62,4 @@ class PayrollRun extends Model
         return $this->hasMany(PayrollItem::class, 'payroll_run_id');
     }
 }
+

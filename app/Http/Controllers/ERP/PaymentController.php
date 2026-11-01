@@ -72,3 +72,4 @@ class PaymentController extends Controller
         return view('erp.payments.show', compact('payment'));
     }
 }
+

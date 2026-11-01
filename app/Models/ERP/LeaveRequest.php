@@ -49,3 +49,4 @@ class LeaveRequest extends Model
         return $this->belongsTo(Admin::class, 'approved_by');
     }
 }
+

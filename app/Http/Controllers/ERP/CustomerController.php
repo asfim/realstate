@@ -67,3 +67,4 @@ class CustomerController extends Controller
         return view('erp.customers.show', compact('customer'));
     }
 }
+

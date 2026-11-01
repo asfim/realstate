@@ -96,3 +96,4 @@
     {{ $customers->links() }}
 </div>
 @endsection
+

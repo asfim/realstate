@@ -131,3 +131,4 @@ return new class extends Migration
         Schema::dropIfExists('erp_employees');
     }
 };
+

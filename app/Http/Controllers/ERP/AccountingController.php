@@ -188,3 +188,4 @@ class AccountingController extends Controller
         return view('erp.accounting.customer_ledger', compact('customers', 'selectedCustomer'));
     }
 }
+
