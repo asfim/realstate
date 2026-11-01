@@ -80,6 +80,103 @@
             </li>
         @endcan
 
+        {{-- Sales & Bookings --}}
+        @can('erp.bookings.view')
+            <li>
+                <a href="#erpSalesSubmenu" data-bs-toggle="collapse"
+                    class="{{ request()->routeIs('erp.bookings.*') || request()->routeIs('erp.customers.*') || request()->routeIs('erp.payments.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <span><i class="bi bi-file-earmark-check"></i> Sales & Bookings</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <ul class="collapse {{ request()->routeIs('erp.bookings.*') || request()->routeIs('erp.customers.*') || request()->routeIs('erp.payments.*') ? 'show' : '' }} sidebar-submenu"
+                    id="erpSalesSubmenu">
+                    <li>
+                        <a href="{{ route('erp.customers.index') }}" class="{{ request()->routeIs('erp.customers.*') ? 'active' : '' }}">
+                            <i class="bi bi-people"></i> Customers / Buyers
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.bookings.index') }}" class="{{ request()->routeIs('erp.bookings.*') ? 'active' : '' }}">
+                            <i class="bi bi-card-checklist"></i> Sales Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.payments.index') }}" class="{{ request()->routeIs('erp.payments.*') ? 'active' : '' }}">
+                            <i class="bi bi-receipt"></i> Payment Receipts
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
+
+        {{-- Accounts & Finance (Double Entry & P&L) --}}
+        @can('erp.accounting.view')
+            <li>
+                <a href="#erpAccountsSubmenu" data-bs-toggle="collapse"
+                    class="{{ request()->routeIs('erp.accounting.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <span><i class="bi bi-cash-coin"></i> Accounts & Finance</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <ul class="collapse {{ request()->routeIs('erp.accounting.*') ? 'show' : '' }} sidebar-submenu"
+                    id="erpAccountsSubmenu">
+                    <li>
+                        <a href="{{ route('erp.accounting.profit-and-loss') }}" class="{{ request()->routeIs('erp.accounting.profit-and-loss') ? 'active' : '' }}">
+                            <i class="bi bi-graph-up-arrow text-success"></i> Profit & Loss (P&L)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.accounting.trial-balance') }}" class="{{ request()->routeIs('erp.accounting.trial-balance') ? 'active' : '' }}">
+                            <i class="bi bi-scale"></i> Trial Balance
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.accounting.balance-sheet') }}" class="{{ request()->routeIs('erp.accounting.balance-sheet') ? 'active' : '' }}">
+                            <i class="bi bi-bank"></i> Balance Sheet
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.accounting.accounts') }}" class="{{ request()->routeIs('erp.accounting.accounts') ? 'active' : '' }}">
+                            <i class="bi bi-diagram-3"></i> Chart of Accounts
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.accounting.journals') }}" class="{{ request()->routeIs('erp.accounting.journals') ? 'active' : '' }}">
+                            <i class="bi bi-journal-text"></i> Vouchers & Journals
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.accounting.customer-ledger') }}" class="{{ request()->routeIs('erp.accounting.customer-ledger') ? 'active' : '' }}">
+                            <i class="bi bi-person-lines-fill"></i> Customer Subledger
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
+
+        {{-- Staff & HRM --}}
+        @can('erp.hrm.view')
+            <li>
+                <a href="#erpHrmSubmenu" data-bs-toggle="collapse"
+                    class="{{ request()->routeIs('erp.employees.*') || request()->routeIs('erp.payroll.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <span><i class="bi bi-person-badge"></i> Staff & HRM</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <ul class="collapse {{ request()->routeIs('erp.employees.*') || request()->routeIs('erp.payroll.*') ? 'show' : '' }} sidebar-submenu"
+                    id="erpHrmSubmenu">
+                    <li>
+                        <a href="{{ route('erp.employees.index') }}" class="{{ request()->routeIs('erp.employees.*') ? 'active' : '' }}">
+                            <i class="bi bi-person-lines-fill"></i> Staff Directory
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('erp.payroll.index') }}" class="{{ request()->routeIs('erp.payroll.*') ? 'active' : '' }}">
+                            <i class="bi bi-wallet2"></i> Monthly Payroll
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        @endcan
+
         <li class="sidebar-heading px-3 mt-3 mb-1 text-uppercase text-xs" style="color: var(--text-light); font-size: 0.72rem; letter-spacing: 1px; font-weight: 600;">
             CMS & Public Website
         </li>

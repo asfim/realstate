@@ -141,3 +141,4 @@ class Unit extends Model
         return $this->hasOne(PublicPropertyLink::class, 'unit_id');
     }
 }
+

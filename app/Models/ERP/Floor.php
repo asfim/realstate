@@ -35,3 +35,4 @@ class Floor extends Model
         return $this->hasMany(Unit::class, 'floor_id');
     }
 }
+

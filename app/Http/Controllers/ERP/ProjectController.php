@@ -171,3 +171,4 @@ class ProjectController extends Controller
         return back()->with('success', 'Block added successfully.');
     }
 }
+

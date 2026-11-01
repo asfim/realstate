@@ -31,3 +31,4 @@ class PublicPropertyLink extends Model
         return $this->belongsTo(Unit::class, 'unit_id');
     }
 }
+

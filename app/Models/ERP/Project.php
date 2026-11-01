@@ -97,3 +97,4 @@ class Project extends Model
         return $this->hasOne(PublicProjectLink::class, 'erp_project_id');
     }
 }
+

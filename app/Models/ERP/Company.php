@@ -56,3 +56,4 @@ class Company extends Model
         return $this->hasMany(StaffAssignment::class, 'company_id');
     }
 }
+

@@ -49,3 +49,4 @@ class CompanyController extends Controller
         return back()->with('success', 'Branch created successfully.');
     }
 }
+

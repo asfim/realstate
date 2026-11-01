@@ -29,3 +29,4 @@ class PublicProjectLink extends Model
         return $this->belongsTo(Project::class, 'erp_project_id');
     }
 }
+

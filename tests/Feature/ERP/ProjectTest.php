@@ -92,3 +92,4 @@ test('can add a building with automatic floors to a project', function () {
         'floor_number' => 1,
     ]);
 });
+

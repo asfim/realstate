@@ -34,3 +34,4 @@ class UnitDocument extends Model
         return $this->belongsTo(Admin::class, 'uploaded_by');
     }
 }
+

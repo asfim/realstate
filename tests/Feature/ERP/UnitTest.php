@@ -184,3 +184,4 @@ test('can link an erp unit to a website public property listing', function () {
         'sync_status' => 'synced',
     ]);
 });
+

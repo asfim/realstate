@@ -44,3 +44,4 @@ class UnitPriceHistory extends Model
         return $this->belongsTo(Admin::class, 'changed_by');
     }
 }
+

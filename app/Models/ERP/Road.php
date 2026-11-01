@@ -42,3 +42,4 @@ class Road extends Model
         return $this->hasMany(Unit::class, 'road_id');
     }
 }
+

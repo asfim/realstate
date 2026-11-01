@@ -41,3 +41,4 @@ class Block extends Model
         return $this->hasMany(Unit::class, 'block_id');
     }
 }
+

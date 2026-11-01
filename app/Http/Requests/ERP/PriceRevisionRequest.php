@@ -20,3 +20,4 @@ class PriceRevisionRequest extends FormRequest
         ];
     }
 }
+

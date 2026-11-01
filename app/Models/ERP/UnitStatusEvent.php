@@ -42,3 +42,4 @@ class UnitStatusEvent extends Model
         return $this->belongsTo(Admin::class, 'actor_id');
     }
 }
+
