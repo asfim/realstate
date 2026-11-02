@@ -1,7 +1,12 @@
 <div class="top-navbar">
-    <button class="btn-toggle" id="sidebarToggle">
-        <i class="bi bi-list"></i>
-    </button>
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn-toggle" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+        </button>
+        <a href="{{ route('erp.dashboard') }}" class="btn btn-sm btn-outline-warning fw-semibold d-none d-sm-inline-flex align-items-center">
+            <i class="bi bi-buildings-fill me-1"></i> Enterprise ERP
+        </a>
+    </div>
 
     <div class="dropdown">
         <a href="#" class="user-dropdown dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

@@ -11,6 +11,13 @@
             </a>
         </li>
 
+        <li>
+            <a href="{{ route('erp.dashboard') }}" class="text-warning fw-semibold" style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.2);">
+                <i class="bi bi-buildings-fill text-warning"></i>
+                Enterprise ERP
+            </a>
+        </li>
+
         @can('homepage-settings.view')
             <li>
                 <a href="{{ route('admin.homepage_settings.index') }}"

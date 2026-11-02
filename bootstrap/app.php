@@ -15,11 +15,17 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            Route::middleware(['web', 'admin', 'erp.context'])
+                ->prefix('erp')
+                ->name('erp.')
+                ->group(base_path('routes/erp.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'erp.context' => \App\Http\Middleware\ERPBranchContextMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
