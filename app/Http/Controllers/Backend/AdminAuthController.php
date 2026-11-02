@@ -19,7 +19,9 @@ class AdminAuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (\Illuminate\Support\Facades\Auth::guard('admin')->attempt($credentials)) {
+        $remember = $request->boolean('remember');
+
+        if (\Illuminate\Support\Facades\Auth::guard('admin')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('admin.dashboard'));
         }
