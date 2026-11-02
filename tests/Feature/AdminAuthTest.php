@@ -41,3 +41,21 @@ test('admin login fails with invalid credentials', function () {
     $this->assertGuest('admin');
 });
 
+test('logged in admin sees dashboard with sidebar menus', function () {
+    $admin = Admin::firstOrCreate(
+        ['email' => 'admin@example.com'],
+        [
+            'name' => 'Super Admin',
+            'password' => Hash::make('password'),
+        ]
+    );
+
+    $response = $this->actingAs($admin, 'admin')->get(route('admin.dashboard'));
+
+    $response->assertStatus(200);
+    $response->assertSee('Dashboard');
+    $response->assertSee('Projects');
+    $response->assertSee('Properties');
+    $response->assertSee('Homepage Settings');
+});
+

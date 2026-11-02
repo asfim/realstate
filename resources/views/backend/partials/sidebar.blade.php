@@ -239,6 +239,55 @@
             </li>
         @endif
 
+        @if (auth('admin')->user()->can('accounts.view') || auth('admin')->user()->can('payroll.view'))
+            <li>
+                <a href="#accountsSubmenu" data-bs-toggle="collapse"
+                    class="{{ request()->routeIs('admin.accounts.*') || request()->routeIs('admin.incomes.*') || request()->routeIs('admin.expenses.*') || request()->routeIs('admin.payrolls.*') || request()->routeIs('admin.account-categories.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <span><i class="bi bi-wallet2"></i> Accounts & Finance</span>
+                    <i class="bi bi-chevron-down small"></i>
+                </a>
+                <ul class="collapse {{ request()->routeIs('admin.accounts.*') || request()->routeIs('admin.incomes.*') || request()->routeIs('admin.expenses.*') || request()->routeIs('admin.payrolls.*') || request()->routeIs('admin.account-categories.*') ? 'show' : '' }} sidebar-submenu"
+                    id="accountsSubmenu">
+                    @can('accounts.view')
+                        <li>
+                            <a href="{{ route('admin.accounts.index') }}"
+                                class="{{ request()->routeIs('admin.accounts.*') ? 'active' : '' }}">
+                                <i class="bi bi-graph-up-arrow"></i> Financial Overview
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.incomes.index') }}"
+                                class="{{ request()->routeIs('admin.incomes.*') ? 'active' : '' }}">
+                                <i class="bi bi-arrow-down-left-circle-fill text-success"></i> Income & Revenue
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.expenses.index') }}"
+                                class="{{ request()->routeIs('admin.expenses.*') ? 'active' : '' }}">
+                                <i class="bi bi-arrow-up-right-circle-fill text-danger"></i> Expenses & Costs
+                            </a>
+                        </li>
+                    @endcan
+                    @can('payroll.view')
+                        <li>
+                            <a href="{{ route('admin.payrolls.index') }}"
+                                class="{{ request()->routeIs('admin.payrolls.*') ? 'active' : '' }}">
+                                <i class="bi bi-cash-stack text-warning"></i> Staff Salary & Payroll
+                            </a>
+                        </li>
+                    @endcan
+                    @can('accounts.view')
+                        <li>
+                            <a href="{{ route('admin.account-categories.index') }}"
+                                class="{{ request()->routeIs('admin.account-categories.*') ? 'active' : '' }}">
+                                <i class="bi bi-tag-fill"></i> Categories
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </li>
+        @endif
+
         @if (auth('admin')->user()->can('admins.view') || auth('admin')->user()->can('roles.view'))
             <li>
                 <a href="#accessSubmenu" data-bs-toggle="collapse"

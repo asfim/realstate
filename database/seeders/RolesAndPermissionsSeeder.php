@@ -126,6 +126,18 @@ class RolesAndPermissionsSeeder extends Seeder
             'admins.create',
             'admins.edit',
             'admins.delete',
+
+            // Accounts & Financials
+            'accounts.view',
+            'accounts.create',
+            'accounts.edit',
+            'accounts.delete',
+
+            // Payroll & Staff Salary
+            'payroll.view',
+            'payroll.create',
+            'payroll.edit',
+            'payroll.delete',
         ];
 
         // Create permissions
@@ -160,6 +172,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'galleries.view', 'galleries.create', 'galleries.edit', 'galleries.delete',
             'posts.view', 'posts.create', 'posts.edit', 'posts.delete',
             'faqs.view', 'faqs.create', 'faqs.edit', 'faqs.delete',
+            'accounts.view', 'accounts.create', 'accounts.edit',
+            'payroll.view', 'payroll.create', 'payroll.edit',
         ]);
 
         // Editor Role

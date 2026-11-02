@@ -22,6 +22,11 @@ use App\Http\Controllers\Backend\ContactSettingController;
 use App\Http\Controllers\Backend\NewsletterController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\AdminUserController;
+use App\Http\Controllers\Backend\AccountController;
+use App\Http\Controllers\Backend\IncomeController;
+use App\Http\Controllers\Backend\ExpenseController;
+use App\Http\Controllers\Backend\PayrollController;
+use App\Http\Controllers\Backend\AccountCategoryController;
 
 Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
 Route::post('login', [AdminAuthController::class, 'login'])->name('login.submit');
@@ -207,5 +212,38 @@ Route::middleware(['admin'])->group(function () {
         'edit' => 'can:admins.edit',
         'update' => 'can:admins.edit',
         'destroy' => 'can:admins.delete',
+    ]);
+
+    // Accounts & Financial Management
+    Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index')->middleware('can:accounts.view');
+    Route::resource('incomes', IncomeController::class)->except(['show'])->middleware([
+        'index' => 'can:accounts.view',
+        'create' => 'can:accounts.create',
+        'store' => 'can:accounts.create',
+        'edit' => 'can:accounts.edit',
+        'update' => 'can:accounts.edit',
+        'destroy' => 'can:accounts.delete',
+    ]);
+    Route::resource('expenses', ExpenseController::class)->except(['show'])->middleware([
+        'index' => 'can:accounts.view',
+        'create' => 'can:accounts.create',
+        'store' => 'can:accounts.create',
+        'edit' => 'can:accounts.edit',
+        'update' => 'can:accounts.edit',
+        'destroy' => 'can:accounts.delete',
+    ]);
+    Route::resource('payrolls', PayrollController::class)->except(['show'])->middleware([
+        'index' => 'can:payroll.view',
+        'create' => 'can:payroll.create',
+        'store' => 'can:payroll.create',
+        'edit' => 'can:payroll.edit',
+        'update' => 'can:payroll.edit',
+        'destroy' => 'can:payroll.delete',
+    ]);
+    Route::resource('account-categories', AccountCategoryController::class)->except(['create', 'show', 'edit'])->middleware([
+        'index' => 'can:accounts.view',
+        'store' => 'can:accounts.create',
+        'update' => 'can:accounts.edit',
+        'destroy' => 'can:accounts.delete',
     ]);
 });
