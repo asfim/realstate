@@ -207,3 +207,4 @@ class ErpFoundationSeeder extends Seeder
         }
     }
 }
+

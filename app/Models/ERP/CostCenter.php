@@ -43,3 +43,4 @@ class CostCenter extends Model
         return $this->hasMany(CostCenter::class, 'parent_id');
     }
 }
+

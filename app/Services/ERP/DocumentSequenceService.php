@@ -21,8 +21,11 @@ class DocumentSequenceService
         'grn'       => 'GRN',
         'bill'      => 'BIL',
         'payment'   => 'PAY',
-        'journal'   => 'JRN',
-        'payroll'   => 'PRL',
+        'journal'    => 'JRN',
+        'payroll'    => 'PRL',
+        'lead'       => 'LED',
+        'customer'   => 'CUST',
+        'site_visit' => 'SV',
     ];
 
     /**
@@ -89,3 +92,4 @@ class DocumentSequenceService
         });
     }
 }
+

@@ -66,3 +66,4 @@ class DocumentSequenceController extends Controller
         return redirect()->route('erp.document-sequences.index')->with('success', 'Document Sequence updated successfully.');
     }
 }
+

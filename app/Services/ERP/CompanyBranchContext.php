@@ -140,3 +140,4 @@ class CompanyBranchContext
         $this->currentBranch();
     }
 }
+

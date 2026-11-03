@@ -296,11 +296,21 @@
         <div class="erp-nav-section-title">Real Estate Operations</div>
         <ul class="erp-menu">
             <li class="erp-menu-item">
-                <a href="#" class="erp-menu-link text-secondary" title="Phase 2">
-                    <i class="bi bi-person-lines-fill menu-icon"></i>
-                    <span>CRM & Lead Engine</span>
-                    <span class="badge bg-secondary ms-auto" style="font-size:0.6rem;">P2</span>
+                <a href="#crmSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.leads.*') || request()->routeIs('erp.site-visits.*') || request()->routeIs('erp.customers.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-person-lines-fill menu-icon"></i>
+                        <span>CRM & Lead Engine</span>
+                    </div>
+                    <i class="bi bi-chevron-down small"></i>
                 </a>
+                <div class="collapse {{ request()->routeIs('erp.leads.*') || request()->routeIs('erp.site-visits.*') || request()->routeIs('erp.customers.*') ? 'show' : '' }}" id="crmSubmenu">
+                    <ul class="erp-submenu">
+                        <li><a href="{{ route('erp.leads.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.leads.index') ? 'active' : '' }}">Leads Pipeline</a></li>
+                        <li><a href="{{ route('erp.leads.create') }}" class="erp-submenu-link {{ request()->routeIs('erp.leads.create') ? 'active' : '' }}">New Lead Intake</a></li>
+                        <li><a href="{{ route('erp.site-visits.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.site-visits.*') ? 'active' : '' }}">Site Visits Schedule</a></li>
+                        <li><a href="{{ route('erp.customers.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.customers.*') ? 'active' : '' }}">Customer Master (KYC)</a></li>
+                    </ul>
+                </div>
             </li>
             <li class="erp-menu-item">
                 <a href="#" class="erp-menu-link text-secondary" title="Phase 3">
@@ -492,3 +502,4 @@
     @stack('scripts')
 </body>
 </html>
+

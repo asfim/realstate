@@ -123,16 +123,18 @@
 
         <!-- Module 2: CRM & Lead Engine -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-custom h-100 p-4 border-start border-4 border-secondary">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-success">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="fw-bold text-dark fs-6">02. CRM & Lead Engine</div>
-                    <span class="badge bg-secondary">PHASE 2</span>
+                    <span class="badge bg-success">ACTIVE</span>
                 </div>
                 <p class="text-muted small mb-3">
                     Multi-channel lead ingestion (Meta/Web/Walk-in), lead scoring, automated agent assignment, follow-up scheduler & site visits.
                 </p>
                 <div class="mt-auto">
-                    <span class="text-muted small fst-italic">Architecture ready for deployment</span>
+                    <a href="{{ route('erp.leads.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Leads</a>
+                    <a href="{{ route('erp.site-visits.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Site Visits</a>
+                    <a href="{{ route('erp.customers.index') }}" class="btn btn-sm btn-outline-dark mb-1">Customers</a>
                 </div>
             </div>
         </div>
@@ -203,3 +205,4 @@
     </div>
 </div>
 @endsection
+

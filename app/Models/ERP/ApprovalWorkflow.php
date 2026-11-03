@@ -46,3 +46,4 @@ class ApprovalWorkflow extends Model
         return $this->belongsTo(Role::class);
     }
 }
+

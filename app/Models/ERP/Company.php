@@ -61,3 +61,4 @@ class Company extends Model
         return $this->branches()->where('is_head_office', true)->first();
     }
 }
+

@@ -45,3 +45,4 @@ class Branch extends Model
         return $this->hasMany(CostCenter::class);
     }
 }
+

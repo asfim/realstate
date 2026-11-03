@@ -133,3 +133,4 @@ class BranchController extends Controller
         return back()->with('success', 'Active workspace context switched successfully.');
     }
 }
+

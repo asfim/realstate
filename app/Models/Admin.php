@@ -33,4 +33,9 @@ class Admin extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function leads(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\ERP\CrmLead::class, 'assigned_agent_id');
+    }
 }

@@ -69,3 +69,4 @@ class DesignationController extends Controller
         return redirect()->route('erp.designations.index')->with('success', 'Designation deleted successfully.');
     }
 }
+

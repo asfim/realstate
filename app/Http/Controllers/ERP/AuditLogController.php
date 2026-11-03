@@ -31,3 +31,4 @@ class AuditLogController extends Controller
         return view('erp.organization.audit_logs.index', compact('logs'));
     }
 }
+

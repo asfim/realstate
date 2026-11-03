@@ -4,6 +4,10 @@ use App\Http\Controllers\ERP\AuditLogController;
 use App\Http\Controllers\ERP\BranchController;
 use App\Http\Controllers\ERP\CompanyController;
 use App\Http\Controllers\ERP\CostCenterController;
+use App\Http\Controllers\ERP\CrmActivityController;
+use App\Http\Controllers\ERP\CrmCustomerController;
+use App\Http\Controllers\ERP\CrmLeadController;
+use App\Http\Controllers\ERP\CrmSiteVisitController;
 use App\Http\Controllers\ERP\DepartmentController;
 use App\Http\Controllers\ERP\DesignationController;
 use App\Http\Controllers\ERP\DocumentSequenceController;
@@ -32,3 +36,19 @@ Route::prefix('organization')->group(function () {
     Route::resource('document-sequences', DocumentSequenceController::class)->only(['index', 'store', 'update']);
     Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
 });
+
+// Phase 2: CRM & Lead Engine
+Route::prefix('crm')->group(function () {
+    Route::post('leads/import-submissions', [CrmLeadController::class, 'importSubmissions'])->name('leads.import-submissions');
+    Route::post('leads/{lead}/stage', [CrmLeadController::class, 'updateStage'])->name('leads.update-stage');
+    Route::post('leads/{lead}/convert', [CrmCustomerController::class, 'convertLead'])->name('leads.convert');
+    Route::post('leads/{lead}/activities', [CrmActivityController::class, 'store'])->name('leads.activities.store');
+    Route::post('leads/{lead}/site-visits', [CrmSiteVisitController::class, 'store'])->name('leads.site-visits.store');
+    Route::resource('leads', CrmLeadController::class);
+
+    Route::get('site-visits', [CrmSiteVisitController::class, 'index'])->name('site-visits.index');
+    Route::put('site-visits/{siteVisit}', [CrmSiteVisitController::class, 'update'])->name('site-visits.update');
+
+    Route::resource('customers', CrmCustomerController::class)->except(['destroy']);
+});
+

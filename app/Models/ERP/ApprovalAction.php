@@ -37,3 +37,4 @@ class ApprovalAction extends Model
         return $this->belongsTo(Admin::class, 'approver_id');
     }
 }
+

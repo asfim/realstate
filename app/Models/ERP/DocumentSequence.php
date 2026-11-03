@@ -37,3 +37,4 @@ class DocumentSequence extends Model
         return $this->belongsTo(FiscalYear::class);
     }
 }
+

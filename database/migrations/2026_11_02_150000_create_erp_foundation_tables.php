@@ -177,3 +177,4 @@ return new class extends Migration
         Schema::dropIfExists('companies');
     }
 };
+

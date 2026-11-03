@@ -57,3 +57,4 @@ class ApprovalRequest extends Model
         return $this->hasMany(ApprovalAction::class, 'request_id');
     }
 }
+

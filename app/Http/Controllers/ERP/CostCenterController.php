@@ -74,3 +74,4 @@ class CostCenterController extends Controller
         return redirect()->route('erp.cost-centers.index')->with('success', 'Cost Center deleted successfully.');
     }
 }
+

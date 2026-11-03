@@ -85,3 +85,4 @@ class CompanyController extends Controller
         return redirect()->route('erp.companies.index')->with('success', 'Company deleted successfully.');
     }
 }
+

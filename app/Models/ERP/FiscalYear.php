@@ -38,3 +38,4 @@ class FiscalYear extends Model
         return $this->hasMany(DocumentSequence::class);
     }
 }
+

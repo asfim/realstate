@@ -29,4 +29,9 @@ class Submission extends Model
     {
         return $this->belongsTo(Property::class, 'property_id');
     }
+
+    public function lead()
+    {
+        return $this->hasOne(\App\Models\ERP\CrmLead::class, 'submission_id');
+    }
 }
