@@ -75,24 +75,24 @@
                   <option value="">Property Type</option>
                   @if(isset($propertyTypes) && count($propertyTypes) > 0)
                     @foreach($propertyTypes as $type)
-                      <option value="{{ $type->name }}">{{ $type->name }}</option>
+                      <option value="{{ $type->title ?? $type->name }}">{{ $type->title ?? $type->name }}</option>
                     @endforeach
                   @else
-                    <option>Apartment</option>
-                    <option>Villa</option>
-                    <option>Duplex</option>
-                    <option>Commercial</option>
-                    <option>Office</option>
-                    <option>Land</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Villa">Villa</option>
+                    <option value="Duplex">Duplex</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Office">Office</option>
+                    <option value="Land">Land</option>
                   @endif
                 </select>
               </div>
               <div class="col-12">
                 <select name="budget" class="form-select">
                   <option value="">Budget Range</option>
-                  <option>Under $200k</option>
-                  <option>$200k–$500k</option>
-                  <option>$500k+</option>
+                  <option value="Under $200k">Under $200k</option>
+                  <option value="$200k–$500k">$200k–$500k</option>
+                  <option value="$500k+">$500k+</option>
                 </select>
               </div>
               <div class="col-12"><textarea name="message" class="form-control" rows="4" placeholder="Message"></textarea></div>

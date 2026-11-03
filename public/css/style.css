@@ -242,8 +242,10 @@ section{ padding:clamp(64px,8vw,120px) 0; position:relative; }
 .contact-info-item p{ font-size:.88rem; margin:0; }
 .map-wrap{ border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-soft); }
 .contact-form-glass{ padding:34px; }
-.contact-form-glass .form-control, .contact-form-glass .form-select{ border-radius:12px; border:1.5px solid rgba(15,23,42,.12); padding:.85rem 1rem; background:#e7e7e7; }
-.contact-form-glass .form-control:focus, .contact-form-glass .form-select:focus{ border-color:var(--gold); box-shadow:0 0 0 4px rgba(212,175,55,.15); }
+.contact-form-glass .form-control, .contact-form-glass .form-select{ border-radius:12px; border:1.5px solid rgba(15,23,42,.12); padding:.85rem 1rem; background:#ffffff; color:#0f172a; }
+.contact-form-glass .form-control:focus, .contact-form-glass .form-select:focus{ border-color:var(--gold); box-shadow:0 0 0 4px rgba(212,175,55,.15); background:#ffffff; color:#0f172a; outline:none; }
+.contact-form-glass .form-control::placeholder{ color:#64748b; opacity:1; }
+.contact-form-glass .form-select option{ background-color:#ffffff; color:#0f172a; }
 
 /* Footer */
 .site-footer{ background:var(--navy); color:rgba(255,255,255,.7); padding:70px 0 24px; }
