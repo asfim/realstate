@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             PropertyTypeSeeder::class,
             PropertySeeder::class,
             FeaturedProjectSeeder::class,
+            ErpMasterDemoSeeder::class,
         ]);
     }
 }
