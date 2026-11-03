@@ -118,3 +118,4 @@ return new class extends Migration
         Schema::dropIfExists('land_parcels');
     }
 };
+

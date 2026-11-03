@@ -109,3 +109,4 @@ class LandParcel extends Model
         return (int) round(($cleared / $total) * 100);
     }
 }
+

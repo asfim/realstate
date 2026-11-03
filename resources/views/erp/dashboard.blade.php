@@ -156,18 +156,20 @@
             </div>
         </div>
 
-        <!-- Module 4: Developer Sales & Inventory -->
+        <!-- Module 4: Developer Sales & Inventory (Live) -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-custom h-100 p-4 border-start border-4 border-secondary">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-primary">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="fw-bold text-dark fs-6">04. Sales & Inventory</div>
-                    <span class="badge bg-secondary">PHASE 4</span>
+                    <div class="fw-bold text-dark fs-6">04. Developer Sales & Inventory</div>
+                    <span class="badge bg-success">ACTIVE</span>
                 </div>
                 <p class="text-muted small mb-3">
                     Apartments, commercial floors, plots, parking allocations, milestone payment schedules, bookings, cancellations & transfer deeds.
                 </p>
                 <div class="mt-auto">
-                    <span class="text-muted small fst-italic">Architecture ready for deployment</span>
+                    <a href="{{ route('erp.dev-projects.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Projects ({{ $stats['projects_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.dev-bookings.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Bookings ({{ $stats['bookings_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.dev-bookings.create') }}" class="btn btn-sm btn-erp-gold mb-1">New Booking</a>
                 </div>
             </div>
         </div>

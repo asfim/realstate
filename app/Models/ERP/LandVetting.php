@@ -38,3 +38,4 @@ class LandVetting extends Model
         return $this->belongsTo(Admin::class, 'verified_by_admin_id');
     }
 }
+

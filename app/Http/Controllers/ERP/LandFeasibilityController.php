@@ -110,3 +110,4 @@ class LandFeasibilityController extends Controller
         return back()->with('success', "Feasibility {$feasibility->feasibility_code} approved.");
     }
 }
+

@@ -10,6 +10,10 @@ use App\Http\Controllers\ERP\CrmLeadController;
 use App\Http\Controllers\ERP\CrmSiteVisitController;
 use App\Http\Controllers\ERP\DepartmentController;
 use App\Http\Controllers\ERP\DesignationController;
+use App\Http\Controllers\ERP\DevParkingController;
+use App\Http\Controllers\ERP\DevProjectController;
+use App\Http\Controllers\ERP\DevSalesBookingController;
+use App\Http\Controllers\ERP\DevUnitController;
 use App\Http\Controllers\ERP\DocumentSequenceController;
 use App\Http\Controllers\ERP\ErpDashboardController;
 use App\Http\Controllers\ERP\FiscalYearController;
@@ -63,5 +67,20 @@ Route::prefix('land')->group(function () {
     Route::get('feasibility/{feasibility}', [LandFeasibilityController::class, 'show'])->name('land-feasibility.show');
     Route::post('feasibility/{feasibility}/approve', [LandFeasibilityController::class, 'approve'])->name('land-feasibility.approve');
     Route::resource('parcels', LandParcelController::class)->names('land-parcels');
+});
+
+// Phase 4: Developer Sales, Inventory & Bookings
+Route::prefix('developer')->group(function () {
+    Route::post('projects/{devProject}/units', [DevUnitController::class, 'store'])->name('dev-units.store');
+    Route::put('units/{unit}', [DevUnitController::class, 'update'])->name('dev-units.update');
+    Route::delete('units/{unit}', [DevUnitController::class, 'destroy'])->name('dev-units.destroy');
+
+    Route::post('projects/{devProject}/parking', [DevParkingController::class, 'store'])->name('dev-parking.store');
+
+    Route::post('bookings/{devBooking}/cancel', [DevSalesBookingController::class, 'cancel'])->name('dev-bookings.cancel');
+    Route::post('installments/{installment}/pay', [DevSalesBookingController::class, 'recordPayment'])->name('dev-installments.pay');
+    Route::resource('bookings', DevSalesBookingController::class)->names('dev-bookings');
+
+    Route::resource('projects', DevProjectController::class)->names('dev-projects');
 });
 

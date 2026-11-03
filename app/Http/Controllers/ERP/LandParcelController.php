@@ -242,3 +242,4 @@ class LandParcelController extends Controller
         return back()->with('success', 'Legal vetting stage updated.');
     }
 }
+

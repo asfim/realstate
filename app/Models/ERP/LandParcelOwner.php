@@ -35,3 +35,4 @@ class LandParcelOwner extends Model
         return $this->belongsTo(LandParcel::class, 'land_parcel_id');
     }
 }
+

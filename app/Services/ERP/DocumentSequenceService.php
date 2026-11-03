@@ -28,6 +28,7 @@ class DocumentSequenceService
         'site_visit'  => 'SV',
         'land_parcel' => 'LND',
         'feasibility' => 'FSB',
+        'project'     => 'PRJ',
     ];
 
     /**
