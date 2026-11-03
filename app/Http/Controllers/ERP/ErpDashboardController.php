@@ -63,7 +63,7 @@ class ErpDashboardController extends Controller
             'employees_count'    => $currentCompany ? HrEmployee::where('company_id', $currentCompany->id)->where('status', 'active')->count() : 0,
             'laborers_count'     => $currentCompany ? HrDailyLaborer::where('company_id', $currentCompany->id)->where('status', 'active')->count() : 0,
             'payrolls_count'     => $currentCompany ? HrPayroll::where('company_id', $currentCompany->id)->count() : 0,
-            'journals_count'     => $currentCompany ? AccJournal::where('company_id', $currentCompany->id)->where('is_posted', true)->count() : 0,
+            'journals_count'     => $currentCompany ? AccJournal::where('company_id', $currentCompany->id)->where('status', 'posted')->count() : 0,
         ];
 
         return view('erp.dashboard', compact('stats', 'currentCompany', 'currentBranch'));
