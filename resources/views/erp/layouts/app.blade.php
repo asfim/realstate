@@ -379,11 +379,22 @@
                 </div>
             </li>
             <li class="erp-menu-item">
-                <a href="#" class="erp-menu-link text-secondary" title="Phase 7">
-                    <i class="bi bi-journal-bookmark-fill menu-icon"></i>
-                    <span>Double-Entry Accounts</span>
-                    <span class="badge bg-secondary ms-auto" style="font-size:0.6rem;">P7</span>
+                <a href="#accSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.acc-coa.*') || request()->routeIs('erp.acc-journals.*') || request()->routeIs('erp.acc-reports.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-journal-bookmark-fill menu-icon"></i>
+                        <span>Double-Entry Accounts</span>
+                    </div>
+                    <i class="bi bi-chevron-down small"></i>
                 </a>
+                <div class="collapse {{ request()->routeIs('erp.acc-coa.*') || request()->routeIs('erp.acc-journals.*') || request()->routeIs('erp.acc-reports.*') ? 'show' : '' }}" id="accSubmenu">
+                    <ul class="erp-submenu">
+                        <li><a href="{{ route('erp.acc-coa.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.acc-coa.*') ? 'active' : '' }}">Chart of Accounts (COA)</a></li>
+                        <li><a href="{{ route('erp.acc-journals.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.acc-journals.*') ? 'active' : '' }}">Journal Vouchers</a></li>
+                        <li><a href="{{ route('erp.acc-reports.trial-balance') }}" class="erp-submenu-link {{ request()->routeIs('erp.acc-reports.trial-balance') ? 'active' : '' }}">Trial Balance</a></li>
+                        <li><a href="{{ route('erp.acc-reports.profit-loss') }}" class="erp-submenu-link {{ request()->routeIs('erp.acc-reports.profit-loss') ? 'active' : '' }}">Profit & Loss (P&L)</a></li>
+                        <li><a href="{{ route('erp.acc-reports.balance-sheet') }}" class="erp-submenu-link {{ request()->routeIs('erp.acc-reports.balance-sheet') ? 'active' : '' }}">Balance Sheet</a></li>
+                    </ul>
+                </div>
             </li>
             <li class="erp-menu-item">
                 <a href="#" class="erp-menu-link text-secondary" title="Phase 8">

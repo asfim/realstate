@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ERP\AccCoaController;
+use App\Http\Controllers\ERP\AccJournalController;
+use App\Http\Controllers\ERP\AccReportController;
 use App\Http\Controllers\ERP\AgencyDealController;
 use App\Http\Controllers\ERP\AgencyLeaseController;
 use App\Http\Controllers\ERP\AgencyListingController;
@@ -124,5 +127,17 @@ Route::prefix('construction')->group(function () {
     Route::get('grns/{conGrn}', [ConProcurementController::class, 'grnShow'])->name('con-grns.show');
 
     Route::get('stocks', [ConProcurementController::class, 'stocksIndex'])->name('con-stocks.index');
+});
+
+// Phase 7: Double-Entry Financial Accounting, General Ledger & Reports
+Route::prefix('accounting')->group(function () {
+    Route::get('coa', [AccCoaController::class, 'index'])->name('acc-coa.index');
+    Route::post('coa', [AccCoaController::class, 'store'])->name('acc-coa.store');
+
+    Route::resource('journals', AccJournalController::class)->names('acc-journals');
+
+    Route::get('reports/trial-balance', [AccReportController::class, 'trialBalance'])->name('acc-reports.trial-balance');
+    Route::get('reports/profit-loss', [AccReportController::class, 'profitAndLoss'])->name('acc-reports.profit-loss');
+    Route::get('reports/balance-sheet', [AccReportController::class, 'balanceSheet'])->name('acc-reports.balance-sheet');
 });
 
