@@ -360,11 +360,23 @@
                 </div>
             </li>
             <li class="erp-menu-item">
-                <a href="#" class="erp-menu-link text-secondary" title="Phase 6">
-                    <i class="bi bi-truck-flatbed menu-icon"></i>
-                    <span>Construction & Procurement</span>
-                    <span class="badge bg-secondary ms-auto" style="font-size:0.6rem;">P6</span>
+                <a href="#conSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.con-vendors.*') || request()->routeIs('erp.con-boq.*') || request()->routeIs('erp.con-requisitions.*') || request()->routeIs('erp.con-pos.*') || request()->routeIs('erp.con-grns.*') || request()->routeIs('erp.con-stocks.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-truck-flatbed menu-icon"></i>
+                        <span>Construction & Procurement</span>
+                    </div>
+                    <i class="bi bi-chevron-down small"></i>
                 </a>
+                <div class="collapse {{ request()->routeIs('erp.con-vendors.*') || request()->routeIs('erp.con-boq.*') || request()->routeIs('erp.con-requisitions.*') || request()->routeIs('erp.con-pos.*') || request()->routeIs('erp.con-grns.*') || request()->routeIs('erp.con-stocks.*') ? 'show' : '' }}" id="conSubmenu">
+                    <ul class="erp-submenu">
+                        <li><a href="{{ route('erp.con-vendors.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.con-vendors.*') ? 'active' : '' }}">Vendors & Suppliers</a></li>
+                        <li><a href="{{ route('erp.con-boq.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.con-boq.*') ? 'active' : '' }}">Project BOQ Budget</a></li>
+                        <li><a href="{{ route('erp.con-requisitions.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.con-requisitions.*') ? 'active' : '' }}">Site Requisitions</a></li>
+                        <li><a href="{{ route('erp.con-pos.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.con-pos.*') ? 'active' : '' }}">Purchase Orders (PO)</a></li>
+                        <li><a href="{{ route('erp.con-grns.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.con-grns.*') ? 'active' : '' }}">Goods Receipts (GRN)</a></li>
+                        <li><a href="{{ route('erp.con-stocks.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.con-stocks.*') ? 'active' : '' }}">Site Stock Inventory</a></li>
+                    </ul>
+                </div>
             </li>
             <li class="erp-menu-item">
                 <a href="#" class="erp-menu-link text-secondary" title="Phase 7">

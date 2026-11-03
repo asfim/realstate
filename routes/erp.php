@@ -6,6 +6,10 @@ use App\Http\Controllers\ERP\AgencyListingController;
 use App\Http\Controllers\ERP\AuditLogController;
 use App\Http\Controllers\ERP\BranchController;
 use App\Http\Controllers\ERP\CompanyController;
+use App\Http\Controllers\ERP\ConBoqController;
+use App\Http\Controllers\ERP\ConProcurementController;
+use App\Http\Controllers\ERP\ConRequisitionController;
+use App\Http\Controllers\ERP\ConVendorController;
 use App\Http\Controllers\ERP\CostCenterController;
 use App\Http\Controllers\ERP\CrmActivityController;
 use App\Http\Controllers\ERP\CrmCustomerController;
@@ -96,5 +100,29 @@ Route::prefix('agency')->group(function () {
     Route::resource('leases', AgencyLeaseController::class)->names('agency-leases');
 
     Route::resource('listings', AgencyListingController::class)->names('agency-listings');
+});
+
+// Phase 6: Construction, BOQ, Procurement & Site Materials
+Route::prefix('construction')->group(function () {
+    Route::resource('vendors', ConVendorController::class)->names('con-vendors');
+
+    Route::get('boq', [ConBoqController::class, 'index'])->name('con-boq.index');
+    Route::post('boq', [ConBoqController::class, 'store'])->name('con-boq.store');
+    Route::put('boq/{boqItem}/consumption', [ConBoqController::class, 'updateConsumption'])->name('con-boq.consumption');
+
+    Route::post('requisitions/{conRequisition}/approve', [ConRequisitionController::class, 'approve'])->name('con-requisitions.approve');
+    Route::resource('requisitions', ConRequisitionController::class)->names('con-requisitions');
+
+    Route::get('pos', [ConProcurementController::class, 'posIndex'])->name('con-pos.index');
+    Route::get('pos/create', [ConProcurementController::class, 'poCreate'])->name('con-pos.create');
+    Route::post('pos', [ConProcurementController::class, 'poStore'])->name('con-pos.store');
+    Route::get('pos/{conPo}', [ConProcurementController::class, 'poShow'])->name('con-pos.show');
+
+    Route::get('grns', [ConProcurementController::class, 'grnsIndex'])->name('con-grns.index');
+    Route::get('grns/create', [ConProcurementController::class, 'grnCreate'])->name('con-grns.create');
+    Route::post('grns', [ConProcurementController::class, 'grnStore'])->name('con-grns.store');
+    Route::get('grns/{conGrn}', [ConProcurementController::class, 'grnShow'])->name('con-grns.show');
+
+    Route::get('stocks', [ConProcurementController::class, 'stocksIndex'])->name('con-stocks.index');
 });
 

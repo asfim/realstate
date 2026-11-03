@@ -8,6 +8,9 @@ use App\Models\ERP\Company;
 use App\Models\ERP\AgencyDeal;
 use App\Models\ERP\AgencyListing;
 use App\Models\ERP\AgencyTenantLease;
+use App\Models\ERP\ConGrn;
+use App\Models\ERP\ConPurchaseOrder;
+use App\Models\ERP\ConVendor;
 use App\Models\ERP\CostCenter;
 use App\Models\ERP\CrmCustomer;
 use App\Models\ERP\CrmLead;
@@ -49,6 +52,10 @@ class ErpDashboardController extends Controller
             'deals_count'        => $currentCompany ? AgencyDeal::where('company_id', $currentCompany->id)->count() : 0,
             'agency_comm_sum'    => $currentCompany ? AgencyDeal::where('company_id', $currentCompany->id)->where('status', '!=', 'cancelled')->sum('company_commission_amount') : 0,
             'leases_count'       => $currentCompany ? AgencyTenantLease::where('company_id', $currentCompany->id)->where('status', 'active')->count() : 0,
+            'vendors_count'      => $currentCompany ? ConVendor::where('company_id', $currentCompany->id)->count() : 0,
+            'pos_count'          => $currentCompany ? ConPurchaseOrder::where('company_id', $currentCompany->id)->count() : 0,
+            'pos_value'          => $currentCompany ? ConPurchaseOrder::where('company_id', $currentCompany->id)->where('status', '!=', 'cancelled')->sum('grand_total') : 0,
+            'grns_count'         => $currentCompany ? ConGrn::where('company_id', $currentCompany->id)->count() : 0,
         ];
 
         return view('erp.dashboard', compact('stats', 'currentCompany', 'currentBranch'));

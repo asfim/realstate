@@ -32,6 +32,8 @@ class DocumentSequenceService
         'agency_listing' => 'LST',
         'agency_deal'    => 'DEA',
         'tenant_lease'   => 'LSE',
+        'vendor'         => 'VEN',
+        'requisition'    => 'REQ',
     ];
 
     /**
