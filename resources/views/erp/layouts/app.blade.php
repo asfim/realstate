@@ -344,11 +344,20 @@
                 </div>
             </li>
             <li class="erp-menu-item">
-                <a href="#" class="erp-menu-link text-secondary" title="Phase 5">
-                    <i class="bi bi-briefcase-fill menu-icon"></i>
-                    <span>Agency & Brokerage</span>
-                    <span class="badge bg-secondary ms-auto" style="font-size:0.6rem;">P5</span>
+                <a href="#agencySubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.agency-listings.*') || request()->routeIs('erp.agency-deals.*') || request()->routeIs('erp.agency-leases.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-briefcase-fill menu-icon"></i>
+                        <span>Agency & Brokerage</span>
+                    </div>
+                    <i class="bi bi-chevron-down small"></i>
                 </a>
+                <div class="collapse {{ request()->routeIs('erp.agency-listings.*') || request()->routeIs('erp.agency-deals.*') || request()->routeIs('erp.agency-leases.*') ? 'show' : '' }}" id="agencySubmenu">
+                    <ul class="erp-submenu">
+                        <li><a href="{{ route('erp.agency-listings.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.agency-listings.*') ? 'active' : '' }}">Mandate Listings</a></li>
+                        <li><a href="{{ route('erp.agency-deals.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.agency-deals.*') ? 'active' : '' }}">Brokerage Deals</a></li>
+                        <li><a href="{{ route('erp.agency-leases.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.agency-leases.*') ? 'active' : '' }}">Tenant Leases</a></li>
+                    </ul>
+                </div>
             </li>
             <li class="erp-menu-item">
                 <a href="#" class="erp-menu-link text-secondary" title="Phase 6">

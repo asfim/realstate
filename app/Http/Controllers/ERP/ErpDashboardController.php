@@ -5,6 +5,9 @@ namespace App\Http\Controllers\ERP;
 use App\Http\Controllers\Controller;
 use App\Models\ERP\Branch;
 use App\Models\ERP\Company;
+use App\Models\ERP\AgencyDeal;
+use App\Models\ERP\AgencyListing;
+use App\Models\ERP\AgencyTenantLease;
 use App\Models\ERP\CostCenter;
 use App\Models\ERP\CrmCustomer;
 use App\Models\ERP\CrmLead;
@@ -42,6 +45,10 @@ class ErpDashboardController extends Controller
             'units_count'        => $currentCompany ? DevProjectUnit::whereHas('project', fn($q) => $q->where('company_id', $currentCompany->id))->count() : 0,
             'bookings_count'     => $currentCompany ? DevSalesBooking::where('company_id', $currentCompany->id)->count() : 0,
             'bookings_value'     => $currentCompany ? DevSalesBooking::where('company_id', $currentCompany->id)->where('status', '!=', 'cancelled')->sum('total_contract_amount') : 0,
+            'listings_count'     => $currentCompany ? AgencyListing::where('company_id', $currentCompany->id)->count() : 0,
+            'deals_count'        => $currentCompany ? AgencyDeal::where('company_id', $currentCompany->id)->count() : 0,
+            'agency_comm_sum'    => $currentCompany ? AgencyDeal::where('company_id', $currentCompany->id)->where('status', '!=', 'cancelled')->sum('company_commission_amount') : 0,
+            'leases_count'       => $currentCompany ? AgencyTenantLease::where('company_id', $currentCompany->id)->where('status', 'active')->count() : 0,
         ];
 
         return view('erp.dashboard', compact('stats', 'currentCompany', 'currentBranch'));

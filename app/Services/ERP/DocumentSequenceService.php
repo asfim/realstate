@@ -26,9 +26,12 @@ class DocumentSequenceService
         'lead'        => 'LED',
         'customer'    => 'CUST',
         'site_visit'  => 'SV',
-        'land_parcel' => 'LND',
-        'feasibility' => 'FSB',
-        'project'     => 'PRJ',
+        'land_parcel'    => 'LND',
+        'feasibility'    => 'FSB',
+        'project'        => 'PRJ',
+        'agency_listing' => 'LST',
+        'agency_deal'    => 'DEA',
+        'tenant_lease'   => 'LSE',
     ];
 
     /**

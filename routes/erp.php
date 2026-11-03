@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ERP\AgencyDealController;
+use App\Http\Controllers\ERP\AgencyLeaseController;
+use App\Http\Controllers\ERP\AgencyListingController;
 use App\Http\Controllers\ERP\AuditLogController;
 use App\Http\Controllers\ERP\BranchController;
 use App\Http\Controllers\ERP\CompanyController;
@@ -82,5 +85,16 @@ Route::prefix('developer')->group(function () {
     Route::resource('bookings', DevSalesBookingController::class)->names('dev-bookings');
 
     Route::resource('projects', DevProjectController::class)->names('dev-projects');
+});
+
+// Phase 5: Brokerage, Agency & Rental Operations
+Route::prefix('agency')->group(function () {
+    Route::post('deals/{agencyDeal}/settle', [AgencyDealController::class, 'settle'])->name('agency-deals.settle');
+    Route::resource('deals', AgencyDealController::class)->names('agency-deals');
+
+    Route::post('leases/{agencyLease}/terminate', [AgencyLeaseController::class, 'terminate'])->name('agency-leases.terminate');
+    Route::resource('leases', AgencyLeaseController::class)->names('agency-leases');
+
+    Route::resource('listings', AgencyListingController::class)->names('agency-listings');
 });
 

@@ -174,18 +174,20 @@
             </div>
         </div>
 
-        <!-- Module 5: Brokerage & Agency -->
+        <!-- Module 5: Brokerage & Agency (Live) -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-custom h-100 p-4 border-start border-4 border-secondary">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-info">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="fw-bold text-dark fs-6">05. Brokerage & Agency</div>
-                    <span class="badge bg-secondary">PHASE 5</span>
+                    <span class="badge bg-success">ACTIVE</span>
                 </div>
                 <p class="text-muted small mb-3">
                     Third-party resale listings, landlord mandates, commission sharing matrix, tenant leases, security deposits & key tracking.
                 </p>
                 <div class="mt-auto">
-                    <span class="text-muted small fst-italic">Architecture ready for deployment</span>
+                    <a href="{{ route('erp.agency-listings.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Listings ({{ $stats['listings_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.agency-deals.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Deals ({{ $stats['deals_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.agency-leases.index') }}" class="btn btn-sm btn-outline-dark mb-1">Leases ({{ $stats['leases_count'] ?? 0 }})</a>
                 </div>
             </div>
         </div>
