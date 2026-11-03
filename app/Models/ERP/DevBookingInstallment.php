@@ -39,3 +39,4 @@ class DevBookingInstallment extends Model
         return $this->belongsTo(DevSalesBooking::class, 'booking_id');
     }
 }
+

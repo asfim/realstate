@@ -45,3 +45,4 @@ class ConBoqItem extends Model
         return $this->belongsTo(DevProject::class, 'project_id');
     }
 }
+

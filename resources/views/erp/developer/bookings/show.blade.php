@@ -327,3 +327,4 @@ function openPaymentModal(installmentId, milestoneName, balanceDue) {
 }
 </script>
 @endsection
+

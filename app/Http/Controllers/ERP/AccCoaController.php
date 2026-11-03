@@ -66,3 +66,4 @@ class AccCoaController extends Controller
         return back()->with('success', "Account {$account->account_code} - {$account->account_name} created.");
     }
 }
+

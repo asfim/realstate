@@ -294,3 +294,4 @@ class ConProcurementController extends Controller
         return view('erp.construction.stocks.index', compact('stocks', 'projects'));
     }
 }
+

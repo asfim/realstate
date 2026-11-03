@@ -133,3 +133,4 @@ class AgencyLeaseController extends Controller
         return back()->with('success', "Lease {$agencyLease->lease_code} terminated and listing restored to active.");
     }
 }
+

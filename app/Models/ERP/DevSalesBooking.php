@@ -116,3 +116,4 @@ class DevSalesBooking extends Model
         return (float) ($this->total_contract_amount - $this->totalPaid());
     }
 }
+

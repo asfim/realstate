@@ -81,3 +81,4 @@ class ConPurchaseOrder extends Model
         return $this->hasMany(ConGrn::class, 'purchase_order_id');
     }
 }
+

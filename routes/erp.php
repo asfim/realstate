@@ -27,6 +27,9 @@ use App\Http\Controllers\ERP\DevUnitController;
 use App\Http\Controllers\ERP\DocumentSequenceController;
 use App\Http\Controllers\ERP\ErpDashboardController;
 use App\Http\Controllers\ERP\FiscalYearController;
+use App\Http\Controllers\ERP\HrEmployeeController;
+use App\Http\Controllers\ERP\HrLaborController;
+use App\Http\Controllers\ERP\HrPayrollController;
 use App\Http\Controllers\ERP\LandFeasibilityController;
 use App\Http\Controllers\ERP\LandParcelController;
 use Illuminate\Support\Facades\Route;
@@ -139,5 +142,19 @@ Route::prefix('accounting')->group(function () {
     Route::get('reports/trial-balance', [AccReportController::class, 'trialBalance'])->name('acc-reports.trial-balance');
     Route::get('reports/profit-loss', [AccReportController::class, 'profitAndLoss'])->name('acc-reports.profit-loss');
     Route::get('reports/balance-sheet', [AccReportController::class, 'balanceSheet'])->name('acc-reports.balance-sheet');
+});
+
+// Phase 8: HR, Permanent Employee Payroll & Site Daily Labor Wages
+Route::prefix('hr')->group(function () {
+    Route::post('payrolls/{payroll}/pay', [HrPayrollController::class, 'pay'])->name('hr-payrolls.pay');
+    Route::resource('payrolls', HrPayrollController::class)->names('hr-payrolls');
+
+    Route::get('labor', [HrLaborController::class, 'laborersIndex'])->name('hr-labor.index');
+    Route::post('labor', [HrLaborController::class, 'laborerStore'])->name('hr-labor.laborers.store');
+    Route::post('labor/store-alias', [HrLaborController::class, 'laborerStore'])->name('hr-labor.store');
+    Route::get('labor/muster', [HrLaborController::class, 'musterIndex'])->name('hr-labor.muster');
+    Route::post('labor/muster', [HrLaborController::class, 'musterStore'])->name('hr-labor.muster.store');
+
+    Route::resource('employees', HrEmployeeController::class)->names('hr-employees');
 });
 

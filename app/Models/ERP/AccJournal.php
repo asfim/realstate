@@ -60,3 +60,4 @@ class AccJournal extends Model
         return $this->hasMany(AccJournalEntry::class, 'journal_id');
     }
 }
+

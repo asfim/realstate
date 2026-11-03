@@ -165,3 +165,4 @@ return new class extends Migration
         Schema::dropIfExists('con_vendors');
     }
 };
+

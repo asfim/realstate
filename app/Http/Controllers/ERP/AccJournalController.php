@@ -149,3 +149,4 @@ class AccJournalController extends Controller
         return view('erp.accounting.journals.show', compact('accJournal'));
     }
 }
+

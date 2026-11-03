@@ -95,3 +95,4 @@ class DevProject extends Model
         return $this->units()->whereIn('status', ['booked', 'sold', 'handed_over'])->count();
     }
 }
+

@@ -98,3 +98,4 @@ class ConVendorController extends Controller
         return redirect()->route('erp.con-vendors.index')->with('success', 'Vendor updated successfully.');
     }
 }
+

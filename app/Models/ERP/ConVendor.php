@@ -43,3 +43,4 @@ class ConVendor extends Model
         return $this->hasMany(ConGrn::class, 'vendor_id');
     }
 }
+

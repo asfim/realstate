@@ -62,3 +62,4 @@ class DevProjectUnit extends Model
         return $this->hasOne(DevSalesBooking::class, 'unit_id')->where('status', '!=', 'cancelled');
     }
 }
+

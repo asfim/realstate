@@ -72,3 +72,4 @@ return new class extends Migration
         Schema::dropIfExists('acc_chart_of_accounts');
     }
 };
+

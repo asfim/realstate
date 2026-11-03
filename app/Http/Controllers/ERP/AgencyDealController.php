@@ -144,3 +144,4 @@ class AgencyDealController extends Controller
         return back()->with('success', "Deal {$agencyDeal->deal_code} marked as settled.");
     }
 }
+

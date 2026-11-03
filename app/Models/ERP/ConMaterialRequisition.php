@@ -64,3 +64,4 @@ class ConMaterialRequisition extends Model
         return $this->hasMany(ConRequisitionItem::class, 'requisition_id');
     }
 }
+

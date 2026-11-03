@@ -125,3 +125,4 @@ class AccReportController extends Controller
         return view('erp.accounting.reports.balance_sheet', compact('assets', 'liabilities', 'equities', 'totalAssets', 'totalLiabilities', 'totalEquity'));
     }
 }
+

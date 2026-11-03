@@ -117,3 +117,4 @@ class ConRequisitionController extends Controller
         return back()->with('success', "Requisition {$conRequisition->requisition_code} approved for PO generation.");
     }
 }
+

@@ -165,3 +165,4 @@ class AgencyListingController extends Controller
         return redirect()->route('erp.agency-listings.show', $agencyListing)->with('success', 'Listing updated successfully.');
     }
 }
+

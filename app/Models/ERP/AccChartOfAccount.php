@@ -52,3 +52,4 @@ class AccChartOfAccount extends Model
         return $this->hasMany(AccJournalEntry::class, 'account_id');
     }
 }
+

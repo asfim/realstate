@@ -40,3 +40,4 @@ class ConSiteStock extends Model
         return $this->belongsTo(DevProject::class, 'project_id');
     }
 }
+

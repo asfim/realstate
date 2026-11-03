@@ -74,3 +74,4 @@ class AgencyDeal extends Model
         return $this->belongsTo(Admin::class, 'created_by');
     }
 }
+

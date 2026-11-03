@@ -261,3 +261,4 @@ function openConsumeModal(itemId, itemName, currentQty, currentCost) {
 </script>
 @endif
 @endsection
+

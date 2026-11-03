@@ -26,3 +26,4 @@ class DevParkingController extends Controller
         return back()->with('success', 'Parking slot added.');
     }
 }
+

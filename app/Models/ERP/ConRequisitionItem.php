@@ -31,3 +31,4 @@ class ConRequisitionItem extends Model
         return $this->belongsTo(ConMaterialRequisition::class, 'requisition_id');
     }
 }
+

@@ -34,6 +34,8 @@ class DocumentSequenceService
         'tenant_lease'   => 'LSE',
         'vendor'         => 'VEN',
         'requisition'    => 'REQ',
+        'employee'       => 'EMP',
+        'laborer'        => 'LAB',
     ];
 
     /**

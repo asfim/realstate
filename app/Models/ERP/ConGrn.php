@@ -63,3 +63,4 @@ class ConGrn extends Model
         return $this->belongsTo(Admin::class, 'received_by');
     }
 }
+

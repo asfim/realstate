@@ -35,3 +35,4 @@ class DevParkingSlot extends Model
         return $this->belongsTo(DevProjectUnit::class, 'assigned_unit_id');
     }
 }
+

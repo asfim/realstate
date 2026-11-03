@@ -87,3 +87,4 @@ class AgencyListing extends Model
         return $this->hasMany(AgencyTenantLease::class, 'listing_id');
     }
 }
+

@@ -34,3 +34,4 @@ class ConPoItem extends Model
         return $this->belongsTo(ConPurchaseOrder::class, 'purchase_order_id');
     }
 }
+

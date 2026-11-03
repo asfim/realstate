@@ -209,6 +209,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- Module 7: Financial Accounting & General Ledger (Live) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-success">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="fw-bold text-dark fs-6">07. Financial Accounting & GL</div>
+                    <span class="badge bg-success">ACTIVE</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Standard 5-digit Chart of Accounts, balanced double-entry journal vouchers, Trial Balance, Profit & Loss, and Balance Sheet.
+                </p>
+                <div class="mt-auto">
+                    <a href="{{ route('erp.acc-coa.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">COA</a>
+                    <a href="{{ route('erp.acc-journals.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Journals ({{ $stats['journals_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.acc-reports.trial-balance') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Trial Balance</a>
+                    <a href="{{ route('erp.acc-reports.profit-loss') }}" class="btn btn-sm btn-outline-dark mb-1">P&L</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Module 8: Workforce & Labour (Live) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-primary">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="fw-bold text-dark fs-6">08. Workforce & Daily Labour</div>
+                    <span class="badge bg-success">ACTIVE</span>
+                </div>
+                <p class="text-muted small mb-3">
+                    Permanent staff compensation structures, monthly salary vouchers, site daily wage tradesmen registry, and overtime muster rolls.
+                </p>
+                <div class="mt-auto">
+                    <a href="{{ route('erp.hr-employees.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Employees ({{ $stats['employees_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.hr-payrolls.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Payrolls ({{ $stats['payrolls_count'] ?? 0 }})</a>
+                    <a href="{{ route('erp.hr-labor.muster') }}" class="btn btn-sm btn-outline-dark mb-1">Site Muster ({{ $stats['laborers_count'] ?? 0 }})</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

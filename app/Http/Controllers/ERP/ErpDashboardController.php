@@ -20,6 +20,10 @@ use App\Models\ERP\DevProject;
 use App\Models\ERP\DevProjectUnit;
 use App\Models\ERP\DevSalesBooking;
 use App\Models\ERP\FiscalYear;
+use App\Models\ERP\HrDailyLaborer;
+use App\Models\ERP\HrEmployee;
+use App\Models\ERP\HrPayroll;
+use App\Models\ERP\AccJournal;
 use App\Models\ERP\LandParcel;
 use App\Services\ERP\CompanyBranchContext;
 use Illuminate\Http\Request;
@@ -56,6 +60,10 @@ class ErpDashboardController extends Controller
             'pos_count'          => $currentCompany ? ConPurchaseOrder::where('company_id', $currentCompany->id)->count() : 0,
             'pos_value'          => $currentCompany ? ConPurchaseOrder::where('company_id', $currentCompany->id)->where('status', '!=', 'cancelled')->sum('grand_total') : 0,
             'grns_count'         => $currentCompany ? ConGrn::where('company_id', $currentCompany->id)->count() : 0,
+            'employees_count'    => $currentCompany ? HrEmployee::where('company_id', $currentCompany->id)->where('status', 'active')->count() : 0,
+            'laborers_count'     => $currentCompany ? HrDailyLaborer::where('company_id', $currentCompany->id)->where('status', 'active')->count() : 0,
+            'payrolls_count'     => $currentCompany ? HrPayroll::where('company_id', $currentCompany->id)->count() : 0,
+            'journals_count'     => $currentCompany ? AccJournal::where('company_id', $currentCompany->id)->where('is_posted', true)->count() : 0,
         ];
 
         return view('erp.dashboard', compact('stats', 'currentCompany', 'currentBranch'));

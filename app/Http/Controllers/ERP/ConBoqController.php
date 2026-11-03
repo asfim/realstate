@@ -73,3 +73,4 @@ class ConBoqController extends Controller
         return back()->with('success', 'Actual consumption updated.');
     }
 }
+

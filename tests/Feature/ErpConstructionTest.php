@@ -266,3 +266,4 @@ test('admin can process GRN against PO which updates received qty and increments
         ->and((float) $stock->current_stock_qty)->toEqual(1000.0)
         ->and((float) $stock->total_received_qty)->toEqual(1000.0);
 });
+
