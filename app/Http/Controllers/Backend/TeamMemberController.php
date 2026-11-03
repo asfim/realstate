@@ -49,6 +49,11 @@ class TeamMemberController extends Controller
         return view('backend.team_members.edit', compact('teamMember'));
     }
 
+    public function show(TeamMember $teamMember)
+    {
+        return redirect()->route('admin.team-members.edit', $teamMember);
+    }
+
     public function update(Request $request, TeamMember $teamMember)
     {
         $data = $request->validate([

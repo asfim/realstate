@@ -45,6 +45,11 @@ class FaqController extends Controller
         return view('backend.faqs.edit', compact('faq'));
     }
 
+    public function show(Faq $faq)
+    {
+        return redirect()->route('admin.faqs.edit', $faq);
+    }
+
     public function update(Request $request, Faq $faq)
     {
         $data = $request->validate([

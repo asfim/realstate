@@ -5,6 +5,7 @@ namespace App\Models\ERP;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CrmCustomer extends Model
@@ -45,6 +46,11 @@ class CrmCustomer extends Model
     public function lead(): BelongsTo
     {
         return $this->belongsTo(CrmLead::class, 'converted_from_lead_id');
+    }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(DevSalesBooking::class, 'customer_id');
     }
 }
 

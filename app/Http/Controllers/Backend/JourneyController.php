@@ -42,6 +42,11 @@ class JourneyController extends Controller
         return view('backend.journeys.edit', compact('journey'));
     }
 
+    public function show(Journey $journey)
+    {
+        return redirect()->route('admin.journeys.edit', $journey);
+    }
+
     public function update(Request $request, Journey $journey)
     {
         $data = $request->validate([

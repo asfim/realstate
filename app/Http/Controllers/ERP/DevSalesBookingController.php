@@ -222,6 +222,42 @@ class DevSalesBookingController extends Controller
         return back()->with('success', 'Booking has been cancelled and unit released back to inventory.');
     }
 
+    public function edit(DevSalesBooking $devBooking)
+    {
+        $agents = Admin::all();
+        return view('erp.developer.bookings.edit', compact('devBooking', 'agents'));
+    }
+
+    public function update(Request $request, DevSalesBooking $devBooking)
+    {
+        $validated = $request->validate([
+            'sales_agent_id'         => 'nullable|exists:admins,id',
+            'expected_handover_date' => 'nullable|date',
+            'special_conditions'     => 'nullable|string',
+            'notes'                  => 'nullable|string',
+        ]);
+
+        $old = $devBooking->toArray();
+        $devBooking->update($validated);
+        $this->auditLog->log('sales.booking_updated', $devBooking, $old, $devBooking->toArray(), $devBooking->company_id, $devBooking->branch_id);
+
+        return redirect()->route('erp.dev-bookings.show', $devBooking)->with('success', 'Booking details updated.');
+    }
+
+    public function destroy(DevSalesBooking $devBooking)
+    {
+        if ($devBooking->status === 'active') {
+            return back()->with('error', 'Please cancel the booking first before deleting it.');
+        }
+
+        $old = $devBooking->toArray();
+        $devBooking->installments()->delete();
+        $devBooking->delete();
+        $this->auditLog->log('sales.booking_deleted', null, $old, null, $devBooking->company_id, $devBooking->branch_id);
+
+        return redirect()->route('erp.dev-bookings.index')->with('success', 'Booking record deleted.');
+    }
+
     /**
      * Auto-generate installment milestones based on plan.
      */

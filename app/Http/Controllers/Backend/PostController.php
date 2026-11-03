@@ -60,6 +60,11 @@ class PostController extends Controller
         return view('backend.posts.edit', compact('post'));
     }
 
+    public function show(Post $post)
+    {
+        return redirect()->route('admin.posts.edit', $post);
+    }
+
     public function update(Request $request, Post $post)
     {
         $data = $request->validate([

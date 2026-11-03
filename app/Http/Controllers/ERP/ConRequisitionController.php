@@ -116,5 +116,40 @@ class ConRequisitionController extends Controller
 
         return back()->with('success', "Requisition {$conRequisition->requisition_code} approved for PO generation.");
     }
+
+    public function edit(ConMaterialRequisition $conRequisition)
+    {
+        $conRequisition->load('items');
+        return view('erp.construction.requisitions.edit', compact('conRequisition'));
+    }
+
+    public function update(Request $request, ConMaterialRequisition $conRequisition)
+    {
+        $validated = $request->validate([
+            'required_date'       => 'required|date',
+            'urgency'             => 'required|string',
+            'site_location_notes' => 'nullable|string',
+        ]);
+
+        $old = $conRequisition->toArray();
+        $conRequisition->update($validated);
+        $this->auditLog->log('procurement.requisition_updated', $conRequisition, $old, $conRequisition->toArray(), $conRequisition->company_id);
+
+        return redirect()->route('erp.con-requisitions.show', $conRequisition)->with('success', 'Requisition updated.');
+    }
+
+    public function destroy(ConMaterialRequisition $conRequisition)
+    {
+        if ($conRequisition->purchaseOrders()->count() > 0) {
+            return back()->with('error', 'Cannot delete a requisition that has associated Purchase Orders.');
+        }
+
+        $old = $conRequisition->toArray();
+        $conRequisition->items()->delete();
+        $conRequisition->delete();
+        $this->auditLog->log('procurement.requisition_deleted', null, $old, null, $conRequisition->company_id);
+
+        return redirect()->route('erp.con-requisitions.index')->with('success', 'Requisition deleted successfully.');
+    }
 }
 

@@ -138,5 +138,18 @@ class CrmCustomerController extends Controller
 
         return redirect()->route('erp.customers.show', $customer)->with('success', "Lead {$lead->lead_code} successfully converted to Customer Account {$customer->customer_code}!");
     }
+
+    public function destroy(CrmCustomer $customer)
+    {
+        if ($customer->bookings()->count() > 0) {
+            return back()->with('error', 'Cannot delete a customer with existing sales bookings.');
+        }
+
+        $old = $customer->toArray();
+        $customer->delete();
+        $this->auditLog->log('crm.customer_deleted', null, $old, null, $customer->company_id);
+
+        return redirect()->route('erp.customers.index')->with('success', 'Customer deleted successfully.');
+    }
 }
 

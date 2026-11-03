@@ -132,5 +132,47 @@ class AgencyLeaseController extends Controller
 
         return back()->with('success', "Lease {$agencyLease->lease_code} terminated and listing restored to active.");
     }
+
+    public function edit(AgencyTenantLease $agencyLease)
+    {
+        $currentCompany = $this->context->currentCompany();
+        $tenants = CrmCustomer::where('company_id', $currentCompany?->id)->where('status', 'active')->get();
+
+        return view('erp.agency.leases.edit', compact('agencyLease', 'tenants'));
+    }
+
+    public function update(Request $request, AgencyTenantLease $agencyLease)
+    {
+        $validated = $request->validate([
+            'monthly_rent'            => 'required|numeric|min:1',
+            'security_deposit_amount' => 'required|numeric|min:0',
+            'monthly_service_charge'  => 'nullable|numeric|min:0',
+            'lease_start_date'        => 'required|date',
+            'lease_end_date'          => 'required|date|after:lease_start_date',
+            'rent_due_day'            => 'required|integer|min:1|max:28',
+            'key_handover_date'       => 'nullable|date',
+            'status'                  => 'required|string',
+            'special_terms'           => 'nullable|string',
+        ]);
+
+        $old = $agencyLease->toArray();
+        $agencyLease->update($validated);
+        $this->auditLog->log('agency.lease_updated', $agencyLease, $old, $agencyLease->toArray(), $agencyLease->company_id, $agencyLease->branch_id);
+
+        return redirect()->route('erp.agency-leases.show', $agencyLease)->with('success', 'Lease updated successfully.');
+    }
+
+    public function destroy(AgencyTenantLease $agencyLease)
+    {
+        if ($agencyLease->status === 'active') {
+            $agencyLease->listing->update(['status' => 'active']);
+        }
+
+        $old = $agencyLease->toArray();
+        $agencyLease->delete();
+        $this->auditLog->log('agency.lease_deleted', null, $old, null, $agencyLease->company_id, $agencyLease->branch_id);
+
+        return redirect()->route('erp.agency-leases.index')->with('success', 'Lease deleted.');
+    }
 }
 

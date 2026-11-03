@@ -55,6 +55,11 @@ class PropertyController extends Controller
         return view('backend.properties.edit', compact('property', 'detail', 'construction', 'types'));
     }
 
+    public function show(Property $property)
+    {
+        return redirect()->route('admin.properties.edit', $property);
+    }
+
     public function update(Request $request, Property $property)
     {
         $data = $request->validate([

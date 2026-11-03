@@ -63,5 +63,10 @@ class ConMaterialRequisition extends Model
     {
         return $this->hasMany(ConRequisitionItem::class, 'requisition_id');
     }
+
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(ConPurchaseOrder::class, 'requisition_id');
+    }
 }
 

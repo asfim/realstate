@@ -49,6 +49,11 @@ class FeaturedProjectController extends Controller
         return view('backend.featured_projects.edit', compact('featuredProject'));
     }
 
+    public function show(FeaturedProject $featuredProject)
+    {
+        return redirect()->route('admin.featured-project.edit', $featuredProject);
+    }
+
     public function update(Request $request, FeaturedProject $featuredProject)
     {
         $data = $request->validate([

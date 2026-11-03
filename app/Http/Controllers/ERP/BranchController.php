@@ -104,8 +104,8 @@ class BranchController extends Controller
         }
 
         $before = $branch->toArray();
+        $this->auditLog->log('branch.deleted', null, $before, null, $branch->company_id, null);
         $branch->delete();
-        $this->auditLog->log('branch.deleted', null, $before, null, $branch->company_id, $branch->id);
 
         return redirect()->route('erp.branches.index')->with('success', 'Branch deleted successfully.');
     }

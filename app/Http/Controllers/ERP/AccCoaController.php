@@ -65,5 +65,38 @@ class AccCoaController extends Controller
 
         return back()->with('success', "Account {$account->account_code} - {$account->account_name} created.");
     }
+
+    public function update(Request $request, AccChartOfAccount $accCoa)
+    {
+        $validated = $request->validate([
+            'account_name'   => 'required|string|max:255',
+            'account_type'   => 'required|string|in:asset,liability,equity,revenue,expense',
+            'normal_balance' => 'required|string|in:debit,credit',
+            'description'    => 'nullable|string',
+        ]);
+
+        $old = $accCoa->toArray();
+        $accCoa->update($validated);
+        $this->auditLog->log('acc.coa_account_updated', $accCoa, $old, $accCoa->toArray(), $accCoa->company_id);
+
+        return back()->with('success', "Account {$accCoa->account_code} updated.");
+    }
+
+    public function destroy(AccChartOfAccount $accCoa)
+    {
+        if ($accCoa->is_system_locked) {
+            return back()->with('error', 'Cannot delete system-defined chart of account.');
+        }
+
+        if ($accCoa->entries()->count() > 0) {
+            return back()->with('error', 'Cannot delete account with posted journal transactions.');
+        }
+
+        $old = $accCoa->toArray();
+        $accCoa->delete();
+        $this->auditLog->log('acc.coa_account_deleted', null, $old, null, $accCoa->company_id);
+
+        return back()->with('success', "Account {$accCoa->account_code} deleted.");
+    }
 }
 

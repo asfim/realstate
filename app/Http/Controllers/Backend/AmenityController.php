@@ -41,6 +41,11 @@ class AmenityController extends Controller
         return view('backend.amenities.edit', compact('amenity'));
     }
 
+    public function show(Amenity $amenity)
+    {
+        return redirect()->route('admin.amenities.edit', $amenity);
+    }
+
     public function update(Request $request, Amenity $amenity)
     {
         $data = $request->validate([

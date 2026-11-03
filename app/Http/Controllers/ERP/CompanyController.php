@@ -79,8 +79,8 @@ class CompanyController extends Controller
         }
 
         $before = $company->toArray();
+        $this->auditLog->log('company.deleted', null, $before, null, null);
         $company->delete();
-        $this->auditLog->log('company.deleted', null, $before, null, $company->id);
 
         return redirect()->route('erp.companies.index')->with('success', 'Company deleted successfully.');
     }

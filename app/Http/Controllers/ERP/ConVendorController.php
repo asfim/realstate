@@ -97,5 +97,23 @@ class ConVendorController extends Controller
 
         return redirect()->route('erp.con-vendors.index')->with('success', 'Vendor updated successfully.');
     }
+
+    public function show(ConVendor $conVendor)
+    {
+        return redirect()->route('erp.con-vendors.edit', $conVendor);
+    }
+
+    public function destroy(ConVendor $conVendor)
+    {
+        if ($conVendor->purchaseOrders()->count() > 0) {
+            return back()->with('error', 'Cannot delete vendor with associated purchase orders.');
+        }
+
+        $old = $conVendor->toArray();
+        $conVendor->delete();
+        $this->auditLog->log('procurement.vendor_deleted', null, $old, null, $conVendor->company_id);
+
+        return redirect()->route('erp.con-vendors.index')->with('success', 'Vendor deleted successfully.');
+    }
 }
 

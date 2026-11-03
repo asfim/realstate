@@ -148,5 +148,19 @@ class AccJournalController extends Controller
         $accJournal->load(['branch', 'fiscalYear', 'creator', 'entries.account', 'entries.costCenter']);
         return view('erp.accounting.journals.show', compact('accJournal'));
     }
+
+    public function destroy(AccJournal $journal)
+    {
+        if ($journal->fiscalYear && $journal->fiscalYear->is_closed) {
+            return back()->with('error', 'Cannot delete journal from a closed fiscal period.');
+        }
+
+        $old = $journal->toArray();
+        $journal->entries()->delete();
+        $journal->delete();
+        $this->auditLog->log('acc.journal_deleted', null, $old, null, $journal->company_id);
+
+        return redirect()->route('erp.acc-journals.index')->with('success', 'Journal voucher deleted.');
+    }
 }
 

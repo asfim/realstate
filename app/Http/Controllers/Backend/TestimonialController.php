@@ -48,6 +48,11 @@ class TestimonialController extends Controller
         return view('backend.testimonials.edit', compact('testimonial'));
     }
 
+    public function show(Testimonial $testimonial)
+    {
+        return redirect()->route('admin.testimonials.edit', $testimonial);
+    }
+
     public function update(Request $request, Testimonial $testimonial)
     {
         $data = $request->validate([

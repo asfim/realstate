@@ -46,8 +46,8 @@ Route::post('/switch-context', [BranchController::class, 'switchContext'])->name
 
 // Foundation & Organization Management
 Route::prefix('organization')->group(function () {
-    Route::resource('companies', CompanyController::class);
-    Route::resource('branches', BranchController::class);
+    Route::resource('companies', CompanyController::class)->except(['show']);
+    Route::resource('branches', BranchController::class)->except(['show']);
     Route::resource('departments', DepartmentController::class)->except(['create', 'show', 'edit']);
     Route::resource('designations', DesignationController::class)->except(['create', 'show', 'edit']);
     Route::resource('cost-centers', CostCenterController::class)->except(['create', 'show', 'edit']);
@@ -68,7 +68,7 @@ Route::prefix('crm')->group(function () {
     Route::get('site-visits', [CrmSiteVisitController::class, 'index'])->name('site-visits.index');
     Route::put('site-visits/{siteVisit}', [CrmSiteVisitController::class, 'update'])->name('site-visits.update');
 
-    Route::resource('customers', CrmCustomerController::class)->except(['destroy']);
+    Route::resource('customers', CrmCustomerController::class);
 });
 
 // Phase 3: Land Acquisition, Joint Venture & Feasibility
@@ -79,7 +79,7 @@ Route::prefix('land')->group(function () {
     Route::post('parcels/{landParcel}/feasibility', [LandFeasibilityController::class, 'store'])->name('land-feasibility.store');
     Route::get('feasibility/{feasibility}', [LandFeasibilityController::class, 'show'])->name('land-feasibility.show');
     Route::post('feasibility/{feasibility}/approve', [LandFeasibilityController::class, 'approve'])->name('land-feasibility.approve');
-    Route::resource('parcels', LandParcelController::class)->names('land-parcels');
+    Route::resource('parcels', LandParcelController::class)->parameters(['parcels' => 'landParcel'])->names('land-parcels');
 });
 
 // Phase 4: Developer Sales, Inventory & Bookings
@@ -92,32 +92,32 @@ Route::prefix('developer')->group(function () {
 
     Route::post('bookings/{devBooking}/cancel', [DevSalesBookingController::class, 'cancel'])->name('dev-bookings.cancel');
     Route::post('installments/{installment}/pay', [DevSalesBookingController::class, 'recordPayment'])->name('dev-installments.pay');
-    Route::resource('bookings', DevSalesBookingController::class)->names('dev-bookings');
+    Route::resource('bookings', DevSalesBookingController::class)->parameters(['bookings' => 'devBooking'])->names('dev-bookings');
 
-    Route::resource('projects', DevProjectController::class)->names('dev-projects');
+    Route::resource('projects', DevProjectController::class)->parameters(['projects' => 'devProject'])->names('dev-projects');
 });
 
 // Phase 5: Brokerage, Agency & Rental Operations
 Route::prefix('agency')->group(function () {
     Route::post('deals/{agencyDeal}/settle', [AgencyDealController::class, 'settle'])->name('agency-deals.settle');
-    Route::resource('deals', AgencyDealController::class)->names('agency-deals');
+    Route::resource('deals', AgencyDealController::class)->parameters(['deals' => 'agencyDeal'])->names('agency-deals');
 
     Route::post('leases/{agencyLease}/terminate', [AgencyLeaseController::class, 'terminate'])->name('agency-leases.terminate');
-    Route::resource('leases', AgencyLeaseController::class)->names('agency-leases');
+    Route::resource('leases', AgencyLeaseController::class)->parameters(['leases' => 'agencyLease'])->names('agency-leases');
 
-    Route::resource('listings', AgencyListingController::class)->names('agency-listings');
+    Route::resource('listings', AgencyListingController::class)->parameters(['listings' => 'agencyListing'])->names('agency-listings');
 });
 
 // Phase 6: Construction, BOQ, Procurement & Site Materials
 Route::prefix('construction')->group(function () {
-    Route::resource('vendors', ConVendorController::class)->names('con-vendors');
+    Route::resource('vendors', ConVendorController::class)->parameters(['vendors' => 'conVendor'])->names('con-vendors');
 
     Route::get('boq', [ConBoqController::class, 'index'])->name('con-boq.index');
     Route::post('boq', [ConBoqController::class, 'store'])->name('con-boq.store');
     Route::put('boq/{boqItem}/consumption', [ConBoqController::class, 'updateConsumption'])->name('con-boq.consumption');
 
     Route::post('requisitions/{conRequisition}/approve', [ConRequisitionController::class, 'approve'])->name('con-requisitions.approve');
-    Route::resource('requisitions', ConRequisitionController::class)->names('con-requisitions');
+    Route::resource('requisitions', ConRequisitionController::class)->parameters(['requisitions' => 'conRequisition'])->names('con-requisitions');
 
     Route::get('pos', [ConProcurementController::class, 'posIndex'])->name('con-pos.index');
     Route::get('pos/create', [ConProcurementController::class, 'poCreate'])->name('con-pos.create');
@@ -136,8 +136,10 @@ Route::prefix('construction')->group(function () {
 Route::prefix('accounting')->group(function () {
     Route::get('coa', [AccCoaController::class, 'index'])->name('acc-coa.index');
     Route::post('coa', [AccCoaController::class, 'store'])->name('acc-coa.store');
+    Route::put('coa/{accCoa}', [AccCoaController::class, 'update'])->name('acc-coa.update');
+    Route::delete('coa/{accCoa}', [AccCoaController::class, 'destroy'])->name('acc-coa.destroy');
 
-    Route::resource('journals', AccJournalController::class)->names('acc-journals');
+    Route::resource('journals', AccJournalController::class)->only(['index', 'create', 'store', 'show', 'destroy'])->names('acc-journals');
 
     Route::get('reports/trial-balance', [AccReportController::class, 'trialBalance'])->name('acc-reports.trial-balance');
     Route::get('reports/profit-loss', [AccReportController::class, 'profitAndLoss'])->name('acc-reports.profit-loss');
@@ -147,7 +149,7 @@ Route::prefix('accounting')->group(function () {
 // Phase 8: HR, Permanent Employee Payroll & Site Daily Labor Wages
 Route::prefix('hr')->group(function () {
     Route::post('payrolls/{payroll}/pay', [HrPayrollController::class, 'pay'])->name('hr-payrolls.pay');
-    Route::resource('payrolls', HrPayrollController::class)->names('hr-payrolls');
+    Route::resource('payrolls', HrPayrollController::class)->only(['index', 'create', 'store', 'show', 'destroy'])->names('hr-payrolls');
 
     Route::get('labor', [HrLaborController::class, 'laborersIndex'])->name('hr-labor.index');
     Route::post('labor', [HrLaborController::class, 'laborerStore'])->name('hr-labor.laborers.store');

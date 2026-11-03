@@ -55,6 +55,11 @@ class PropertyTypeController extends Controller
         return view('backend.property_types.edit', compact('propertyType'));
     }
 
+    public function show(PropertyType $propertyType)
+    {
+        return redirect()->route('admin.property-types.edit', $propertyType);
+    }
+
     /**
      * Update the specified resource in storage.
      */

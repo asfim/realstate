@@ -71,6 +71,11 @@ class RoleController extends Controller
         return view('backend.roles.edit', compact('role', 'groupedPermissions', 'rolePermissions'));
     }
 
+    public function show(Role $role)
+    {
+        return redirect()->route('admin.roles.edit', $role);
+    }
+
     public function update(Request $request, Role $role)
     {
         if ($role->name === 'Super Admin') {

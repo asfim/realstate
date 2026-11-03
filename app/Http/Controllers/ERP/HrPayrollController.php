@@ -133,4 +133,17 @@ class HrPayrollController extends Controller
         $hrPayroll = $payroll;
         return view('erp.hr.payrolls.show', compact('payroll', 'hrPayroll'));
     }
+
+    public function destroy(HrPayroll $payroll)
+    {
+        if ($payroll->payment_status === 'paid') {
+            return back()->with('error', 'Cannot delete an already disbursed payroll voucher.');
+        }
+
+        $old = $payroll->toArray();
+        $payroll->delete();
+        $this->auditLog->log('hr.payroll_deleted', null, $old, null, $payroll->company_id);
+
+        return redirect()->route('erp.hr-payrolls.index')->with('success', 'Payroll voucher deleted.');
+    }
 }

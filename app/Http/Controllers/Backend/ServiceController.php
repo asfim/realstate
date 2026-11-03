@@ -50,6 +50,11 @@ class ServiceController extends Controller
         return view('backend.services.edit', compact('service'));
     }
 
+    public function show(Service $service)
+    {
+        return redirect()->route('admin.services.edit', $service);
+    }
+
     public function update(Request $request, Service $service)
     {
         $data = $request->validate([

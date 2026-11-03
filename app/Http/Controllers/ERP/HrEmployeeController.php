@@ -154,4 +154,17 @@ class HrEmployeeController extends Controller
 
         return redirect()->route('erp.hr-employees.show', $employee)->with('success', 'Employee profile updated.');
     }
+
+    public function destroy(HrEmployee $employee)
+    {
+        if ($employee->payrolls()->count() > 0) {
+            return back()->with('error', 'Cannot delete employee with existing payroll disbursement records.');
+        }
+
+        $old = $employee->toArray();
+        $employee->delete();
+        $this->auditLog->log('hr.employee_deleted', null, $old, null, $employee->company_id);
+
+        return redirect()->route('erp.hr-employees.index')->with('success', 'Employee deleted successfully.');
+    }
 }

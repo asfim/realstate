@@ -143,5 +143,52 @@ class AgencyDealController extends Controller
 
         return back()->with('success', "Deal {$agencyDeal->deal_code} marked as settled.");
     }
+
+    public function edit(AgencyDeal $agencyDeal)
+    {
+        $currentCompany = $this->context->currentCompany();
+        $customers = CrmCustomer::where('company_id', $currentCompany?->id)->where('status', 'active')->get();
+        $agents = Admin::all();
+
+        return view('erp.agency.deals.edit', compact('agencyDeal', 'customers', 'agents'));
+    }
+
+    public function update(Request $request, AgencyDeal $agencyDeal)
+    {
+        $validated = $request->validate([
+            'closing_price'                     => 'required|numeric|min:1',
+            'company_commission_amount'         => 'required|numeric|min:0',
+            'agent_commission_percent'          => 'nullable|numeric|min:0|max:100',
+            'external_broker_name'              => 'nullable|string|max:255',
+            'external_broker_phone'             => 'nullable|string|max:50',
+            'external_broker_commission_amount' => 'nullable|numeric|min:0',
+            'deal_date'                         => 'required|date',
+            'status'                            => 'required|string',
+            'notes'                             => 'nullable|string',
+        ]);
+
+        $agentPercent = $validated['agent_commission_percent'] ?? 0;
+        $validated['agent_commission_amount'] = ($validated['company_commission_amount'] * $agentPercent) / 100;
+
+        $old = $agencyDeal->toArray();
+        $agencyDeal->update($validated);
+        $this->auditLog->log('agency.deal_updated', $agencyDeal, $old, $agencyDeal->toArray(), $agencyDeal->company_id, $agencyDeal->branch_id);
+
+        return redirect()->route('erp.agency-deals.show', $agencyDeal)->with('success', 'Deal updated successfully.');
+    }
+
+    public function destroy(AgencyDeal $agencyDeal)
+    {
+        if ($agencyDeal->status === 'settled') {
+            return back()->with('error', 'Cannot delete a settled deal.');
+        }
+
+        $agencyDeal->listing->update(['status' => 'active']);
+        $old = $agencyDeal->toArray();
+        $agencyDeal->delete();
+        $this->auditLog->log('agency.deal_deleted', null, $old, null, $agencyDeal->company_id, $agencyDeal->branch_id);
+
+        return redirect()->route('erp.agency-deals.index')->with('success', 'Deal deleted and listing restored to active.');
+    }
 }
 

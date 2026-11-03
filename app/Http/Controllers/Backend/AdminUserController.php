@@ -50,6 +50,11 @@ class AdminUserController extends Controller
         return view('backend.admins.edit', compact('admin', 'roles', 'adminRoles'));
     }
 
+    public function show(Admin $admin)
+    {
+        return redirect()->route('admin.admins.edit', $admin);
+    }
+
     public function update(Request $request, Admin $admin)
     {
         $request->validate([

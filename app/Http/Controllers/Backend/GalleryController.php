@@ -60,6 +60,11 @@ class GalleryController extends Controller
         return view('backend.galleries.edit', compact('gallery'));
     }
 
+    public function show(Gallery $gallery)
+    {
+        return redirect()->route('admin.galleries.edit', $gallery);
+    }
+
     public function update(Request $request, Gallery $gallery)
     {
         $data = $request->validate([

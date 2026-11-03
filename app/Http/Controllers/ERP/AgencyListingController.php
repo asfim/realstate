@@ -164,5 +164,18 @@ class AgencyListingController extends Controller
 
         return redirect()->route('erp.agency-listings.show', $agencyListing)->with('success', 'Listing updated successfully.');
     }
+
+    public function destroy(AgencyListing $agencyListing)
+    {
+        if ($agencyListing->deals()->count() > 0 || $agencyListing->leases()->count() > 0) {
+            return back()->with('error', 'Cannot delete an agency listing with associated deals or leases.');
+        }
+
+        $old = $agencyListing->toArray();
+        $agencyListing->delete();
+        $this->auditLog->log('agency.listing_deleted', null, $old, null, $agencyListing->company_id, $agencyListing->branch_id);
+
+        return redirect()->route('erp.agency-listings.index')->with('success', 'Agency listing deleted successfully.');
+    }
 }
 
