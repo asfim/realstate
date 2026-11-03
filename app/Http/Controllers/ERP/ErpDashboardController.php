@@ -11,6 +11,7 @@ use App\Models\ERP\CrmLead;
 use App\Models\ERP\CrmSiteVisit;
 use App\Models\ERP\Department;
 use App\Models\ERP\FiscalYear;
+use App\Models\ERP\LandParcel;
 use App\Services\ERP\CompanyBranchContext;
 use Illuminate\Http\Request;
 
@@ -33,6 +34,7 @@ class ErpDashboardController extends Controller
             'leads_count'        => $currentCompany ? CrmLead::where('company_id', $currentCompany->id)->count() : 0,
             'site_visits_count'  => $currentCompany ? CrmSiteVisit::where('company_id', $currentCompany->id)->count() : 0,
             'customers_count'    => $currentCompany ? CrmCustomer::where('company_id', $currentCompany->id)->count() : 0,
+            'land_parcels_count' => $currentCompany ? LandParcel::where('company_id', $currentCompany->id)->count() : 0,
         ];
 
         return view('erp.dashboard', compact('stats', 'currentCompany', 'currentBranch'));

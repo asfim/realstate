@@ -313,11 +313,19 @@
                 </div>
             </li>
             <li class="erp-menu-item">
-                <a href="#" class="erp-menu-link text-secondary" title="Phase 3">
-                    <i class="bi bi-map-fill menu-icon"></i>
-                    <span>Land & Projects</span>
-                    <span class="badge bg-secondary ms-auto" style="font-size:0.6rem;">P3</span>
+                <a href="#landSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.land-parcels.*') || request()->routeIs('erp.land-feasibility.*') ? 'active' : '' }} d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-map-fill menu-icon"></i>
+                        <span>Land & Feasibility</span>
+                    </div>
+                    <i class="bi bi-chevron-down small"></i>
                 </a>
+                <div class="collapse {{ request()->routeIs('erp.land-parcels.*') || request()->routeIs('erp.land-feasibility.*') ? 'show' : '' }}" id="landSubmenu">
+                    <ul class="erp-submenu">
+                        <li><a href="{{ route('erp.land-parcels.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.land-parcels.index') ? 'active' : '' }}">Land Parcels Bank</a></li>
+                        <li><a href="{{ route('erp.land-parcels.create') }}" class="erp-submenu-link {{ request()->routeIs('erp.land-parcels.create') ? 'active' : '' }}">New Parcel Intake</a></li>
+                    </ul>
+                </div>
             </li>
             <li class="erp-menu-item">
                 <a href="#" class="erp-menu-link text-secondary" title="Phase 4">

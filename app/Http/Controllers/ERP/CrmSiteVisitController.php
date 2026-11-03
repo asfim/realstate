@@ -103,3 +103,4 @@ class CrmSiteVisitController extends Controller
         return back()->with('success', 'Site visit outcome recorded.');
     }
 }
+

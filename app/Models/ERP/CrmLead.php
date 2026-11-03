@@ -139,3 +139,4 @@ class CrmLead extends Model
         return min(100, $score);
     }
 }
+

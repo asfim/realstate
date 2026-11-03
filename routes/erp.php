@@ -13,6 +13,8 @@ use App\Http\Controllers\ERP\DesignationController;
 use App\Http\Controllers\ERP\DocumentSequenceController;
 use App\Http\Controllers\ERP\ErpDashboardController;
 use App\Http\Controllers\ERP\FiscalYearController;
+use App\Http\Controllers\ERP\LandFeasibilityController;
+use App\Http\Controllers\ERP\LandParcelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,5 +52,16 @@ Route::prefix('crm')->group(function () {
     Route::put('site-visits/{siteVisit}', [CrmSiteVisitController::class, 'update'])->name('site-visits.update');
 
     Route::resource('customers', CrmCustomerController::class)->except(['destroy']);
+});
+
+// Phase 3: Land Acquisition, Joint Venture & Feasibility
+Route::prefix('land')->group(function () {
+    Route::post('parcels/{landParcel}/owners', [LandParcelController::class, 'addOwner'])->name('land-parcels.owners.store');
+    Route::put('vettings/{vetting}', [LandParcelController::class, 'updateVetting'])->name('land-vettings.update');
+    Route::get('parcels/{landParcel}/feasibility/create', [LandFeasibilityController::class, 'create'])->name('land-feasibility.create');
+    Route::post('parcels/{landParcel}/feasibility', [LandFeasibilityController::class, 'store'])->name('land-feasibility.store');
+    Route::get('feasibility/{feasibility}', [LandFeasibilityController::class, 'show'])->name('land-feasibility.show');
+    Route::post('feasibility/{feasibility}/approve', [LandFeasibilityController::class, 'approve'])->name('land-feasibility.approve');
+    Route::resource('parcels', LandParcelController::class)->names('land-parcels');
 });
 

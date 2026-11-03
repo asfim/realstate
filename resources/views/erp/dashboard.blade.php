@@ -141,16 +141,17 @@
 
         <!-- Module 3: Land & Feasibility -->
         <div class="col-md-6 col-lg-4">
-            <div class="card card-custom h-100 p-4 border-start border-4 border-secondary">
+            <div class="card card-custom h-100 p-4 border-start border-4 border-warning">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <div class="fw-bold text-dark fs-6">03. Land & Feasibility</div>
-                    <span class="badge bg-secondary">PHASE 3</span>
+                    <span class="badge bg-success">ACTIVE</span>
                 </div>
                 <p class="text-muted small mb-3">
                     Land acquisition tracking, joint venture landowner sharing agreements, vetting status, soil test & zoning feasibility.
                 </p>
                 <div class="mt-auto">
-                    <span class="text-muted small fst-italic">Architecture ready for deployment</span>
+                    <a href="{{ route('erp.land-parcels.index') }}" class="btn btn-sm btn-outline-dark me-1 mb-1">Land Bank</a>
+                    <a href="{{ route('erp.land-parcels.create') }}" class="btn btn-sm btn-outline-dark mb-1">New Parcel</a>
                 </div>
             </div>
         </div>

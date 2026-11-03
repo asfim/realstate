@@ -255,3 +255,4 @@ class CrmLeadController extends Controller
         return redirect()->route('erp.leads.index')->with('success', "{$count} website inquiries imported into CRM leads.");
     }
 }
+

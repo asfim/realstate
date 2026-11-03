@@ -47,3 +47,4 @@ class CrmCustomer extends Model
         return $this->belongsTo(CrmLead::class, 'converted_from_lead_id');
     }
 }
+

@@ -139,3 +139,4 @@ class CrmCustomerController extends Controller
         return redirect()->route('erp.customers.show', $customer)->with('success', "Lead {$lead->lead_code} successfully converted to Customer Account {$customer->customer_code}!");
     }
 }
+

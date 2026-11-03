@@ -121,3 +121,4 @@ return new class extends Migration
         Schema::dropIfExists('crm_leads');
     }
 };
+

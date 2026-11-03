@@ -39,3 +39,4 @@ class CrmLeadActivity extends Model
         return $this->belongsTo(Admin::class, 'admin_id');
     }
 }
+

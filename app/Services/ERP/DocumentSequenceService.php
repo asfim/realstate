@@ -23,9 +23,11 @@ class DocumentSequenceService
         'payment'   => 'PAY',
         'journal'    => 'JRN',
         'payroll'    => 'PRL',
-        'lead'       => 'LED',
-        'customer'   => 'CUST',
-        'site_visit' => 'SV',
+        'lead'        => 'LED',
+        'customer'    => 'CUST',
+        'site_visit'  => 'SV',
+        'land_parcel' => 'LND',
+        'feasibility' => 'FSB',
     ];
 
     /**

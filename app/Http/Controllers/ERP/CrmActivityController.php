@@ -35,3 +35,4 @@ class CrmActivityController extends Controller
         return back()->with('success', 'Follow-up activity recorded.');
     }
 }
+
