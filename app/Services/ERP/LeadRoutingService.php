@@ -46,8 +46,11 @@ class LeadRoutingService
     {
         return DB::transaction(function () use ($submission, $companyId, $branchId) {
             // Check if already ingested
-            $existing = CrmLead::where('submission_id', $submission->id)->first();
+            $existing = CrmLead::withTrashed()->where('submission_id', $submission->id)->first();
             if ($existing) {
+                if ($existing->trashed()) {
+                    $existing->restore();
+                }
                 return $existing;
             }
 

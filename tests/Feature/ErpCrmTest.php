@@ -178,3 +178,33 @@ test('admin can convert lead to customer with kyc details', function () {
 
     $response->assertRedirect(route('erp.customers.show', $customer));
 });
+
+test('admin can import website submissions as crm leads without duplicate code exception', function () {
+    CrmLead::firstOrCreate([
+        'lead_code' => 'LED-2026-00001',
+    ], [
+        'company_id' => $this->company->id,
+        'branch_id' => $this->branch->id,
+        'name' => 'Existing Customer',
+        'phone' => '01700000001',
+        'source' => 'web_form',
+    ]);
+
+    $submission = Submission::create([
+        'name'    => 'Sub Imported User',
+        'phone'   => '01899999999',
+        'email'   => 'imported@example.com',
+        'message' => 'Please call me back.',
+    ]);
+
+    $response = $this->actingAs($this->admin, 'admin')
+        ->post(route('erp.leads.import-submissions'));
+
+    $response->assertRedirect(route('erp.leads.index'));
+    $response->assertSessionHas('success');
+
+    $importedLead = CrmLead::where('submission_id', $submission->id)->first();
+    expect($importedLead)->not->toBeNull()
+        ->and($importedLead->lead_code)->not->toBe('LED-2026-00001')
+        ->and($importedLead->name)->toBe('Sub Imported User');
+});

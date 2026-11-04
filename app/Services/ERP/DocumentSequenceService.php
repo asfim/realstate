@@ -12,20 +12,20 @@ class DocumentSequenceService
      * Default prefixes mapped by document type.
      */
     protected array $defaultPrefixes = [
-        'quotation' => 'QTE',
-        'booking'   => 'BKG',
-        'contract'  => 'CTR',
-        'invoice'   => 'INV',
-        'receipt'   => 'REC',
-        'po'        => 'PO',
-        'grn'       => 'GRN',
-        'bill'      => 'BIL',
-        'payment'   => 'PAY',
-        'journal'    => 'JRN',
-        'payroll'    => 'PRL',
-        'lead'        => 'LED',
-        'customer'    => 'CUST',
-        'site_visit'  => 'SV',
+        'quotation'      => 'QTE',
+        'booking'        => 'BKG',
+        'contract'       => 'CTR',
+        'invoice'        => 'INV',
+        'receipt'        => 'REC',
+        'po'             => 'PO',
+        'grn'            => 'GRN',
+        'bill'           => 'BIL',
+        'payment'        => 'PAY',
+        'journal'        => 'JRN',
+        'payroll'        => 'PRL',
+        'lead'           => 'LED',
+        'customer'       => 'CUST',
+        'site_visit'     => 'SV',
         'land_parcel'    => 'LND',
         'feasibility'    => 'FSB',
         'project'        => 'PRJ',
@@ -39,7 +39,30 @@ class DocumentSequenceService
     ];
 
     /**
-     * Atomically get the next sequential document code.
+     * Document types mapped to Model and unique code column for collision detection.
+     */
+    protected array $modelMappings = [
+        'booking'        => [\App\Models\ERP\DevSalesBooking::class, 'booking_code'],
+        'po'             => [\App\Models\ERP\ConPurchaseOrder::class, 'po_code'],
+        'grn'            => [\App\Models\ERP\ConGoodsReceivedNote::class, 'grn_code'],
+        'journal'        => [\App\Models\ERP\AccJournal::class, 'voucher_code'],
+        'payroll'        => [\App\Models\ERP\HrPayroll::class, 'payroll_code'],
+        'lead'           => [\App\Models\ERP\CrmLead::class, 'lead_code'],
+        'customer'       => [\App\Models\ERP\CrmCustomer::class, 'customer_code'],
+        'land_parcel'    => [\App\Models\ERP\LandParcel::class, 'parcel_code'],
+        'feasibility'    => [\App\Models\ERP\LandDevelopmentFeasibility::class, 'feasibility_code'],
+        'project'        => [\App\Models\ERP\DevProject::class, 'project_code'],
+        'agency_listing' => [\App\Models\ERP\AgencyListing::class, 'listing_code'],
+        'agency_deal'    => [\App\Models\ERP\AgencyDeal::class, 'deal_code'],
+        'tenant_lease'   => [\App\Models\ERP\AgencyTenantLease::class, 'lease_code'],
+        'vendor'         => [\App\Models\ERP\ConVendor::class, 'vendor_code'],
+        'requisition'    => [\App\Models\ERP\ConMaterialRequisition::class, 'requisition_code'],
+        'employee'       => [\App\Models\ERP\HrEmployee::class, 'employee_code'],
+        'laborer'        => [\App\Models\ERP\HrDailyLaborer::class, 'laborer_code'],
+    ];
+
+    /**
+     * Atomically get the next sequential document code with collision avoidance.
      */
     public function getNextNumber(
         string $documentType,
@@ -69,26 +92,10 @@ class DocumentSequenceService
                 ->lockForUpdate()
                 ->first();
 
-            if (!$sequence) {
-                // If not found, create a global company sequence
-                $prefix = $this->defaultPrefixes[$documentType] ?? strtoupper(substr($documentType, 0, 3));
-                $sequence = DocumentSequence::create([
-                    'company_id'     => $companyId,
-                    'branch_id'      => $branchId,
-                    'fiscal_year_id' => $fiscalYearId,
-                    'document_type'  => $documentType,
-                    'prefix'         => $prefix,
-                    'next_number'    => 1,
-                    'padding'        => 5,
-                ]);
-            }
-
-            $currentNumber = $sequence->next_number;
-            $sequence->increment('next_number');
-
             $yearPart = '';
-            if ($sequence->fiscal_year_id) {
-                $fy = FiscalYear::find($sequence->fiscal_year_id);
+            $effectiveFyId = $sequence?->fiscal_year_id ?? $fiscalYearId;
+            if ($effectiveFyId) {
+                $fy = FiscalYear::find($effectiveFyId);
                 if ($fy) {
                     $yearPart = '-' . date('Y', strtotime($fy->start_date));
                 }
@@ -96,10 +103,83 @@ class DocumentSequenceService
                 $yearPart = '-' . date('Y');
             }
 
-            $formattedNumber = str_pad((string)$currentNumber, $sequence->padding, '0', STR_PAD_LEFT);
+            if (!$sequence) {
+                // If not found, create a global company sequence with intelligent initial next_number
+                $prefix = $this->defaultPrefixes[$documentType] ?? strtoupper(substr($documentType, 0, 3));
+                $initialNext = $this->getInitialNextNumber($documentType, $prefix, $yearPart);
 
-            return "{$sequence->prefix}{$yearPart}-{$formattedNumber}";
+                $sequence = DocumentSequence::create([
+                    'company_id'     => $companyId,
+                    'branch_id'      => $branchId,
+                    'fiscal_year_id' => $fiscalYearId,
+                    'document_type'  => $documentType,
+                    'prefix'         => $prefix,
+                    'next_number'    => $initialNext,
+                    'padding'        => 5,
+                ]);
+            }
+
+            // Loop to ensure candidate code is 100% unique and does not collide with any existing record
+            do {
+                $currentNumber = $sequence->next_number;
+                $sequence->next_number = $currentNumber + 1;
+                $sequence->save();
+
+                $formattedNumber = str_pad((string)$currentNumber, $sequence->padding, '0', STR_PAD_LEFT);
+                $candidateCode = "{$sequence->prefix}{$yearPart}-{$formattedNumber}";
+
+                $exists = false;
+                if (isset($this->modelMappings[$documentType])) {
+                    [$modelClass, $column] = $this->modelMappings[$documentType];
+                    if ($modelClass && class_exists($modelClass)) {
+                        $query = $modelClass::where($column, $candidateCode);
+                        if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive($modelClass))) {
+                            $query = $modelClass::withTrashed()->where($column, $candidateCode);
+                        }
+                        $exists = $query->exists();
+                    }
+                }
+            } while ($exists);
+
+            return $candidateCode;
         });
     }
-}
 
+    /**
+     * Determine initial next_number by checking existing records in the table.
+     */
+    protected function getInitialNextNumber(string $documentType, string $prefix, string $yearPart): int
+    {
+        if (!isset($this->modelMappings[$documentType])) {
+            return 1;
+        }
+
+        [$modelClass, $column] = $this->modelMappings[$documentType];
+        if (!$modelClass || !class_exists($modelClass)) {
+            return 1;
+        }
+
+        $expectedPrefix = "{$prefix}{$yearPart}-";
+        $prefixLen = strlen($expectedPrefix);
+
+        $query = $modelClass::query();
+        if (in_array(\Illuminate\Database\Eloquent\SoftDeletes::class, class_uses_recursive($modelClass))) {
+            $query = $modelClass::withTrashed();
+        }
+
+        $codes = $query->where($column, 'like', "{$expectedPrefix}%")->pluck($column)->all();
+        if (empty($codes)) {
+            return 1;
+        }
+
+        $maxNum = 0;
+        foreach ($codes as $code) {
+            $numPart = substr($code, $prefixLen);
+            if (is_numeric($numPart)) {
+                $maxNum = max($maxNum, (int)$numPart);
+            }
+        }
+
+        return $maxNum + 1;
+    }
+}
