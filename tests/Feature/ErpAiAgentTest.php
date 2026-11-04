@@ -4,6 +4,7 @@ use App\Models\Admin;
 use App\Models\ERP\Branch;
 use App\Models\ERP\Company;
 use App\Models\ERP\CrmCustomer;
+use App\Models\ERP\CrmLead;
 use App\Models\ERP\DevBookingInstallment;
 use App\Models\ERP\DevProject;
 use App\Models\ERP\DevProjectUnit;
@@ -31,6 +32,20 @@ beforeEach(function () {
 
     $this->company = Company::where('code', 'AURELIA')->first();
     $this->branch = Branch::where('code', 'DHK-HQ')->first();
+
+    CrmLead::firstOrCreate(
+        ['lead_code' => 'LED-TEST-001'],
+        [
+            'company_id'        => $this->company->id,
+            'branch_id'         => $this->branch->id,
+            'assigned_agent_id' => $this->admin->id,
+            'name'              => 'Hasan Parvez',
+            'phone'             => '01866700047',
+            'source'            => 'web_form',
+            'stage'             => 'new',
+            'priority'          => 'high',
+        ]
+    );
 });
 
 test('ai assistant index page loads successfully for authenticated admin', function () {
@@ -114,6 +129,45 @@ test('ai service accurately handles colloquial banglish queries', function () {
     $res10 = $service->ask('Hasan Parvez');
     expect($res10['intent'])->toBe('smart_entity_search')
         ->and($res10['answer'])->toContain('Hasan');
+});
+
+test('ai service corrects spelling mistakes and typos with accurate answers', function () {
+    $service = app(ErpAiAgentService::class);
+
+    // Typo in sales
+    expect($service->ask('ajkr sel koyta')['intent'])->toBe('sales_today');
+
+    // Typo in today profit
+    expect($service->ask('ajkr profitt koto')['intent'])->toBe('profit_today');
+
+    // Typo in overall profit
+    expect($service->ask('profitt koto')['intent'])->toBe('profit_summary');
+
+    // Typo in dues
+    expect($service->ask('dieu koto ase')['intent'])->toBe('dues');
+
+    // Typo in project
+    expect($service->ask('projct koyta')['intent'])->toBe('projects_info');
+
+    // Typo in customer
+    expect($service->ask('custmar koyjon')['intent'])->toBe('customers_info');
+
+    // Typo in vendor
+    expect($service->ask('vendur list')['intent'])->toBe('vendors_info');
+
+    // Typo in cement
+    expect($service->ask('semnt koto ase')['intent'])->toBe('materials_stock');
+
+    // Typo in name search (Hasam instead of Hasan)
+    $resName = $service->ask('Hasam Parvez');
+    expect($resName['intent'])->toBe('smart_entity_search')
+        ->and($resName['answer'])->toContain('Hasan');
+
+    // Typo in staff
+    expect($service->ask('staf list')['intent'])->toBe('employees');
+
+    // Typo in jomi
+    expect($service->ask('jomii koyta')['intent'])->toBe('land_bank');
 });
 
 test('ai service handles english queries correctly', function () {

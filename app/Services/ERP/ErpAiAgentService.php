@@ -22,6 +22,218 @@ use Illuminate\Support\Facades\Log;
 class ErpAiAgentService
 {
     /**
+     * Common typo dictionary and phonetic replacements for real estate terms.
+     */
+    protected array $typoReplacements = [
+        // Today & Time variations
+        'ajkr' => 'ajker',
+        'ajk' => 'ajke',
+        'ajka' => 'ajke',
+        'aajkr' => 'ajker',
+        'ajaker' => 'ajker',
+        'aajke' => 'ajke',
+        'aajker' => 'ajker',
+        'todays' => 'today',
+        'tday' => 'today',
+        'todai' => 'today',
+
+        // Sales, Selling & Bookings
+        'sel' => 'sell',
+        'selll' => 'sell',
+        'cell' => 'sell',
+        'cel' => 'sell',
+        'sle' => 'sale',
+        'sele' => 'sale',
+        'sales' => 'sale',
+        'boking' => 'booking',
+        'bokng' => 'booking',
+        'bookng' => 'booking',
+        'bkg' => 'booking',
+        'bkng' => 'booking',
+        'bokingg' => 'booking',
+        'bikri' => 'বিক্রয়',
+        'bikroy' => 'বিক্রয়',
+        'সেঈল' => 'সেল',
+        'সেলল' => 'সেল',
+
+        // Profit, Margin, Loss, Income, Expense
+        'profitt' => 'profit',
+        'proffit' => 'profit',
+        'prophit' => 'profit',
+        'prfit' => 'profit',
+        'profite' => 'profit',
+        'lavh' => 'lav',
+        'labh' => 'lav',
+        'lab' => 'lav',
+        'laav' => 'lav',
+        'lavv' => 'lav',
+        'incom' => 'income',
+        'expens' => 'expense',
+        'expence' => 'expense',
+        'khoroj' => 'khoroch',
+        'khoros' => 'khoroch',
+        'koroch' => 'khoroch',
+        'khorc' => 'khoroch',
+        'লাভ্' => 'লাভ',
+        'প্রফিটট' => 'প্রফিট',
+
+        // Dues, Pending, Receivables
+        'duee' => 'due',
+        'duees' => 'due',
+        'dieu' => 'due',
+        'dew' => 'due',
+        'dwe' => 'due',
+        'du' => 'due',
+        'bakeya' => 'bakeya',
+        'bokeya' => 'bakeya',
+        'boccheya' => 'bakeya',
+        'bakya' => 'bakeya',
+        'kisti' => 'kisti',
+        'kisthi' => 'kisti',
+        'kisty' => 'kisti',
+        'instalment' => 'installment',
+        'instalments' => 'installments',
+        'বকেয়া' => 'বকেয়া',
+        'বকেয়া' => 'বকেয়া',
+
+        // Projects
+        'projct' => 'project',
+        'projeck' => 'project',
+        'projek' => 'project',
+        'projeckt' => 'project',
+        'porject' => 'project',
+        'prjct' => 'project',
+        'prj' => 'project',
+        'projekts' => 'projects',
+        'প্রজেক্টট' => 'প্রজেক্ট',
+
+        // Customers
+        'costomer' => 'customer',
+        'costomers' => 'customers',
+        'custmar' => 'customer',
+        'custmars' => 'customers',
+        'custmr' => 'customer',
+        'kastomer' => 'customer',
+        'kustomer' => 'customer',
+        'castomar' => 'customer',
+        'costomar' => 'customer',
+        'customr' => 'customer',
+
+        // Flats / Units
+        'flatt' => 'flat',
+        'flats' => 'flat',
+        'flts' => 'flat',
+        'flt' => 'flat',
+        'unitt' => 'unit',
+        'unite' => 'unit',
+        'apertment' => 'apartment',
+        'apartmnt' => 'apartment',
+
+        // Vendors / Materials
+        'vender' => 'vendor',
+        'venders' => 'vendors',
+        'vendur' => 'vendor',
+        'vendurs' => 'vendors',
+        'suplier' => 'supplier',
+        'supliers' => 'suppliers',
+        'supliyer' => 'supplier',
+        'semnt' => 'cement',
+        'siment' => 'cement',
+        'cemen' => 'cement',
+        'ciment' => 'cement',
+        'simant' => 'cement',
+        'materil' => 'material',
+        'metarial' => 'material',
+        'stoc' => 'stock',
+        'stok' => 'stock',
+
+        // Labor / Muster
+        'labour' => 'labor',
+        'labourer' => 'laborer',
+        'labrer' => 'laborer',
+        'hazira' => 'hajira',
+        'shromk' => 'shromik',
+
+        // Employees & Payroll
+        'employe' => 'employee',
+        'empolyee' => 'employee',
+        'staf' => 'staff',
+        'stafs' => 'staff',
+        'slary' => 'salary',
+        'sallary' => 'salary',
+        'salry' => 'salary',
+        'betonn' => 'beton',
+
+        // Land
+        'jomii' => 'jomi',
+        'landd' => 'land',
+        'lnd' => 'land',
+        'parsel' => 'parcel',
+
+        // General Bengali Normalization
+        'কতো' => 'কত',
+        'কয়টা' => 'কয়টা',
+    ];
+
+    /**
+     * Correct spelling mistakes and typos in query using dictionary and Levenshtein distance.
+     */
+    public function correctTypos(string $input): string
+    {
+        // 1. Collapse 3 or more repeated letters into 1 or 2 (e.g. selllll -> sell, dueeee -> due)
+        $clean = preg_replace('/(.)\1{2,}/u', '$1$1', $input);
+
+        // Canonical keywords for Levenshtein fuzzy distance matching
+        $canonicalWords = [
+            'project', 'projects', 'customer', 'customers', 'vendor', 'vendors',
+            'cement', 'material', 'labor', 'laborer', 'employee', 'employees',
+            'salary', 'payroll', 'booking', 'profit', 'income', 'expense',
+            'installment', 'installments', 'apartment', 'parcel'
+        ];
+
+        // 2. Tokenize into words preserving spaces and punctuation
+        $words = preg_split('/(\s+)/u', $clean, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $corrected = [];
+
+        foreach ($words as $w) {
+            if (trim($w) === '' || preg_match('/^[^\p{L}\p{N}]+$/u', $w)) {
+                $corrected[] = $w;
+                continue;
+            }
+
+            $lower = mb_strtolower($w, 'UTF-8');
+
+            // Direct dictionary lookup
+            if (isset($this->typoReplacements[$lower])) {
+                $corrected[] = $this->typoReplacements[$lower];
+                continue;
+            }
+
+            // Dynamic Levenshtein fuzzy match on English / Latin tokens of length >= 4
+            $matched = false;
+            if (preg_match('/^[a-z]+$/i', $lower) && strlen($lower) >= 4) {
+                foreach ($canonicalWords as $canon) {
+                    $dist = levenshtein($lower, $canon);
+                    if ($dist <= 2 && abs(strlen($lower) - strlen($canon)) <= 2) {
+                        similar_text($lower, $canon, $simPercent);
+                        if ($simPercent >= 80) {
+                            $corrected[] = $canon;
+                            $matched = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!$matched) {
+                $corrected[] = $w;
+            }
+        }
+
+        return implode('', $corrected);
+    }
+
+    /**
      * Process an incoming user query and return an AI answer backed by real database facts.
      */
     public function ask(string $rawQuery, ?int $companyId = null, ?int $branchId = null): array
@@ -41,11 +253,14 @@ class ErpAiAgentService
 
         $isBangla = $this->detectBangla($query);
 
+        // Normalize typos and misspellings for ultra-accurate intent detection
+        $correctedQuery = $this->correctTypos($query);
+
         try {
-            $intent = $this->detectIntent($query);
+            $intent = $this->detectIntent($correctedQuery);
 
             // Fetch metrics related to detected intent
-            $data = $this->fetchMetricsForIntent($intent, $companyId, $branchId, $query);
+            $data = $this->fetchMetricsForIntent($intent, $companyId, $branchId, $correctedQuery);
 
             // Attempt LLM generation if configured, otherwise use deterministic aggregator
             $apiKey = config('services.gemini.api_key', env('GEMINI_API_KEY'));
@@ -53,14 +268,14 @@ class ErpAiAgentService
             $poweredBy = 'Aurelia ERP Database Intelligence';
 
             if ($apiKey && strlen($apiKey) > 10) {
-                $answer = $this->askGemini($query, $intent, $data, $apiKey, $isBangla);
+                $answer = $this->askGemini($correctedQuery, $intent, $data, $apiKey, $isBangla);
                 if ($answer) {
                     $poweredBy = 'Gemini 1.5 Flash + Aurelia Database';
                 }
             }
 
             if (!$answer) {
-                $answer = $this->formatDeterministicAnswer($intent, $data, $query, $isBangla);
+                $answer = $this->formatDeterministicAnswer($intent, $data, $correctedQuery, $isBangla);
             }
 
             return [
@@ -476,36 +691,54 @@ class ErpAiAgentService
             case 'smart_entity_search':
                 // Extract searchable search terms from the query
                 $words = preg_split('/[\s,\.\?\!]+/u', $rawQuery, -1, PREG_SPLIT_NO_EMPTY);
-                $stopWords = ['ki', 'koto', 'koyta', 'koita', 'ase', 'ache', 'hoise', 'holo', 'kemon', 'amader', 'er', 'theke', 'dao', 'bolo', 'details', 'tell', 'me', 'about', 'how', 'many', 'much', 'is', 'the', 'what', 'are', 'bistarito'];
-                $searchTerm = '';
+                $stopWords = ['ki', 'koto', 'koyta', 'koita', 'ase', 'ache', 'hoise', 'holo', 'kemon', 'amader', 'er', 'theke', 'dao', 'bolo', 'details', 'tell', 'me', 'about', 'how', 'many', 'much', 'is', 'the', 'what', 'are', 'bistarito', 'info'];
+                $searchTokens = [];
 
                 foreach ($words as $w) {
                     $cleaned = mb_strtolower($w, 'UTF-8');
                     if (mb_strlen($cleaned) >= 3 && !in_array($cleaned, $stopWords)) {
-                        $searchTerm = $w;
-                        break;
+                        $searchTokens[] = $w;
                     }
                 }
 
-                if ($searchTerm === '') {
-                    $searchTerm = $rawQuery;
+                if (empty($searchTokens)) {
+                    $searchTokens = [$rawQuery];
                 }
 
-                $foundCustomers = CrmCustomer::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
-                $foundLeads = CrmLead::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
-                $foundProjects = DevProject::where('name', 'like', "%{$searchTerm}%")->orWhere('location', 'like', "%{$searchTerm}%")->get();
-                $foundUnits = DevProjectUnit::where('unit_number', 'like', "%{$searchTerm}%")->get();
-                $foundEmployees = HrEmployee::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
-                $foundVendors = ConVendor::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
+                $soundexTokens = array_map('soundex', $searchTokens);
+
+                $matchFuzzy = function($name, $phone = '') use ($searchTokens, $soundexTokens) {
+                    $nameLower = mb_strtolower($name, 'UTF-8');
+                    foreach ($searchTokens as $i => $tok) {
+                        $tokLower = mb_strtolower($tok, 'UTF-8');
+                        if (str_contains($nameLower, $tokLower)) return true;
+                        if ($phone && str_contains($phone, $tok)) return true;
+                        foreach (explode(' ', $name) as $part) {
+                            $partClean = trim(mb_strtolower($part, 'UTF-8'));
+                            if (mb_strlen($partClean) >= 3) {
+                                if (levenshtein($partClean, $tokLower) <= 1) return true;
+                                if (soundex($partClean) === $soundexTokens[$i]) return true;
+                            }
+                        }
+                    }
+                    return false;
+                };
+
+                $foundCustomers = CrmCustomer::all()->filter(fn($c) => $matchFuzzy($c->name, $c->phone));
+                $foundLeads = CrmLead::all()->filter(fn($l) => $matchFuzzy($l->name, $l->phone));
+                $foundProjects = DevProject::all()->filter(fn($p) => $matchFuzzy($p->name . ' ' . ($p->location ?? '')));
+                $foundUnits = DevProjectUnit::all()->filter(fn($u) => $matchFuzzy((string) $u->unit_number));
+                $foundEmployees = HrEmployee::all()->filter(fn($e) => $matchFuzzy($e->name, $e->phone));
+                $foundVendors = ConVendor::all()->filter(fn($v) => $matchFuzzy($v->name . ' ' . ($v->contact_person ?? ''), $v->phone));
 
                 return [
-                    'search_term' => $searchTerm,
-                    'customers' => $foundCustomers->map(fn($c) => ['name' => $c->name, 'code' => $c->customer_code, 'phone' => $c->phone, 'status' => $c->status])->toArray(),
-                    'leads' => $foundLeads->map(fn($l) => ['name' => $l->name, 'code' => $l->lead_code, 'phone' => $l->phone, 'stage' => $l->stage])->toArray(),
-                    'projects' => $foundProjects->map(fn($p) => ['name' => $p->name, 'code' => $p->project_code, 'location' => $p->location, 'status' => $p->status])->toArray(),
-                    'units' => $foundUnits->map(fn($u) => ['unit' => $u->unit_number, 'sqft' => (float)$u->gross_area_sqft, 'price' => (float)$u->grand_total_price, 'status' => $u->status])->toArray(),
-                    'employees' => $foundEmployees->map(fn($e) => ['name' => $e->name, 'phone' => $e->phone, 'salary' => (float)$e->gross_salary, 'status' => $e->status])->toArray(),
-                    'vendors' => $foundVendors->map(fn($v) => ['name' => $v->name, 'phone' => $v->phone, 'contact' => $v->contact_person])->toArray(),
+                    'search_term' => implode(' ', $searchTokens),
+                    'customers' => $foundCustomers->map(fn($c) => ['name' => $c->name, 'code' => $c->customer_code, 'phone' => $c->phone, 'status' => $c->status])->values()->toArray(),
+                    'leads' => $foundLeads->map(fn($l) => ['name' => $l->name, 'code' => $l->lead_code, 'phone' => $l->phone, 'stage' => $l->stage])->values()->toArray(),
+                    'projects' => $foundProjects->map(fn($p) => ['name' => $p->name, 'code' => $p->project_code, 'location' => $p->location, 'status' => $p->status])->values()->toArray(),
+                    'units' => $foundUnits->map(fn($u) => ['unit' => $u->unit_number, 'sqft' => (float)$u->gross_area_sqft, 'price' => (float)$u->grand_total_price, 'status' => $u->status])->values()->toArray(),
+                    'employees' => $foundEmployees->map(fn($e) => ['name' => $e->name, 'phone' => $e->phone, 'salary' => (float)$e->gross_salary, 'status' => $e->status])->values()->toArray(),
+                    'vendors' => $foundVendors->map(fn($v) => ['name' => $v->name, 'phone' => $v->phone, 'contact' => $v->contact_person])->values()->toArray(),
                 ];
 
             case 'sales_today':
