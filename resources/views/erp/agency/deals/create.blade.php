@@ -65,7 +65,7 @@
                         </option>
                     @endforeach
                 </select>
-                <div class="form-text">Client registered in CRM. <a href="{{ route('erp.crm-customers.create') }}" target="_blank">Register new client</a></div>
+                <div class="form-text">Client registered in CRM. <a href="{{ route('erp.customers.create') }}" target="_blank">Register new client</a></div>
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-semibold">Deal Type <span class="text-danger">*</span></label>

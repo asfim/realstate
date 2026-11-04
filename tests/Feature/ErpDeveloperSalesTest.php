@@ -53,6 +53,21 @@ test('admin can view developer projects and bookings list', function () {
     $responseBookings->assertSee('Developer Sales Bookings');
 });
 
+test('admin can view create booking form with project query param', function () {
+    $project = DevProject::first() ?? DevProject::create([
+        'company_id'   => $this->company->id,
+        'branch_id'    => $this->branch->id,
+        'project_code' => 'PRJ-TEST-001',
+        'name'         => 'Test Heights',
+        'type'         => 'residential',
+        'status'       => 'planning',
+    ]);
+
+    $response = $this->actingAs($this->admin, 'admin')->get(route('erp.dev-bookings.create', ['project_id' => $project->id]));
+    $response->assertStatus(200);
+    $response->assertSee('Create Developer Sales Booking');
+});
+
 test('admin can register a developer project with auto project code', function () {
     $response = $this->actingAs($this->admin, 'admin')->post('/erp/developer/projects', [
         'name'                     => 'Aurelia Crown Heights',

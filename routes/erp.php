@@ -69,6 +69,7 @@ Route::prefix('crm')->group(function () {
     Route::put('site-visits/{siteVisit}', [CrmSiteVisitController::class, 'update'])->name('site-visits.update');
 
     Route::resource('customers', CrmCustomerController::class);
+    Route::get('crm-customers/create', [CrmCustomerController::class, 'create'])->name('crm-customers.create');
 });
 
 // Phase 3: Land Acquisition, Joint Venture & Feasibility

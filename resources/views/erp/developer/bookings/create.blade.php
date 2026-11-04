@@ -80,7 +80,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <div class="form-text">Customer must be active in CRM. <a href="{{ route('erp.crm-customers.create') }}" target="_blank">Add new customer</a></div>
+                    <div class="form-text">Customer must be active in CRM. <a href="{{ route('erp.customers.create') }}" target="_blank">Add new customer</a></div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Lead Reference (Optional)</label>
