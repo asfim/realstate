@@ -15,8 +15,11 @@ class AccountCategorySeeder extends Seeder
         $incomes = [
             'Property Sales Commission',
             'Booking Money',
+            'Installment Collection',
             'Rental Income',
+            'Parking Space Allotment',
             'Consultation Fees',
+            'Transfer & Documentation Fees',
             'Service Charges',
             'Other Income',
         ];
@@ -32,11 +35,15 @@ class AccountCategorySeeder extends Seeder
             'Office Rent',
             'Marketing & Advertising',
             'Staff Salary & Payroll',
+            'Direct Construction & Materials',
+            'Site Contractor & Labor Wages',
             'Utility Bills & Internet',
-            'Legal & Documentation',
+            'Legal & Documentation Fees',
             'Maintenance & Repairs',
-            'Office Supplies',
-            'Travel & Conveyance',
+            'Architecture & Soil Testing Consultancy',
+            'Office Supplies & Stationery',
+            'Travel & Site Conveyance',
+            'IT & Software Subscriptions',
             'Other Expense',
         ];
 
