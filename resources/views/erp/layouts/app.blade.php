@@ -617,6 +617,8 @@
 
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Marked.js for fast Markdown table & typography rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggleBtn = document.getElementById('erpToggleBtn');
@@ -681,10 +683,11 @@
                         const el = document.getElementById(loadId);
                         if (el) el.remove();
                         const ans = res.data ? res.data.answer : 'কোনো ফলাফল পাওয়া যায়নি।';
+                        const rendered = typeof marked !== 'undefined' ? marked.parse(ans) : ans;
                         drawerStream.insertAdjacentHTML('beforeend', `
                             <div class="d-flex mb-3">
-                                <div class="p-2 rounded-3 bg-white border shadow-sm small text-dark" style="max-width: 95%; line-height: 1.4; overflow-x: auto;">
-                                    ${ans.replace(/### (.*?)\n/g, '<h6 class="fw-bold mb-1">$1</h6>').replace(/> (.*?)\n/g, '<div class="alert alert-success py-1 px-2 my-1 small fw-bold">$1</div>').replace(/\n\n/g, '<br>')}
+                                <div class="p-2 rounded-3 bg-white border shadow-sm small text-dark ai-rendered-content" style="max-width: 95%; line-height: 1.4; overflow-x: auto;">
+                                    ${rendered}
                                 </div>
                             </div>
                         `);
@@ -708,8 +711,6 @@
                     });
                 });
             }
-        });
-    </script>
         });
     </script>
     @stack('scripts')

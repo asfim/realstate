@@ -2,6 +2,9 @@
 
 namespace App\Services\ERP;
 
+use App\Models\ERP\ConSiteStock;
+use App\Models\ERP\ConVendor;
+use App\Models\ERP\CrmCustomer;
 use App\Models\ERP\CrmLead;
 use App\Models\ERP\DevBookingInstallment;
 use App\Models\ERP\DevProject;
@@ -10,6 +13,7 @@ use App\Models\ERP\DevSalesBooking;
 use App\Models\ERP\HrEmployee;
 use App\Models\ERP\HrLaborMusterRoll;
 use App\Models\ERP\HrPayroll;
+use App\Models\ERP\LandParcel;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
@@ -31,41 +35,63 @@ class ErpAiAgentService
                 'answer' => "অনুগ্রহ করে আপনার প্রশ্নটি লিখুন। যেমন: *\"আজকের সেল কয়টা হয়েছে?\"*, *\"আজকের লাভ কত?\"*, অথবা *\"কত টাকা বকেয়া আছে?\"*",
                 'metrics' => [],
                 'suggestions' => $this->getDefaultSuggestions(),
-                'powered_by' => 'Aurelia ERP Rule Aggregator',
+                'powered_by' => 'Aurelia ERP Database Agent',
             ];
         }
 
         $isBangla = $this->detectBangla($query);
-        $intent = $this->detectIntent($query);
 
-        // Fetch metrics related to detected intent
-        $data = $this->fetchMetricsForIntent($intent, $companyId, $branchId, $query);
+        try {
+            $intent = $this->detectIntent($query);
 
-        // Attempt LLM generation if configured, otherwise use deterministic aggregator
-        $apiKey = config('services.gemini.api_key', env('GEMINI_API_KEY'));
-        $answer = null;
-        $poweredBy = 'Aurelia ERP Real-Time Aggregator';
+            // Fetch metrics related to detected intent
+            $data = $this->fetchMetricsForIntent($intent, $companyId, $branchId, $query);
 
-        if ($apiKey && strlen($apiKey) > 10) {
-            $answer = $this->askGemini($query, $intent, $data, $apiKey, $isBangla);
-            if ($answer) {
-                $poweredBy = 'Gemini 1.5 Flash + Aurelia ERP Database';
+            // Attempt LLM generation if configured, otherwise use deterministic aggregator
+            $apiKey = config('services.gemini.api_key', env('GEMINI_API_KEY'));
+            $answer = null;
+            $poweredBy = 'Aurelia ERP Database Intelligence';
+
+            if ($apiKey && strlen($apiKey) > 10) {
+                $answer = $this->askGemini($query, $intent, $data, $apiKey, $isBangla);
+                if ($answer) {
+                    $poweredBy = 'Gemini 1.5 Flash + Aurelia Database';
+                }
             }
-        }
 
-        if (!$answer) {
-            $answer = $this->formatDeterministicAnswer($intent, $data, $query, $isBangla);
-        }
+            if (!$answer) {
+                $answer = $this->formatDeterministicAnswer($intent, $data, $query, $isBangla);
+            }
 
-        return [
-            'question' => $query,
-            'intent' => $intent,
-            'language' => $isBangla ? 'bn' : 'en',
-            'answer' => $answer,
-            'metrics' => $data,
-            'suggestions' => $this->getRelevantSuggestions($intent),
-            'powered_by' => $poweredBy,
-        ];
+            return [
+                'question' => $query,
+                'intent' => $intent,
+                'language' => $isBangla ? 'bn' : 'en',
+                'answer' => $answer,
+                'metrics' => $data,
+                'suggestions' => $this->getRelevantSuggestions($intent),
+                'powered_by' => $poweredBy,
+            ];
+        } catch (\Throwable $e) {
+            Log::error('AI Assistant Query Error: ' . $e->getMessage(), [
+                'query' => $query,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Graceful resilient fallback using basic overview so user always receives an answer
+            $fallbackOverview = $this->fetchMetricsForIntent('company_overview', $companyId, $branchId, $query);
+            $answer = $this->formatDeterministicAnswer('company_overview', $fallbackOverview, $query, $isBangla);
+
+            return [
+                'question' => $query,
+                'intent' => 'company_overview',
+                'language' => $isBangla ? 'bn' : 'en',
+                'answer' => $answer,
+                'metrics' => $fallbackOverview,
+                'suggestions' => $this->getDefaultSuggestions(),
+                'powered_by' => 'Aurelia Resilient Fallback Engine',
+            ];
+        }
     }
 
     /**
@@ -75,34 +101,79 @@ class ErpAiAgentService
     {
         $normalized = mb_strtolower($query, 'UTF-8');
 
-        // 1. Check if query is looking for a specific booking code or lead code
-        if (preg_match('/(bkg-[0-9]{4}-[0-9]+|led-[0-9]{4}-[0-9]+)/i', $normalized)) {
+        // 1. Specific Code Lookup (BKG-..., LED-..., PRJ-..., VEN-..., EMP-...)
+        if (preg_match('/(bkg-[0-9]{4}-[0-9]+|led-[0-9]{4}-[0-9]+|prj-[0-9]{4}-[0-9]+|ven-[0-9]{4}-[0-9]+|emp-[0-9]{4}-[0-9]+)/i', $normalized)) {
             return 'search_code';
         }
 
-        // 2. Project Units & Inventory (check before dues so "unit কয়টা বাকি" matches inventory)
+        // 2. Projects & Towers ("project koyta", "project list", "aurelia heights", "প্রজেক্ট কয়টা")
         if (
-            preg_match('/(unit(s)?|flat(s)?|apartment(s)?|inventory|stock|available|খালি|ইউনিট|ফ্ল্যাট|স্টক)/iu', $normalized)
+            preg_match('/(project|projects|tower|towers|building|প্রজেক্ট|প্রকল্প|বিল্ডিং)/iu', $normalized) &&
+            !preg_match('/(unit|flat|inventory|খালি)/iu', $normalized)
+        ) {
+            return 'projects_info';
+        }
+
+        // 3. Customers ("customer koyjon", "customer list", "গ্রাহক", "কাস্টমার")
+        if (
+            preg_match('/(customer|customers|client|clients|buyer|buyers|কাস্টমার|গ্রাহক|ক্রেতা)/iu', $normalized) &&
+            !preg_match('/(due|dues|baki|কিস্তি|installment)/iu', $normalized)
+        ) {
+            return 'customers_info';
+        }
+
+        // 4. Vendors, Suppliers & Materials ("vendor koyta", "vendor list", "supplier", "ভেন্ডর", "সরবরাহকারী")
+        if (
+            preg_match('/(vendor|vendors|supplier|suppliers|ভেন্ডর|সরবরাহকারী)/iu', $normalized)
+        ) {
+            return 'vendors_info';
+        }
+
+        // 5. Materials & Construction Stock ("cement", "steel", "stock", "material", "রড", "সিমেন্ট", "ম্যাটেরিয়াল")
+        if (
+            preg_match('/(cement|steel|rod|sand|material|materials|site stock|স্টক|মালামাল|সিমেন্ট|রড|বালু)/iu', $normalized)
+        ) {
+            return 'materials_stock';
+        }
+
+        // 6. Land Bank ("land", "jomi", "parcel", "katha", "জমি", "প্লট", "মৌজা")
+        if (
+            preg_match('/(land|jomi|parcel|mouza|katha|khatian|dag|জমি|প্লট|মৌজা|খতিয়ান|দাগ)/iu', $normalized)
+        ) {
+            return 'land_bank';
+        }
+
+        // 7. Unit Pricing ("shobcheye dami", "flats price", "কম দামি", "ফ্ল্যাটের দাম", "price sqft")
+        if (
+            preg_match('/(price|dam|cost|rate|pricing|dami|sqft price|দামি|মূল্য|দাম|বাজেট).*?(unit|flat|apartment|ফ্ল্যাট|ইউনিট)/iu', $normalized) ||
+            preg_match('/(unit|flat|apartment|ফ্ল্যাট|ইউনিট).*?(price|dam|cost|rate|pricing|dami|sqft price|দামি|মূল্য|দাম)/iu', $normalized)
+        ) {
+            return 'units_pricing';
+        }
+
+        // 8. Project Units & Inventory ("unit koyta", "flat koyta", "available flat", "খালি ফ্ল্যাট")
+        if (
+            preg_match('/(unit(s)?|flat(s)?|apartment(s)?|inventory|stock|available|khali|খালি|ইউনিট|ফ্ল্যাট)/iu', $normalized)
         ) {
             return 'inventory';
         }
 
-        // 3. Daily Site Labor & Muster Roll (check before generic profit so "labor" never matches "lab")
+        // 9. Daily Site Labor & Muster Roll ("labor", "shromik", "muster", "হাজিরা", "লেবার", "মজুরি")
         if (
             preg_match('/(labor(s)?|laborer(s)?|labour(s)?|shromik|muster|hajira|হাজিরা|লেবার|শ্রমিক|মজুরি|wage(s)?|daily wage)/iu', $normalized)
         ) {
             return 'labor';
         }
 
-        // 4. Sales & Bookings Today (handles ajke, ajker, ajaker, aajke, aajker, today, আজকের, ইত্যাদি)
+        // 10. Sales & Bookings Today ("ajker sell", "today sales", "আজকের সেল", "ajaker sell koyta hoise")
         if (
             preg_match('/(aj(a)?k(e|er|a)|aaj(a)?k(e|er|a)|today|আজকে|আজকের).*?(sel(l)?|sale(s)?|booking(s)?|boking|বিক্রি|বিক্রয়|সেল|বুকিং)/iu', $normalized) ||
-            preg_match('/(sel(l)?|sale(s)?|booking(s)?|boking|বিক্রি|বিক্রয়|সেল|বুকিং).*?(aj(a)?k(e|er|a)|aaj(a)?k(e|er|a)|today|আজকে|আজকের)/iu' , $normalized)
+            preg_match('/(sel(l)?|sale(s)?|booking(s)?|boking|বিক্রি|বিক্রয়|সেল|বুকিং).*?(aj(a)?k(e|er|a)|aaj(a)?k(e|er|a)|today|আজকে|আজকের)/iu', $normalized)
         ) {
             return 'sales_today';
         }
 
-        // 5. Sales & Bookings General / Monthly / Total
+        // 11. Sales & Bookings General / Monthly / Total ("total sales", "booking list", "মোট বিক্রি")
         if (
             preg_match('/(sel(l)?|sale(s)?|booking(s)?|boking|বিক্রি|বিক্রয়|সেল|বুকিং)/iu', $normalized) &&
             preg_match('/(koyta|koita|koto|how many|total|shob|sob|সব|মোট|মাস|month|list|তালিকা)/iu', $normalized)
@@ -110,7 +181,7 @@ class ErpAiAgentService
             return 'sales_summary';
         }
 
-        // 6. Profit / Financials Today (using word boundaries around short words like lav, lab, los)
+        // 12. Profit / Financials Today ("ajker profit", "ajker lav", "আজকের লাভ", "ajker income")
         if (
             preg_match('/(aj(a)?k(e|er|a)|aaj(a)?k(e|er|a)|today|আজকে|আজকের).*?(profit|\blav\b|\blabh\b|\blab\b|\blos(s)?\b|income|incom|expense|expens|khoro(ch|j|s)|ayon|bey|লাভ|ক্ষতি|ইনকাম|খরচ|প্রফিট|ব্যয়|আয়)/iu', $normalized) ||
             preg_match('/(profit|\blav\b|\blabh\b|\blab\b|\blos(s)?\b|income|incom|expense|expens|khoro(ch|j|s)|লাভ|ক্ষতি|ইনকাম|খরচ|প্রফিট).*?(aj(a)?k(e|er|a)|aaj(a)?k(e|er|a)|today|আজকে|আজকের)/iu', $normalized)
@@ -118,7 +189,7 @@ class ErpAiAgentService
             return 'profit_today';
         }
 
-        // 7. Profit / Financials Overall / Monthly
+        // 13. Profit / Financials Overall / Monthly ("profit summary", "total income", "মোট লাভ")
         if (
             preg_match('/(profit|\blav\b|\blabh\b|\blab\b|\bloss\b|\blos\b|লাভ|ক্ষতি|প্রফিট)/iu', $normalized) ||
             preg_match('/(income|expense|khoro(ch|j|s)|খরচ|ইনকাম|আয়|ব্যয়).*?(koto|how much|summary|মোট|সব)/iu', $normalized)
@@ -126,43 +197,69 @@ class ErpAiAgentService
             return 'profit_summary';
         }
 
-        // 8. Dues / Receivables / Installments
+        // 14. Dues / Receivables / Installments ("due koto", "baki koto", "বকেয়া কত", "কিস্তি বকেয়া")
         if (
             preg_match('/(due(s)?|baki|bakeya|bokeya|boccheya|বকেয়া|বকেয়া|বাকি|ডিউ|কিস্তি|installment(s)?|kisti|receivable(s)?|payment pending)/iu', $normalized)
         ) {
             return 'dues';
         }
 
-        // 9. CRM Leads & Inquiries
+        // 15. CRM Leads & Inquiries ("lead koyta", "leads list", "লিড", "অনুসন্ধান")
         if (
             preg_match('/(lead(s)?|inquiry|inquiries|customer inquiry|নতুন গ্রাহক|লিড|অনুসন্ধান)/iu', $normalized)
         ) {
             return 'leads';
         }
 
-        // 10. Permanent Employees & Payroll
+        // 16. Permanent Employees & Payroll ("employee koyjon", "staff list", "বেতন", "কর্মচারী", "salary")
         if (
             preg_match('/(employee(s)?|staff(s)?|kormochari|কর্মচারী|কর্মকর্তা|payroll(s)?|salary|বেতন)/iu', $normalized)
         ) {
             return 'employees';
         }
 
-        // 11. Help / Commands
+        // 17. Transactions & Bank / Cash Movements ("transaction", "লেনদেন", "টাকা কোথায় গেল")
+        if (
+            preg_match('/(transaction|transactions|payment|payments|bank|cash|লেনদেন|পেমেন্ট|ক্যাশ|ব্যাংক)/iu', $normalized)
+        ) {
+            return 'transactions_info';
+        }
+
+        // 18. Smart Entity / Name Search Check:
+        // If query mentions an explicit person name or specific keyword like "Hasan", "Rahim", "Gulshan", "Aurelia", "Parvez"
+        $words = preg_split('/[\s,\.\?\!]+/u', $query, -1, PREG_SPLIT_NO_EMPTY);
+        $stopWords = ['ki', 'koto', 'koyta', 'koita', 'ase', 'ache', 'hoise', 'holo', 'kemon', 'amader', 'er', 'theke', 'dao', 'bolo', 'bistarito', 'info', 'details', 'tell', 'me', 'about', 'how', 'many', 'much', 'is', 'the', 'what', 'are'];
+        foreach ($words as $w) {
+            $cleaned = mb_strtolower($w, 'UTF-8');
+            if (mb_strlen($cleaned) >= 3 && !in_array($cleaned, $stopWords)) {
+                // Check if this keyword exists in Customer, Lead, Project, or Vendor names
+                if (
+                    CrmCustomer::where('name', 'like', "%{$cleaned}%")->orWhere('phone', 'like', "%{$cleaned}%")->exists() ||
+                    CrmLead::where('name', 'like', "%{$cleaned}%")->orWhere('phone', 'like', "%{$cleaned}%")->exists() ||
+                    DevProject::where('name', 'like', "%{$cleaned}%")->exists() ||
+                    ConVendor::where('name', 'like', "%{$cleaned}%")->exists()
+                ) {
+                    return 'smart_entity_search';
+                }
+            }
+        }
+
+        // 19. Help / Commands
         if (
             preg_match('/(help|sahajjo|command|questions|ki ki|কী কী|সাহায্য|guide|কিভাবে)/iu', $normalized)
         ) {
             return 'help';
         }
 
-        // 12. Company Overview / Executive Summary
+        // 20. Executive Overview / Summary
         if (
             preg_match('/(summary|overview|obostha|dashboard|status|সারসংক্ষেপ|সার্বিক|অবস্থা|রিপোর্ট|report|সবকিছু|overall)/iu', $normalized)
         ) {
             return 'company_overview';
         }
 
-        // Default to company overview if generic or unmatched
-        return 'company_overview';
+        // Default to smart entity search if we can find anything, else company overview
+        return 'smart_entity_search';
     }
 
     /**
@@ -176,7 +273,7 @@ class ErpAiAgentService
         }
 
         // Common Banglish words
-        $banglishTerms = ['ajke', 'ajker', 'ajaker', 'aajke', 'aajker', 'koto', 'koyta', 'koita', 'baki', 'bakeya', 'bokeya', 'lav', 'labh', 'khoroch', 'ase', 'hoise', 'hobe', 'kemon', 'shob', 'sob', 'kisti', 'taka', 'koto'];
+        $banglishTerms = ['ajke', 'ajker', 'ajaker', 'aajke', 'aajker', 'koto', 'koyta', 'koita', 'baki', 'bakeya', 'bokeya', 'lav', 'labh', 'khoroch', 'ase', 'hoise', 'hobe', 'kemon', 'shob', 'sob', 'kisti', 'taka', 'amader', 'dao', 'bolo'];
         $lower = mb_strtolower($query);
         foreach ($banglishTerms as $term) {
             if (str_contains($lower, $term)) {
@@ -197,8 +294,9 @@ class ErpAiAgentService
 
         switch ($intent) {
             case 'search_code':
-                preg_match('/(bkg-[0-9]{4}-[0-9]+|led-[0-9]{4}-[0-9]+)/i', $rawQuery, $matches);
+                preg_match('/(bkg-[0-9]{4}-[0-9]+|led-[0-9]{4}-[0-9]+|prj-[0-9]{4}-[0-9]+|ven-[0-9]{4}-[0-9]+|emp-[0-9]{4}-[0-9]+)/i', $rawQuery, $matches);
                 $code = strtoupper($matches[1] ?? '');
+
                 if (str_starts_with($code, 'BKG')) {
                     $b = DevSalesBooking::with(['customer', 'project', 'unit', 'installments'])->where('booking_code', $code)->first();
                     if ($b) {
@@ -219,7 +317,7 @@ class ErpAiAgentService
                         ];
                     }
                 } elseif (str_starts_with($code, 'LED')) {
-                    $l = CrmLead::with(['project', 'property'])->where('lead_code', $code)->first();
+                    $l = CrmLead::with(['featuredProject', 'property'])->where('lead_code', $code)->first();
                     if ($l) {
                         return [
                             'type' => 'lead',
@@ -230,12 +328,185 @@ class ErpAiAgentService
                             'stage' => $l->stage,
                             'source' => $l->source,
                             'priority' => $l->priority,
-                            'project' => $l->project->name ?? 'General',
+                            'project' => $l->featuredProject->title ?? 'General',
                             'date' => $l->created_at->format('Y-m-d'),
+                        ];
+                    }
+                } elseif (str_starts_with($code, 'PRJ')) {
+                    $p = DevProject::where('project_code', $code)->first();
+                    if ($p) {
+                        return [
+                            'type' => 'project',
+                            'code' => $code,
+                            'found' => true,
+                            'name' => $p->name,
+                            'location' => $p->location,
+                            'total_units' => $p->total_units,
+                            'status' => $p->status,
                         ];
                     }
                 }
                 return ['type' => 'unknown', 'code' => $code, 'found' => false];
+
+            case 'projects_info':
+                $projects = DevProject::withCount([
+                    'units as total_units_count',
+                    'units as available_units_count' => fn($q) => $q->where('status', 'available'),
+                    'units as booked_units_count' => fn($q) => $q->where('status', 'booked'),
+                    'units as sold_units_count' => fn($q) => $q->where('status', 'sold'),
+                ])->get();
+
+                return [
+                    'count' => $projects->count(),
+                    'projects' => $projects->map(fn($p) => [
+                        'code' => $p->project_code,
+                        'name' => $p->name,
+                        'location' => $p->location ?? $p->address ?? 'N/A',
+                        'type' => $p->project_type ?? 'Residential',
+                        'total_units' => $p->total_units ?? $p->total_units_count,
+                        'available' => $p->available_units_count,
+                        'booked' => $p->booked_units_count,
+                        'sold' => $p->sold_units_count,
+                        'floors' => $p->total_floors,
+                        'status' => $p->status,
+                    ])->toArray(),
+                ];
+
+            case 'customers_info':
+                $customers = CrmCustomer::with(['company'])->latest()->take(10)->get();
+                $totalCustomers = CrmCustomer::count();
+
+                return [
+                    'total_count' => $totalCustomers,
+                    'customers' => $customers->map(fn($c) => [
+                        'code' => $c->customer_code,
+                        'name' => $c->name,
+                        'phone' => $c->phone,
+                        'email' => $c->email,
+                        'status' => $c->status,
+                        'nid' => $c->nid_number ?? 'N/A',
+                    ])->toArray(),
+                ];
+
+            case 'vendors_info':
+                $vendors = ConVendor::latest()->take(10)->get();
+                $totalVendors = ConVendor::count();
+
+                return [
+                    'total_count' => $totalVendors,
+                    'vendors' => $vendors->map(fn($v) => [
+                        'code' => $v->vendor_code,
+                        'name' => $v->name,
+                        'contact_person' => $v->contact_person ?? 'N/A',
+                        'phone' => $v->phone,
+                        'status' => $v->status,
+                    ])->toArray(),
+                ];
+
+            case 'materials_stock':
+                $stocks = ConSiteStock::with(['project'])->get();
+
+                return [
+                    'count' => $stocks->count(),
+                    'stocks' => $stocks->map(fn($s) => [
+                        'material' => $s->material_name,
+                        'project' => $s->project->name ?? 'Main Site',
+                        'current_qty' => (float) $s->current_stock_qty,
+                        'unit' => $s->unit_of_measure,
+                        'total_received' => (float) $s->total_received_qty,
+                        'total_consumed' => (float) $s->total_consumed_qty,
+                    ])->toArray(),
+                ];
+
+            case 'land_bank':
+                $parcels = LandParcel::all();
+
+                return [
+                    'total_parcels' => $parcels->count(),
+                    'total_katha' => (float) $parcels->sum('total_area_katha'),
+                    'parcels' => $parcels->map(fn($lp) => [
+                        'code' => $lp->parcel_code,
+                        'title' => $lp->title,
+                        'mouza' => $lp->mouza,
+                        'katha' => (float) $lp->total_area_katha,
+                        'ratio' => "{$lp->landowner_ratio}% / {$lp->developer_ratio}%",
+                        'status' => $lp->status,
+                    ])->toArray(),
+                ];
+
+            case 'units_pricing':
+                $units = DevProjectUnit::with(['project'])->orderBy('grand_total_price', 'desc')->take(10)->get();
+                $avgSqftPrice = (float) DevProjectUnit::avg('base_price_sqft');
+                $highestPrice = (float) DevProjectUnit::max('grand_total_price');
+                $lowestPrice = (float) DevProjectUnit::min('grand_total_price');
+
+                return [
+                    'highest_price' => $highestPrice,
+                    'lowest_price' => $lowestPrice,
+                    'avg_sqft_price' => $avgSqftPrice,
+                    'units' => $units->map(fn($u) => [
+                        'unit_number' => $u->unit_number,
+                        'project' => $u->project->name ?? 'Project',
+                        'bedrooms' => $u->bedrooms,
+                        'sqft' => (float) $u->gross_area_sqft,
+                        'base_rate' => (float) $u->base_price_sqft,
+                        'total_price' => (float) $u->grand_total_price,
+                        'status' => $u->status,
+                    ])->toArray(),
+                ];
+
+            case 'transactions_info':
+                $recent = Transaction::with(['category'])->latest('transaction_date')->take(10)->get();
+                $todayIncome = (float) Transaction::income()->whereDate('transaction_date', $today)->sum('amount');
+                $todayExpense = (float) Transaction::expense()->whereDate('transaction_date', $today)->sum('amount');
+
+                return [
+                    'today_income' => $todayIncome,
+                    'today_expense' => $todayExpense,
+                    'transactions' => $recent->map(fn($t) => [
+                        'type' => $t->type,
+                        'title' => $t->title,
+                        'amount' => (float) $t->amount,
+                        'category' => $t->category->name ?? 'General',
+                        'method' => $t->payment_method,
+                        'date' => $t->transaction_date ? $t->transaction_date->format('Y-m-d') : 'N/A',
+                    ])->toArray(),
+                ];
+
+            case 'smart_entity_search':
+                // Extract searchable search terms from the query
+                $words = preg_split('/[\s,\.\?\!]+/u', $rawQuery, -1, PREG_SPLIT_NO_EMPTY);
+                $stopWords = ['ki', 'koto', 'koyta', 'koita', 'ase', 'ache', 'hoise', 'holo', 'kemon', 'amader', 'er', 'theke', 'dao', 'bolo', 'details', 'tell', 'me', 'about', 'how', 'many', 'much', 'is', 'the', 'what', 'are', 'bistarito'];
+                $searchTerm = '';
+
+                foreach ($words as $w) {
+                    $cleaned = mb_strtolower($w, 'UTF-8');
+                    if (mb_strlen($cleaned) >= 3 && !in_array($cleaned, $stopWords)) {
+                        $searchTerm = $w;
+                        break;
+                    }
+                }
+
+                if ($searchTerm === '') {
+                    $searchTerm = $rawQuery;
+                }
+
+                $foundCustomers = CrmCustomer::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
+                $foundLeads = CrmLead::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
+                $foundProjects = DevProject::where('name', 'like', "%{$searchTerm}%")->orWhere('location', 'like', "%{$searchTerm}%")->get();
+                $foundUnits = DevProjectUnit::where('unit_number', 'like', "%{$searchTerm}%")->get();
+                $foundEmployees = HrEmployee::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
+                $foundVendors = ConVendor::where('name', 'like', "%{$searchTerm}%")->orWhere('phone', 'like', "%{$searchTerm}%")->get();
+
+                return [
+                    'search_term' => $searchTerm,
+                    'customers' => $foundCustomers->map(fn($c) => ['name' => $c->name, 'code' => $c->customer_code, 'phone' => $c->phone, 'status' => $c->status])->toArray(),
+                    'leads' => $foundLeads->map(fn($l) => ['name' => $l->name, 'code' => $l->lead_code, 'phone' => $l->phone, 'stage' => $l->stage])->toArray(),
+                    'projects' => $foundProjects->map(fn($p) => ['name' => $p->name, 'code' => $p->project_code, 'location' => $p->location, 'status' => $p->status])->toArray(),
+                    'units' => $foundUnits->map(fn($u) => ['unit' => $u->unit_number, 'sqft' => (float)$u->gross_area_sqft, 'price' => (float)$u->grand_total_price, 'status' => $u->status])->toArray(),
+                    'employees' => $foundEmployees->map(fn($e) => ['name' => $e->name, 'phone' => $e->phone, 'salary' => (float)$e->gross_salary, 'status' => $e->status])->toArray(),
+                    'vendors' => $foundVendors->map(fn($v) => ['name' => $v->name, 'phone' => $v->phone, 'contact' => $v->contact_person])->toArray(),
+                ];
 
             case 'sales_today':
                 $query = DevSalesBooking::with(['customer', 'project', 'unit'])
@@ -250,7 +521,6 @@ class ErpAiAgentService
                 $totalContract = (float) $todayBookings->sum('total_contract_amount');
                 $totalDownpayment = (float) $todayBookings->sum('downpayment_amount');
 
-                // Also fetch month sales for comparison
                 $monthCount = DevSalesBooking::whereMonth('booking_date', $today->month)
                     ->whereYear('booking_date', $today->year)
                     ->count();
@@ -306,11 +576,10 @@ class ErpAiAgentService
                 $totalTodayExpense = $todayExpense + $todayLaborWage;
                 $todayNetProfit = $todayIncome - $totalTodayExpense;
 
-                // Month-to-date context
                 $monthIncome = (float) Transaction::income()->whereBetween('transaction_date', [$startOfMonth, $today])->sum('amount');
                 $monthExpense = (float) Transaction::expense()->whereBetween('transaction_date', [$startOfMonth, $today])->sum('amount');
                 $monthLabor = (float) HrLaborMusterRoll::whereBetween('work_date', [$startOfMonth, $today])->sum('total_wage');
-                $monthPayroll = (float) HrPayroll::where('payroll_month', $today->format('Y-m'))->sum('net_salary');
+                $monthPayroll = (float) HrPayroll::where('salary_month', $today->month)->where('salary_year', $today->year)->sum('net_payable');
                 $monthNetProfit = $monthIncome - ($monthExpense + $monthLabor + $monthPayroll);
 
                 return [
@@ -329,7 +598,7 @@ class ErpAiAgentService
                 $totalIncome = (float) Transaction::income()->sum('amount');
                 $totalExpense = (float) Transaction::expense()->sum('amount');
                 $totalLabor = (float) HrLaborMusterRoll::sum('total_wage');
-                $totalPayroll = (float) HrPayroll::sum('net_salary');
+                $totalPayroll = (float) HrPayroll::sum('net_payable');
                 $totalOutflow = $totalExpense + $totalLabor + $totalPayroll;
                 $netProfit = $totalIncome - $totalOutflow;
 
@@ -388,7 +657,7 @@ class ErpAiAgentService
                     ->pluck('total', 'stage')
                     ->toArray();
 
-                $recentLeads = CrmLead::with(['project', 'property'])
+                $recentLeads = CrmLead::with(['featuredProject', 'property'])
                     ->latest()
                     ->take(5)
                     ->get()
@@ -399,7 +668,7 @@ class ErpAiAgentService
                         'stage' => $l->stage,
                         'source' => $l->source,
                         'priority' => $l->priority,
-                        'project' => $l->project->name ?? 'General',
+                        'project' => $l->featuredProject->title ?? 'General',
                         'date' => $l->created_at->format('Y-m-d'),
                     ])->toArray();
 
@@ -458,25 +727,39 @@ class ErpAiAgentService
 
             case 'employees':
                 $totalEmployees = HrEmployee::where('status', 'active')->count();
-                $totalPayrollsPaid = (float) HrPayroll::where('status', 'paid')->sum('net_salary');
-                $pendingPayrolls = (float) HrPayroll::where('status', 'pending')->sum('net_salary');
+                $employeesList = HrEmployee::with(['department', 'designation'])->take(10)->get();
+                $totalPayrollsPaid = (float) HrPayroll::where('payment_status', 'paid')->sum('net_payable');
+                $pendingPayrolls = (float) HrPayroll::where('payment_status', 'pending')->sum('net_payable');
 
                 return [
                     'active_employees' => $totalEmployees,
                     'total_payroll_paid' => $totalPayrollsPaid,
                     'pending_payroll_approval' => $pendingPayrolls,
+                    'employees' => $employeesList->map(fn($e) => [
+                        'code' => $e->employee_code,
+                        'name' => $e->name,
+                        'designation' => $e->designation->name ?? 'Staff',
+                        'department' => $e->department->name ?? 'General',
+                        'gross_salary' => (float) $e->gross_salary,
+                        'phone' => $e->phone,
+                    ])->toArray(),
                 ];
 
             case 'help':
                 return [
                     'supported_topics' => [
+                        'Projects & Towers' => ['আমাদের কয়টা প্রজেক্ট আছে?', 'প্রজেক্ট লিস্ট দাও', 'where are the projects?'],
                         'Sales & Bookings' => ['আজকের সেল কয়টা হয়েছে?', 'মোট কয়টা বুকিং আছে?', 'today sales'],
                         'Profit & Loss' => ['আজকের লাভ কত?', 'চলতি মাসের মোট ইনকাম ও এক্সপেন্স কত?', 'profit summary'],
                         'Dues & Receivables' => ['কত টাকা বকেয়া আছে?', 'কার কার কিস্তি বাকি আছে?', 'total dues'],
                         'CRM Leads' => ['আজকে কয়টা লিড এসেছে?', 'মোট লিডের সংখ্যা কত?', 'crm leads status'],
-                        'Flats / Inventory' => ['ইউনিট কয়টা খালি আছে?', 'প্রজেক্ট অনুযায়ী ফ্ল্যাট সংখ্যা কত?', 'available units'],
+                        'Customers' => ['কাস্টমার কয়জন আছে?', 'কাস্টমারদের তালিকা', 'customer list'],
+                        'Flats / Pricing' => ['ইউনিট কয়টা খালি আছে?', 'সবচেয়ে দামি ফ্ল্যাট কোনটা?', 'available units'],
+                        'Vendors & Materials' => ['ভেন্ডর কয়টা আছে?', 'সিমেন্ট ও রড স্টক কত?', 'vendor list'],
                         'Construction Labor' => ['আজকের সাইট লেবার হাজিরা কত?', 'লেবারদের দৈনিক মজুরি কত?', 'daily labor muster'],
-                        'Executive Overview' => ['সার্বিক অবস্থা কেমন?', 'কোম্পানির রিপোর্ট দাও', 'company overview'],
+                        'Employees & Payroll' => ['কর্মচারী কয়জন আছে?', 'স্টাফদের বেতন কত?', 'employee list'],
+                        'Land Bank' => ['জমির পরিমাণ কত?', 'ল্যান্ড পার্সেল কয়টা আছে?', 'land parcels'],
+                        'Search by Name' => ['Hasan Parvez এর তথ্য', 'BKG-2026-00001', 'Aurelia Heights'],
                     ],
                 ];
 
@@ -492,6 +775,8 @@ class ErpAiAgentService
                 $availableUnits = DevProjectUnit::where('status', 'available')->count();
                 $todayLeads = CrmLead::whereDate('created_at', $today)->count();
                 $totalLeads = CrmLead::count();
+                $totalProjects = DevProject::count();
+                $totalCustomers = CrmCustomer::count();
 
                 return [
                     'date' => $today->format('Y-m-d'),
@@ -506,6 +791,8 @@ class ErpAiAgentService
                     'available_units' => $availableUnits,
                     'today_leads' => $todayLeads,
                     'total_leads' => $totalLeads,
+                    'total_projects' => $totalProjects,
+                    'total_customers' => $totalCustomers,
                 ];
         }
     }
@@ -571,8 +858,208 @@ class ErpAiAgentService
                           "| ⚡ **Priority** | {$data['priority']} |\n" .
                           "| 🏢 **Project** | {$data['project']} |\n" .
                           "| 📅 **Created Date** | {$data['date']} |\n";
+                } elseif ($data['type'] === 'project') {
+                    return "### 🏢 প্রজেক্ট বিবরণ: `{$data['code']}`\n\n- নাম: **{$data['name']}**\n- লোকেশন: **{$data['location']}**\n- মোট ইউনিট: **{$data['total_units']} টি**\n- স্ট্যাটাস: **{$data['status']}**";
                 }
                 return "Record found for code: {$data['code']}";
+
+            case 'projects_info':
+                $count = $data['count'] ?? 0;
+                $out = $isBangla
+                    ? "### 🏗️ চলমান রিয়েল এস্টেট প্রকল্পসমূহ (মোট: {$count} টি)\n\n" .
+                      "| কোড | প্রকল্পের নাম | লোকেশন | মোট ইউনিট | খালি (Available) | বুকড | স্ট্যাটাস |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 🏗️ Real Estate Projects Register (Total: {$count})\n\n" .
+                      "| Code | Project Name | Location | Units | Available | Booked | Status |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['projects'] ?? [] as $p) {
+                    $out .= "| `{$p['code']}` | **{$p['name']}** | {$p['location']} | {$p['total_units']} টি | <span class=\"badge bg-success\">{$p['available']}</span> | {$p['booked']} | <span class=\"badge bg-primary\">{$p['status']}</span> |\n";
+                }
+                return $out;
+
+            case 'customers_info':
+                $count = $data['total_count'] ?? 0;
+                $out = $isBangla
+                    ? "### 👥 নিবন্ধিত কাস্টমার মাস্টার তালিকা (সর্বমোট: {$count} জন)\n\n" .
+                      "| আইডি | কাস্টমারের নাম | মোবাইল | ইমেইল | স্ট্যাটাস |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 👥 Customer Master Directory (Total: {$count})\n\n" .
+                      "| Customer Code | Full Name | Phone | Email | Status |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['customers'] ?? [] as $c) {
+                    $out .= "| `{$c['code']}` | **{$c['name']}** | {$c['phone']} | {$c['email']} | <span class=\"badge bg-success\">{$c['status']}</span> |\n";
+                }
+                return $out;
+
+            case 'vendors_info':
+                $count = $data['total_count'] ?? 0;
+                $out = $isBangla
+                    ? "### 🚚 সরবরাহকারী ও ভেন্ডর তালিকা (মোট: {$count} টি)\n\n" .
+                      "| কোড | ভেন্ডরের নাম | যোগাযোগ ব্যক্তি | মোবাইল | স্ট্যাটাস |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 🚚 Construction Vendors & Suppliers (Total: {$count})\n\n" .
+                      "| Code | Vendor Name | Contact Person | Phone | Status |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['vendors'] ?? [] as $v) {
+                    $out .= "| `{$v['code']}` | **{$v['name']}** | {$v['contact_person']} | {$v['phone']} | <span class=\"badge bg-info text-dark\">{$v['status']}</span> |\n";
+                }
+                return $out;
+
+            case 'materials_stock':
+                $count = $data['count'] ?? 0;
+                $out = $isBangla
+                    ? "### 🧱 সাইট নির্মাণ সামগ্রী ও স্টক রিপোর্ট\n\n" .
+                      "| মালামালের নাম | প্রকল্প সাইট | বর্তমান মজুদ (Current Stock) | মোট গৃহীত | মোট ব্যবহার |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 🧱 Site Material Inventory Stocks\n\n" .
+                      "| Material Name | Project Site | Current Stock | Received | Consumed |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['stocks'] ?? [] as $s) {
+                    $out .= "| **{$s['material']}** | {$s['project']} | **{$s['current_qty']} {$s['unit']}** | {$s['total_received']} | {$s['total_consumed']} |\n";
+                }
+                return $out;
+
+            case 'land_bank':
+                $count = $data['total_parcels'] ?? 0;
+                $totalKatha = $data['total_katha'] ?? 0;
+                $out = $isBangla
+                    ? "### 🗺️ কোম্পানির ল্যান্ড ব্যাংক ও জমির হিসাব\n\n" .
+                      "> **সর্বমোট জমির পরিমাণ: {$totalKatha} কাঠা** (মোট পার্সেল: {$count} টি)\n\n" .
+                      "| কোড | জমির শিরোনাম | মৌজা | পরিমাণ (কাঠা) | জেভি অনুপাত (Landowner/Dev) | অবস্থা |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 🗺️ Land Bank & Parcel Assets\n\n" .
+                      "> **Total Land Holding: {$totalKatha} Katha** (Total Parcels: {$count})\n\n" .
+                      "| Code | Parcel Title | Mouza | Area (Katha) | JV Ratio | Status |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['parcels'] ?? [] as $lp) {
+                    $out .= "| `{$lp['code']}` | **{$lp['title']}** | {$lp['mouza']} | {$lp['katha']} | {$lp['ratio']} | <span class=\"badge bg-success\">{$lp['status']}</span> |\n";
+                }
+                return $out;
+
+            case 'units_pricing':
+                $high = $fmt($data['highest_price'] ?? 0);
+                $low = $fmt($data['lowest_price'] ?? 0);
+                $avgSqft = $fmt($data['avg_sqft_price'] ?? 0);
+
+                $out = $isBangla
+                    ? "### 💎 ফ্ল্যাট ও ইউনিট মূল্য তালিকা\n\n" .
+                      "- **সর্বোচ্চ ইউনিট মূল্য:** **{$high}**\n" .
+                      "- **সর্বনিম্ন ইউনিট মূল্য:** **{$low}**\n" .
+                      "- **গড় প্রতি স্কয়ারফুট রেট:** **{$avgSqft}**\n\n" .
+                      "| ইউনিট নম্বর | প্রজেক্ট | বেডরুম | সাইজ (sqft) | প্রতি স্কয়ারফুট | মোট মূল্য | অবস্থা |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 💎 Unit Pricing & Apartment Register\n\n" .
+                      "- **Highest Unit Price:** **{$high}**\n" .
+                      "- **Lowest Unit Price:** **{$low}**\n" .
+                      "- **Average Sqft Rate:** **{$avgSqft}**\n\n" .
+                      "| Unit | Project | Beds | Size (sqft) | Base Rate | Total Price | Status |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['units'] ?? [] as $u) {
+                    $uPrice = $fmt($u['total_price']);
+                    $uRate = $fmt($u['base_rate']);
+                    $out .= "| **Unit {$u['unit_number']}** | {$u['project']} | {$u['bedrooms']} Bed | {$u['sqft']} | {$uRate} | **{$uPrice}** | <span class=\"badge bg-secondary\">{$u['status']}</span> |\n";
+                }
+                return $out;
+
+            case 'transactions_info':
+                $tInc = $fmt($data['today_income'] ?? 0);
+                $tExp = $fmt($data['today_expense'] ?? 0);
+
+                $out = $isBangla
+                    ? "### 💳 সাম্প্রতিক লেনদেন ও ক্যাশ মুভমেন্ট\n\n" .
+                      "- **আজকের মোট আয়:** **{$tInc}**\n" .
+                      "- **আজকের মোট ব্যয়:** **{$tExp}**\n\n" .
+                      "| ধরণ | বিবরণ | খাত / ক্যাটাগরি | পরিমাণ | মাধ্যম | তারিখ |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- |\n"
+                    : "### 💳 Recent Cash & Bank Transactions\n\n" .
+                      "- **Today's Inflow:** **{$tInc}**\n" .
+                      "- **Today's Outflow:** **{$tExp}**\n\n" .
+                      "| Type | Title | Category | Amount | Method | Date |\n" .
+                      "| :--- | :--- | :--- | :--- | :--- | :--- |\n";
+
+                foreach ($data['transactions'] ?? [] as $t) {
+                    $tAmt = $fmt($t['amount']);
+                    $badge = $t['type'] === 'income' ? '<span class="badge bg-success">Income</span>' : '<span class="badge bg-danger">Expense</span>';
+                    $out .= "| {$badge} | {$t['title']} | {$t['category']} | **{$tAmt}** | {$t['method']} | {$t['date']} |\n";
+                }
+                return $out;
+
+            case 'smart_entity_search':
+                $term = $data['search_term'] ?? $query;
+                $foundAny = false;
+                $out = $isBangla
+                    ? "### 🔍 '{$term}' এর অনুসন্ধান ফলাফল\n\n"
+                    : "### 🔍 Search Results for '{$term}'\n\n";
+
+                if (!empty($data['customers'])) {
+                    $foundAny = true;
+                    $out .= "#### 👤 সম্পর্কিত কাস্টমার:\n";
+                    foreach ($data['customers'] as $c) {
+                        $out .= "- **{$c['name']}** (Code: `{$c['code']}`), মোবাইল: `{$c['phone']}`, স্ট্যাটাস: `{$c['status']}`\n";
+                    }
+                    $out .= "\n";
+                }
+
+                if (!empty($data['leads'])) {
+                    $foundAny = true;
+                    $out .= "#### 🎯 সম্পর্কিত লিড:\n";
+                    foreach ($data['leads'] as $l) {
+                        $out .= "- **{$l['name']}** (Code: `{$l['code']}`), মোবাইল: `{$l['phone']}`, স্টেজ: `{$l['stage']}`\n";
+                    }
+                    $out .= "\n";
+                }
+
+                if (!empty($data['projects'])) {
+                    $foundAny = true;
+                    $out .= "#### 🏗️ সম্পর্কিত প্রজেক্ট:\n";
+                    foreach ($data['projects'] as $p) {
+                        $out .= "- **{$p['name']}** (Code: `{$p['code']}`), লোকেশন: `{$p['location']}`, স্ট্যাটাস: `{$p['status']}`\n";
+                    }
+                    $out .= "\n";
+                }
+
+                if (!empty($data['units'])) {
+                    $foundAny = true;
+                    $out .= "#### 🏢 সম্পর্কিত ফ্ল্যাট / ইউনিট:\n";
+                    foreach ($data['units'] as $u) {
+                        $out .= "- **Unit {$u['unit']}**, সাইজ: `{$u['sqft']} sqft`, মূল্য: **" . $fmt($u['price']) . "**, স্ট্যাটাস: `{$u['status']}`\n";
+                    }
+                    $out .= "\n";
+                }
+
+                if (!empty($data['employees'])) {
+                    $foundAny = true;
+                    $out .= "#### 👔 সম্পর্কিত কর্মকর্তা / কর্মচারী:\n";
+                    foreach ($data['employees'] as $e) {
+                        $out .= "- **{$e['name']}**, মোবাইল: `{$e['phone']}`, গ্রস বেতন: **" . $fmt($e['salary']) . "**\n";
+                    }
+                    $out .= "\n";
+                }
+
+                if (!$foundAny) {
+                    $out = $isBangla
+                        ? "### ℹ️ '{$term}' সম্পর্কিত কোনো তথ্য পাওয়া যায়নি।\n\n" .
+                          "তবে আপনি নিচের তথ্যগুলো জানতে চাইতে পারেন:\n" .
+                          "- **আজকের সেল কয়টা হয়েছে?**\n" .
+                          "- **আজকের লাভ কত?**\n" .
+                          "- **কত টাকা বকেয়া আছে?**\n" .
+                          "- **প্রজেক্টের তালিকা দাও**\n" .
+                          "- **কাস্টমারদের তালিকা দাও**"
+                        : "### ℹ️ No specific record found for '{$term}'.\n\n" .
+                          "You can ask about:\n" .
+                          "- **Today's sales count**\n" .
+                          "- **Today's net profit**\n" .
+                          "- **Total pending dues**\n" .
+                          "- **Project list or Customer directory**";
+                }
+
+                return $out;
 
             case 'sales_today':
                 $count = $data['count'] ?? 0;
@@ -851,24 +1338,30 @@ class ErpAiAgentService
                 $paid = $fmt($data['total_payroll_paid'] ?? 0);
                 $pend = $fmt($data['pending_payroll_approval'] ?? 0);
 
-                if ($isBangla) {
-                    return "### 👔 কোম্পানির স্থায়ী কর্মকর্তা ও স্টাফ পেরোল\n\n" .
-                           "- **সক্রিয় কর্মকর্তা ও কর্মচারীর সংখ্যা:** **{$emp} জন**\n" .
-                           "- **পরিশোধিত সর্বমোট পেরোল স্যালারি:** **{$paid}**\n" .
-                           "- **অনুমোদনের অপেক্ষায় থাকা বেতন বিল:** **{$pend}**\n\n" .
-                           "বিস্তারিত দেখতে [HR Employees](/erp/hr/employees) ও [Staff Payrolls](/erp/hr/payrolls) দেখুন।";
-                }
+                $out = $isBangla
+                    ? "### 👔 কোম্পানির স্থায়ী কর্মকর্তা ও স্টাফ পেরোল\n\n" .
+                      "- **সক্রিয় কর্মকর্তা ও কর্মচারীর সংখ্যা:** **{$emp} জন**\n" .
+                      "- **পরিশোধিত সর্বমোট পেরোল স্যালারি:** **{$paid}**\n" .
+                      "- **অনুমোদনের অপেক্ষায় থাকা বেতন বিল:** **{$pend}**\n\n" .
+                      "#### 📋 কর্মকর্তা ও কর্মচারীদের তালিকা:\n"
+                    : "### 👔 Permanent Staff & Payroll Overview\n\n" .
+                      "- **Active Permanent Employees:** **{$emp}**\n" .
+                      "- **Total Net Salaries Disbursed:** **{$paid}**\n" .
+                      "- **Pending Payroll Approvals:** **{$pend}**\n\n" .
+                      "#### 📋 Staff Directory:\n";
 
-                return "### 👔 Permanent Staff & Payroll Overview\n\n" .
-                       "- **Active Permanent Employees:** **{$emp}**\n" .
-                       "- **Total Net Salaries Disbursed:** **{$paid}**\n" .
-                       "- **Pending Payroll Approvals:** **{$pend}**\n\n" .
-                       "Manage employees at [HR Employees](/erp/hr/employees) or review [Staff Payrolls](/erp/hr/payrolls).";
+                $out .= "| আইডি | নাম | পদবী | বিভাগ | গ্রস বেতন | মোবাইল |\n";
+                $out .= "| :--- | :--- | :--- | :--- | :--- | :--- |\n";
+                foreach ($data['employees'] ?? [] as $e) {
+                    $gSal = $fmt($e['gross_salary']);
+                    $out .= "| `{$e['code']}` | **{$e['name']}** | {$e['designation']} | {$e['department']} | {$gSal} | {$e['phone']} |\n";
+                }
+                return $out;
 
             case 'help':
                 if ($isBangla) {
                     $out = "### 💡 আমি যেভাবে আপনাকে সাহায্য করতে পারি:\n\n" .
-                           "আমি রিয়েল এস্টেট ইআরপি এবং সিএমএস ডাটাবেসের সাথে সংযুক্ত একটি কৃত্রিম বুদ্ধিমত্তা। আপনি বাংলা বা ইংরেজিতে যেকোনো তথ্য জানতে পারেন:\n\n";
+                           "আমি রিয়েল এস্টেট ইআরপি এবং সিএমএস ডাটাবেসের সাথে সংযুক্ত একটি কৃত্রিম বুদ্ধিমত্তা। আপনি যেকোনো প্রশ্ন করতে পারেন:\n\n";
                     foreach ($data['supported_topics'] as $topic => $samples) {
                         $out .= "#### 🔹 {$topic}\n";
                         foreach ($samples as $s) {
@@ -880,7 +1373,7 @@ class ErpAiAgentService
                 }
 
                 $out = "### 💡 What I Can Help You With:\n\n" .
-                       "I am connected directly to your Real Estate ERP & CMS database. Ask me any question in English, Bengali, or Banglish:\n\n";
+                       "I am connected directly to your Real Estate ERP & CMS database. Ask me any question:\n\n";
                 foreach ($data['supported_topics'] as $topic => $samples) {
                     $out .= "#### 🔹 {$topic}\n";
                     foreach ($samples as $s) {
@@ -904,17 +1397,20 @@ class ErpAiAgentService
                 $totUnits = $data['total_units'] ?? 0;
                 $todayL = $data['today_leads'] ?? 0;
                 $totL = $data['total_leads'] ?? 0;
+                $totPrj = $data['total_projects'] ?? 0;
+                $totCust = $data['total_customers'] ?? 0;
 
                 if ($isBangla) {
                     return "### 🏢 কোম্পানির সার্বিক দৈনিক এক্সিকিউটিভ রিপোর্ট ({$dateStr})\n\n" .
-                           "| ক্ষেত্র | আজকের ডাটা | সামগ্রিক অবস্থা |\n" .
+                           "| ক্ষেত্র | আজকের ডাটা | সামগ্রিক ডাটাবেস অবস্থা |\n" .
                            "| :--- | :--- | :--- |\n" .
-                           "| 🎯 **বিক্রয় ও বুকিং** | **{$tSales} টি** ({$tSalesVal}) | বুকিং প্রক্রিয়া চলমান |\n" .
+                           "| 🎯 **বিক্রয় ও বুকিং** | **{$tSales} টি** ({$tSalesVal}) | বুকিং কার্যক্রম চলমান |\n" .
                            "| 💰 **আজকের নেট প্রফিট** | **{$tProfit}** | আয়: {$tInc} / ব্যয়: {$tExp} |\n" .
                            "| ⚠️ **বকেয়া কিস্তি (Dues)** | ওভারডিউ: **{$overdue}** | সর্বমোট বকেয়া: **{$dues}** |\n" .
-                           "| 👥 **সিআরএম লিড** | নতুন লিড: **{$todayL} টি** | মোট লিড ডাটাবেস: **{$totL} টি** |\n" .
-                           "| 🏢 **ফ্ল্যাট স্টক** | অবিক্রিত: **{$avail} টি** | মোট ফ্ল্যাট: **{$totUnits} টি** |\n\n" .
-                           "💡 *নির্দিষ্ট কোনো বিষয়ে বিস্তারিত জানতে উপরের বাটনগুলোতে ক্লিক করুন অথবা প্রশ্ন লিখুন।*";
+                           "| 👥 **সিআরএম লিডস** | নতুন লিড: **{$todayL} টি** | মোট লিড: **{$totL} টি** |\n" .
+                           "| 🏢 **ফ্ল্যাট ও ইউনিট স্টক** | অবিক্রিত: **{$avail} টি** | মোট ফ্ল্যাট: **{$totUnits} টি** |\n" .
+                           "| 🏗️ **প্রকল্প ও গ্রাহক** | মোট প্রজেক্ট: **{$totPrj} টি** | মোট নিবন্ধিত কাস্টমার: **{$totCust} জন** |\n\n" .
+                           "💡 *নির্দিষ্ট কোনো তথ্য জানতে সরাসরি নাম, কোড বা প্রশ্ন লিখুন (যেমন: \"প্রজেক্ট লিস্ট\", \"কাস্টমারদের নাম\", \"আজকের সেল\")।*";
                 }
 
                 return "### 🏢 Enterprise Executive Snapshot ({$dateStr})\n\n" .
@@ -924,8 +1420,9 @@ class ErpAiAgentService
                        "| 💰 **Today's Net Profit** | **{$tProfit}** | Inflow: {$tInc} / Outflow: {$tExp} |\n" .
                        "| ⚠️ **Customer Dues** | Overdue: **{$overdue}** | Total Due: **{$dues}** |\n" .
                        "| 👥 **CRM Leads** | New today: **{$todayL}** | Total database: **{$totL}** |\n" .
-                       "| 🏢 **Unit Inventory** | Available: **{$avail} units** | Total Units: **{$totUnits}** |\n\n" .
-                       "💡 *Ask specific questions anytime (e.g. \"today's sales\", \"how much due pending\", \"profit today\").*";
+                       "| 🏢 **Unit Inventory** | Available: **{$avail} units** | Total Units: **{$totUnits}** |\n" .
+                       "| 🏗️ **Projects & Customers** | Active Projects: **{$totPrj}** | Total Customers: **{$totCust}** |\n\n" .
+                       "💡 *Ask specific questions anytime (e.g. \"project list\", \"customer list\", \"how much due pending\").*";
         }
     }
 
@@ -979,8 +1476,10 @@ class ErpAiAgentService
             'আজকের সেল কয়টা হয়েছে?',
             'আজকের লাভ কত?',
             'কত টাকা বকেয়া আছে?',
-            'কয়টা লিড এসেছে?',
-            'ইউনিট কয়টা বাকি আছে?',
+            'আমাদের প্রজেক্টের তালিকা দাও',
+            'কাস্টমারদের তালিকা দেখাও',
+            'খালি ইউনিট কয়টা বাকি আছে?',
+            'সব ভেন্ডরের তালিকা',
             'আজকের সাইট লেবার কয়জন?',
         ];
     }
@@ -992,10 +1491,30 @@ class ErpAiAgentService
     {
         switch ($intent) {
             case 'search_code':
+            case 'smart_entity_search':
                 return [
+                    'আমাদের প্রজেক্টের তালিকা দাও',
                     'আজকের সেল কয়টা হয়েছে?',
                     'কত টাকা বকেয়া আছে?',
+                ];
+            case 'projects_info':
+                return [
+                    'খালি ইউনিট কয়টা বাকি আছে?',
+                    'সবচেয়ে দামি ফ্ল্যাট কোনটা?',
+                    'আজকের সেল কয়টা হয়েছে?',
+                ];
+            case 'customers_info':
+                return [
+                    'কত টাকা বকেয়া আছে?',
+                    'কার কার কিস্তি বকেয়া আছে?',
+                    'আজকের সেল কয়টা হয়েছে?',
+                ];
+            case 'vendors_info':
+            case 'materials_stock':
+                return [
+                    'সাইট নির্মাণ সামগ্রীর স্টক কত?',
                     'আজকের লাভ কত?',
+                    'আমাদের প্রজেক্টের তালিকা দাও',
                 ];
             case 'sales_today':
                 return [

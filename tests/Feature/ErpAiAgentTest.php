@@ -96,6 +96,24 @@ test('ai service accurately handles colloquial banglish queries', function () {
     // Specific booking code query
     $res6 = $service->ask('BKG-2026-00001 er details ki?');
     expect($res6['intent'])->toBe('search_code');
+
+    // Projects query
+    $res7 = $service->ask('amader project koyta');
+    expect($res7['intent'])->toBe('projects_info')
+        ->and($res7['answer'])->toContain('প্রকল্প');
+
+    // Customers query
+    $res8 = $service->ask('customer koyjon');
+    expect($res8['intent'])->toBe('customers_info');
+
+    // Vendors query
+    $res9 = $service->ask('vendor list');
+    expect($res9['intent'])->toBe('vendors_info');
+
+    // Smart name search query
+    $res10 = $service->ask('Hasan Parvez');
+    expect($res10['intent'])->toBe('smart_entity_search')
+        ->and($res10['answer'])->toContain('Hasan');
 });
 
 test('ai service handles english queries correctly', function () {

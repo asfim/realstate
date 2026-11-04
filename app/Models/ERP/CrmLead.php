@@ -83,6 +83,11 @@ class CrmLead extends Model
         return $this->belongsTo(FeaturedProject::class, 'featured_project_id');
     }
 
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(FeaturedProject::class, 'featured_project_id');
+    }
+
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class, 'property_id');
