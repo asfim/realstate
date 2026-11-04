@@ -271,6 +271,14 @@
             </li>
 
             <li class="erp-menu-item">
+                <a href="{{ route('erp.ai-assistant.index') }}" class="erp-menu-link {{ request()->routeIs('erp.ai-assistant.*') ? 'active' : '' }}" style="{{ request()->routeIs('erp.ai-assistant.*') ? 'background: rgba(203, 161, 53, 0.2); border-left: 3px solid var(--erp-gold);' : '' }}">
+                    <i class="bi bi-robot menu-icon text-warning"></i>
+                    <span class="fw-bold">AI Database Assistant</span>
+                    <span class="badge bg-warning text-dark ms-auto" style="font-size:0.62rem;">LIVE</span>
+                </a>
+            </li>
+
+            <li class="erp-menu-item">
                 <a href="#orgSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.companies.*') || request()->routeIs('erp.branches.*') || request()->routeIs('erp.departments.*') || request()->routeIs('erp.designations.*') || request()->routeIs('erp.cost-centers.*') || request()->routeIs('erp.fiscal-years.*') || request()->routeIs('erp.document-sequences.*') || request()->routeIs('erp.audit-logs.*') ? 'active' : '' }} d-flex justify-content-between">
                     <div>
                         <i class="bi bi-diagram-3-fill menu-icon"></i>
@@ -491,6 +499,11 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
+                <a href="{{ route('erp.ai-assistant.index') }}" class="btn btn-sm btn-outline-warning d-inline-flex align-items-center gap-1 shadow-sm" style="border-color: var(--erp-gold); color: #946c00; font-weight: 600;">
+                    <i class="bi bi-robot text-warning"></i> Ask AI Agent
+                    <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">NEW</span>
+                </a>
+
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary d-none d-sm-inline-flex align-items-center gap-1">
                     <i class="bi bi-grid-fill"></i> CMS Backend
                 </a>
@@ -549,6 +562,59 @@
         </main>
     </div>
 
+    @if(!request()->routeIs('erp.ai-assistant.index'))
+    <!-- Floating Ask AI Button -->
+    <button type="button" class="btn btn-warning position-fixed shadow-lg d-flex align-items-center gap-2 rounded-pill px-3 py-2" id="floatingAiBtn" data-bs-toggle="offcanvas" data-bs-target="#aiDrawerOffcanvas" aria-controls="aiDrawerOffcanvas" style="bottom: 24px; right: 24px; z-index: 1040; background-color: #cba135; border: 2px solid #b48c26; color: #000; font-weight: 700;">
+        <i class="bi bi-robot fs-5 text-dark"></i>
+        <span class="d-none d-sm-inline">Ask AI Agent</span>
+    </button>
+
+    <!-- Offcanvas Quick AI Assistant Drawer -->
+    <div class="offcanvas offcanvas-end shadow-lg" tabindex="-1" id="aiDrawerOffcanvas" aria-labelledby="aiDrawerOffcanvasLabel" style="width: 440px; max-width: 95vw; z-index: 1060;">
+        <div class="offcanvas-header text-white" style="background: linear-gradient(135deg, #090e1a 0%, #1b2436 100%);">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; background: rgba(203, 161, 53, 0.2); border: 1px solid #cba135;">
+                    <i class="bi bi-robot text-warning"></i>
+                </div>
+                <div>
+                    <h6 class="offcanvas-title fw-bold mb-0 text-white" id="aiDrawerOffcanvasLabel">Aurelia AI Assistant</h6>
+                    <small class="text-secondary" style="font-size: 0.68rem;">Live Database Intelligence</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('erp.ai-assistant.index') }}" class="btn btn-xs btn-outline-warning py-1 px-2 text-decoration-none" title="Open Fullscreen" style="font-size:0.75rem;">
+                    <i class="bi bi-arrows-fullscreen"></i> Full View
+                </a>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-3 bg-light" style="overflow-y: auto;">
+            <div class="flex-grow-1 overflow-y-auto mb-3" id="drawerChatStream" style="max-height: calc(100vh - 200px);">
+                <div class="p-3 bg-white rounded-3 shadow-sm border mb-3">
+                    <p class="small mb-1 fw-semibold text-dark">কীভাবে সাহায্য করতে পারি?</p>
+                    <p class="small text-muted mb-2">যেকোনো প্রশ্ন লিখুন অথবা নিচের বোতামে চাপ দিন:</p>
+                    <div class="d-flex flex-wrap gap-1">
+                        <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2 drawer-chip" style="font-size: 0.72rem;" data-query="আজকের সেল কয়টা হয়েছে?">আজকের সেল?</button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2 drawer-chip" style="font-size: 0.72rem;" data-query="আজকের লাভ কত?">আজকের লাভ?</button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2 drawer-chip" style="font-size: 0.72rem;" data-query="কত টাকা বকেয়া আছে?">বকেয়া কত?</button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2 drawer-chip" style="font-size: 0.72rem;" data-query="ইউনিট কয়টা বাকি আছে?">খালি ইউনিট?</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drawer Input -->
+            <form id="drawerChatForm" class="mt-auto">
+                <div class="input-group">
+                    <input type="text" id="drawerQueryInput" class="form-control form-control-sm shadow-none" placeholder="প্রশ্ন লিখুন (e.g. ajker sell koyta)..." required autocomplete="off">
+                    <button class="btn btn-warning btn-sm" type="submit" id="drawerSendBtn" style="background-color: #cba135; border-color: #cba135; color: #000;">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -560,6 +626,90 @@
                     sidebar.classList.toggle('open');
                 });
             }
+
+            // Drawer AI Logic
+            const drawerForm = document.getElementById('drawerChatForm');
+            const drawerInput = document.getElementById('drawerQueryInput');
+            const drawerStream = document.getElementById('drawerChatStream');
+            const drawerSendBtn = document.getElementById('drawerSendBtn');
+
+            if (drawerForm) {
+                document.querySelectorAll('.drawer-chip').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        drawerInput.value = this.getAttribute('data-query');
+                        drawerForm.dispatchEvent(new Event('submit'));
+                    });
+                });
+
+                drawerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const q = drawerInput.value.trim();
+                    if (!q) return;
+
+                    drawerStream.insertAdjacentHTML('beforeend', `
+                        <div class="d-flex justify-content-end mb-2">
+                            <div class="p-2 rounded-3 text-white small" style="background: #090e1a; max-width: 85%;">
+                                ${q}
+                            </div>
+                        </div>
+                    `);
+                    drawerInput.value = '';
+                    drawerInput.disabled = true;
+                    drawerSendBtn.disabled = true;
+
+                    const loadId = 'd_load_' + Date.now();
+                    drawerStream.insertAdjacentHTML('beforeend', `
+                        <div class="d-flex mb-2" id="${loadId}">
+                            <div class="p-2 rounded-3 bg-white border small text-muted">
+                                <span class="spinner-border spinner-border-sm me-1"></span> ডাটা অনুসন্ধান হচ্ছে...
+                            </div>
+                        </div>
+                    `);
+                    drawerStream.scrollTop = drawerStream.scrollHeight;
+
+                    fetch("{{ route('erp.ai-assistant.query') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ query: q })
+                    })
+                    .then(r => r.json())
+                    .then(res => {
+                        const el = document.getElementById(loadId);
+                        if (el) el.remove();
+                        const ans = res.data ? res.data.answer : 'কোনো ফলাফল পাওয়া যায়নি।';
+                        drawerStream.insertAdjacentHTML('beforeend', `
+                            <div class="d-flex mb-3">
+                                <div class="p-2 rounded-3 bg-white border shadow-sm small text-dark" style="max-width: 95%; line-height: 1.4; overflow-x: auto;">
+                                    ${ans.replace(/### (.*?)\n/g, '<h6 class="fw-bold mb-1">$1</h6>').replace(/> (.*?)\n/g, '<div class="alert alert-success py-1 px-2 my-1 small fw-bold">$1</div>').replace(/\n\n/g, '<br>')}
+                                </div>
+                            </div>
+                        `);
+                        drawerStream.scrollTop = drawerStream.scrollHeight;
+                    })
+                    .catch(() => {
+                        const el = document.getElementById(loadId);
+                        if (el) el.remove();
+                        drawerStream.insertAdjacentHTML('beforeend', `
+                            <div class="d-flex mb-2">
+                                <div class="p-2 rounded-3 bg-danger bg-opacity-10 text-danger border border-danger small">
+                                    ত্রুটি হয়েছে, অনুগ্রহ করে আবার চেষ্টা করুন।
+                                </div>
+                            </div>
+                        `);
+                    })
+                    .finally(() => {
+                        drawerInput.disabled = false;
+                        drawerSendBtn.disabled = false;
+                        drawerInput.focus();
+                    });
+                });
+            }
+        });
+    </script>
         });
     </script>
     @stack('scripts')

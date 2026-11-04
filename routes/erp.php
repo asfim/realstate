@@ -6,6 +6,7 @@ use App\Http\Controllers\ERP\AccReportController;
 use App\Http\Controllers\ERP\AgencyDealController;
 use App\Http\Controllers\ERP\AgencyLeaseController;
 use App\Http\Controllers\ERP\AgencyListingController;
+use App\Http\Controllers\ERP\AiAssistantController;
 use App\Http\Controllers\ERP\AuditLogController;
 use App\Http\Controllers\ERP\BranchController;
 use App\Http\Controllers\ERP\CompanyController;
@@ -43,6 +44,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ErpDashboardController::class, 'index'])->name('dashboard');
 Route::post('/switch-context', [BranchController::class, 'switchContext'])->name('switch-context');
+
+// AI Database Assistant & Real-Time Query Engine
+Route::prefix('ai-assistant')->group(function () {
+    Route::get('/', [AiAssistantController::class, 'index'])->name('ai-assistant.index');
+    Route::post('/query', [AiAssistantController::class, 'query'])->name('ai-assistant.query');
+    Route::get('/overview', [AiAssistantController::class, 'quickOverview'])->name('ai-assistant.overview');
+});
 
 // Foundation & Organization Management
 Route::prefix('organization')->group(function () {
