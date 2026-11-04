@@ -314,3 +314,4 @@ class RealEstateAccountsDemoSeeder extends Seeder
         }
     }
 }
+
