@@ -137,7 +137,7 @@
 
                             @if($lead->min_budget || $lead->max_budget)
                                 <div class="small text-muted">
-                                    BDT {{ number_format($lead->min_budget ?? 0) }} - {{ number_format($lead->max_budget ?? 0) }}
+                                    BDT {{ number_format((float)($lead->min_budget ?? 0)) }} - {{ number_format((float)($lead->max_budget ?? 0)) }}
                                 </div>
                             @endif
                         </td>

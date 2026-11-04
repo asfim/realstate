@@ -31,4 +31,18 @@ class Property extends Model
     {
         return $this->hasOne(ConstructionStatus::class);
     }
+
+    public function getFormattedPriceAttribute(): string
+    {
+        if (empty($this->price)) {
+            return 'Price on Call';
+        }
+
+        $clean = preg_replace('/[^\d.]/', '', (string)$this->price);
+        if ($clean !== '' && is_numeric($clean)) {
+            return 'BDT ' . number_format((float)$clean);
+        }
+
+        return (string)$this->price;
+    }
 }

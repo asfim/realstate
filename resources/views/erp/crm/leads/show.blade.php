@@ -131,7 +131,7 @@
             <div class="mb-3">
                 <small class="text-muted d-block">Budget Range</small>
                 <div class="fw-bold text-success mt-1">
-                    BDT {{ number_format($lead->min_budget ?? 0) }} &mdash; {{ number_format($lead->max_budget ?? 0) }}
+                    BDT {{ number_format((float)($lead->min_budget ?? 0)) }} &mdash; {{ number_format((float)($lead->max_budget ?? 0)) }}
                 </div>
             </div>
 

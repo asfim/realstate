@@ -115,7 +115,7 @@
                     <select name="property_id" class="form-select">
                         <option value="">-- Select Property (Optional) --</option>
                         @foreach($properties as $prop)
-                            <option value="{{ $prop->id }}" {{ old('property_id') == $prop->id ? 'selected' : '' }}>{{ $prop->title }} - BDT {{ number_format($prop->price) }}</option>
+                            <option value="{{ $prop->id }}" {{ old('property_id') == $prop->id ? 'selected' : '' }}>{{ $prop->title }} - {{ $prop->formatted_price }}</option>
                         @endforeach
                     </select>
                 </div>

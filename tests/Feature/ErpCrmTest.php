@@ -38,6 +38,24 @@ test('admin can view crm leads pipeline', function () {
     $response->assertSee('Lead Pipeline');
 });
 
+test('admin can view create lead form when properties have string prices', function () {
+    \App\Models\Property::create([
+        'title' => 'String Price Villa',
+        'type' => 'Villa',
+        'location' => 'Gulshan',
+        'price' => '$350,000',
+        'beds' => 4,
+        'baths' => 3,
+        'area' => 3200,
+        'is_active' => true,
+    ]);
+
+    $response = $this->actingAs($this->admin, 'admin')->get(route('erp.leads.create'));
+    $response->assertStatus(200);
+    $response->assertSee('Register New Lead');
+    $response->assertSee('String Price Villa');
+});
+
 test('admin can create a new lead and calculates initial score', function () {
     $response = $this->actingAs($this->admin, 'admin')->post('/erp/crm/leads', [
         'name'                   => 'Tariqul Islam',
