@@ -396,20 +396,24 @@
                     </ul>
                 </div>
             </li>
+            <!-- Phase 8: HR & Payroll -->
             <li class="erp-menu-item">
-                <a href="#hrSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.hr-employees.*') || request()->routeIs('erp.hr-payrolls.*') || request()->routeIs('erp.hr-labor.*') ? 'active' : '' }} d-flex justify-content-between">
+                <a href="#hrSubmenu" data-bs-toggle="collapse" class="erp-menu-link {{ request()->routeIs('erp.hr-employees.*') || request()->routeIs('erp.hr-payrolls.*') || request()->routeIs('erp.hr-labor.*') || request()->routeIs('erp.departments.*') || request()->routeIs('erp.designations.*') ? 'active' : '' }} d-flex justify-content-between">
                     <div>
-                        <i class="bi bi-people-fill menu-icon"></i>
-                        <span>Workforce & Labour</span>
+                        <i class="bi bi-person-badge-fill menu-icon"></i>
+                        <span>HR, Workforce & Payroll</span>
                     </div>
                     <i class="bi bi-chevron-down small"></i>
                 </a>
-                <div class="collapse {{ request()->routeIs('erp.hr-employees.*') || request()->routeIs('erp.hr-payrolls.*') || request()->routeIs('erp.hr-labor.*') ? 'show' : '' }}" id="hrSubmenu">
+                <div class="collapse {{ request()->routeIs('erp.hr-employees.*') || request()->routeIs('erp.hr-payrolls.*') || request()->routeIs('erp.hr-labor.*') || request()->routeIs('erp.departments.*') || request()->routeIs('erp.designations.*') ? 'show' : '' }}" id="hrSubmenu">
                     <ul class="erp-submenu">
-                        <li><a href="{{ route('erp.hr-employees.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-employees.*') ? 'active' : '' }}">Permanent Staff</a></li>
-                        <li><a href="{{ route('erp.hr-payrolls.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-payrolls.*') ? 'active' : '' }}">Monthly Payrolls</a></li>
+                        <li><a href="{{ route('erp.hr-employees.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-employees.index') ? 'active' : '' }}">Permanent Staff (Employees)</a></li>
+                        <li><a href="{{ route('erp.hr-employees.create') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-employees.create') ? 'active' : '' }}">Onboard New Employee</a></li>
+                        <li><a href="{{ route('erp.hr-payrolls.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-payrolls.*') ? 'active' : '' }}">Monthly Staff Payroll</a></li>
                         <li><a href="{{ route('erp.hr-labor.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-labor.index') ? 'active' : '' }}">Site Labor Registry</a></li>
-                        <li><a href="{{ route('erp.hr-labor.muster') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-labor.muster*') ? 'active' : '' }}">Daily Muster Sheet</a></li>
+                        <li><a href="{{ route('erp.hr-labor.muster') }}" class="erp-submenu-link {{ request()->routeIs('erp.hr-labor.muster*') ? 'active' : '' }}">Daily Labor Muster Sheet</a></li>
+                        <li><a href="{{ route('erp.departments.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.departments.*') ? 'active' : '' }}">Departments</a></li>
+                        <li><a href="{{ route('erp.designations.index') }}" class="erp-submenu-link {{ request()->routeIs('erp.designations.*') ? 'active' : '' }}">Designations & Roles</a></li>
                     </ul>
                 </div>
             </li>

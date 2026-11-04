@@ -229,11 +229,11 @@
             </div>
         </div>
 
-        <!-- Module 8: Workforce & Labour (Live) -->
+        <!-- Module 8: Human Resources & Payroll (Live) -->
         <div class="col-md-6 col-lg-4">
             <div class="card card-custom h-100 p-4 border-start border-4 border-primary">
                 <div class="d-flex align-items-center justify-content-between mb-3">
-                    <div class="fw-bold text-dark fs-6">08. Workforce & Daily Labour</div>
+                    <div class="fw-bold text-dark fs-6">08. Human Resources (HR) & Payroll</div>
                     <span class="badge bg-success">ACTIVE</span>
                 </div>
                 <p class="text-muted small mb-3">
