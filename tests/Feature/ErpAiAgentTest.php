@@ -253,3 +253,74 @@ test('ai quick overview endpoint returns real-time metrics', function () {
         ],
     ]);
 });
+
+test('ai service answers specific unit pricing and details query', function () {
+    $project = DevProject::firstOrCreate(
+        ['project_code' => 'PRJ-TEST-UNIT'],
+        [
+            'company_id'   => $this->company->id,
+            'branch_id'    => $this->branch->id,
+            'name'         => 'Aurelia Grand Tower',
+            'project_type' => 'residential',
+            'status'       => 'under_construction',
+        ]
+    );
+
+    $unit = DevProjectUnit::firstOrCreate(
+        ['project_id' => $project->id, 'unit_number' => '5A'],
+        [
+            'floor_label'       => '5th Floor',
+            'unit_type'         => 'apartment',
+            'gross_area_sqft'   => 1850,
+            'bedrooms'          => 3,
+            'bathrooms'         => 3,
+            'grand_total_price' => 12500000,
+            'status'            => 'available',
+        ]
+    );
+
+    $service = app(ErpAiAgentService::class);
+    $res = $service->ask('5A flat er dam koto?');
+
+    expect($res['intent'])->toBe('specific_unit')
+        ->and($res['answer'])->toContain('5A')
+        ->and($res['answer'])->toContain('12,500,000');
+});
+
+test('ai service answers branches, departments, and admins queries accurately', function () {
+    $service = app(ErpAiAgentService::class);
+
+    // Branches query
+    $resBranch = $service->ask('branch koyta ache');
+    expect($resBranch['intent'])->toBe('branches_info')
+        ->and($resBranch['answer'])->toContain('Dhaka Corporate HQ');
+
+    // Departments query
+    $resDept = $service->ask('department koyta');
+    expect($resDept['intent'])->toBe('departments_info')
+        ->and($resDept['answer'])->toContain('Executive');
+
+    // Admins query
+    $resAdmin = $service->ask('admin koyjon');
+    expect($resAdmin['intent'])->toBe('admins_info')
+        ->and($resAdmin['answer'])->toContain('Super Admin');
+});
+
+test('ai service extracts specific field in smart entity search', function () {
+    $service = app(ErpAiAgentService::class);
+
+    $resPhone = $service->ask('Hasan Parvez er phone number ki?');
+    expect($resPhone['intent'])->toBe('smart_entity_search')
+        ->and($resPhone['answer'])->toContain('01866700047');
+});
+
+test('ai service handles highest due and highest price unit queries', function () {
+    $service = app(ErpAiAgentService::class);
+
+    $resDue = $service->ask('shobcheye beshi baki kar?');
+    expect($resDue['intent'])->toBe('highest_due_customer');
+
+    $resPrice = $service->ask('shobcheye dami flat konta?');
+    expect($resPrice['intent'])->toBe('highest_price_unit');
+});
+
