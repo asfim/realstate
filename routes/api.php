@@ -27,3 +27,4 @@ Route::prefix('webhooks')->group(function () {
 
 // 4. Direct Lead Ingestion Endpoint (for Zapier, Make, LeadSync, custom webhooks)
 Route::post('/leads/ingest', [MetaWebhookController::class, 'directIngest'])->name('api.leads.ingest');
+

@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             FeaturedProjectSeeder::class,
             ErpMasterDemoSeeder::class,
             RealEstateAccountsDemoSeeder::class,
+            MetaLeadSampleSeeder::class,
         ]);
     }
 }

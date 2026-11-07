@@ -43,3 +43,4 @@ class CrmWebhookLog extends Model
         return $this->belongsTo(CrmLead::class, 'lead_id');
     }
 }
+
