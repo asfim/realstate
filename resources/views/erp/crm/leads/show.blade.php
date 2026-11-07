@@ -75,9 +75,14 @@
             <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">Client Information</h6>
             <div class="mb-3">
                 <small class="text-muted d-block">Phone Number</small>
-                <div class="fw-bold text-dark"><i class="bi bi-telephone-fill text-primary me-2"></i>{{ $lead->phone }}</div>
+                <div class="d-flex align-items-center justify-content-between mt-1">
+                    <span class="fw-bold text-dark"><i class="bi bi-telephone-fill text-primary me-2"></i>{{ $lead->phone }}</span>
+                    <a href="{{ $lead->whatsAppUrl() }}" target="_blank" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                    </a>
+                </div>
                 @if($lead->secondary_phone)
-                    <div class="small text-muted mt-1"><i class="bi bi-whatsapp text-success me-2"></i>{{ $lead->secondary_phone }}</div>
+                    <div class="small text-muted mt-1"><i class="bi bi-telephone text-secondary me-2"></i>{{ $lead->secondary_phone }}</div>
                 @endif
             </div>
 
@@ -88,9 +93,25 @@
 
             <div class="mb-3">
                 <small class="text-muted d-block">Source & Priority</small>
-                <span class="badge bg-light text-dark border me-1">{{ ucfirst(str_replace('_', ' ', $lead->source)) }}</span>
+                @if($lead->source === 'facebook_lead_ad')
+                    <span class="badge bg-primary text-white me-1"><i class="bi bi-facebook me-1"></i> Facebook Ad</span>
+                @elseif($lead->source === 'whatsapp_ad' || $lead->source === 'whatsapp')
+                    <span class="badge bg-success text-white me-1"><i class="bi bi-whatsapp me-1"></i> WhatsApp Ad</span>
+                @else
+                    <span class="badge bg-light text-dark border me-1">{{ ucfirst(str_replace('_', ' ', $lead->source)) }}</span>
+                @endif
                 <span class="badge bg-secondary">{{ ucfirst($lead->priority) }} Priority</span>
             </div>
+
+            @if($lead->campaign_name || $lead->ad_name)
+                <div class="mb-3 p-2 bg-light rounded-2 border">
+                    <small class="text-muted d-block fw-semibold" style="font-size: 0.72rem;">Meta Ad Attribution</small>
+                    <div class="small fw-bold text-dark"><i class="bi bi-megaphone-fill text-primary me-1"></i> {{ $lead->campaign_name ?? 'Facebook Ad' }}</div>
+                    @if($lead->ad_name)
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ $lead->ad_name }}</div>
+                    @endif
+                </div>
+            @endif
 
             <div class="mb-3">
                 <small class="text-muted d-block">Assigned Agent</small>

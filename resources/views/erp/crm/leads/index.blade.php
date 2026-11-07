@@ -15,6 +15,9 @@
                 </button>
             </form>
         @endif
+        <a href="{{ route('erp.crm-integrations.index') }}" class="btn btn-outline-primary btn-sm px-3">
+            <i class="bi bi-meta me-1"></i> Meta & WhatsApp Sync
+        </a>
         <a href="{{ route('erp.leads.create') }}" class="btn btn-erp-gold btn-sm px-3">
             <i class="bi bi-person-plus-fill me-1"></i> New Lead
         </a>
@@ -64,6 +67,9 @@
         <div class="col-md-3">
             <select name="source" class="form-select form-select-sm">
                 <option value="">-- All Sources --</option>
+                <option value="facebook_lead_ad" {{ request('source') === 'facebook_lead_ad' ? 'selected' : '' }}>Facebook Lead Ads</option>
+                <option value="whatsapp_ad" {{ request('source') === 'whatsapp_ad' ? 'selected' : '' }}>WhatsApp Ads (Click-to-WA)</option>
+                <option value="whatsapp" {{ request('source') === 'whatsapp' ? 'selected' : '' }}>Direct WhatsApp</option>
                 <option value="web_form" {{ request('source') === 'web_form' ? 'selected' : '' }}>Website Inquiry</option>
                 <option value="walk_in" {{ request('source') === 'walk_in' ? 'selected' : '' }}>Walk-in</option>
                 <option value="social_media" {{ request('source') === 'social_media' ? 'selected' : '' }}>Social Media / Meta</option>
@@ -142,9 +148,22 @@
                             @endif
                         </td>
                         <td>
-                            <span class="badge bg-light text-dark border text-capitalize mb-1">
-                                {{ str_replace('_', ' ', $lead->source) }}
-                            </span>
+                            @if($lead->source === 'facebook_lead_ad')
+                                <span class="badge bg-primary text-white mb-1"><i class="bi bi-facebook me-1"></i> Facebook Ad</span>
+                            @elseif($lead->source === 'whatsapp_ad' || $lead->source === 'whatsapp')
+                                <span class="badge bg-success text-white mb-1"><i class="bi bi-whatsapp me-1"></i> WhatsApp Ad</span>
+                            @else
+                                <span class="badge bg-light text-dark border text-capitalize mb-1">
+                                    {{ str_replace('_', ' ', $lead->source) }}
+                                </span>
+                            @endif
+
+                            @if($lead->campaign_name)
+                                <small class="d-block text-muted text-truncate" style="max-width: 150px;" title="{{ $lead->campaign_name }}">
+                                    <i class="bi bi-megaphone me-1 text-primary"></i> {{ $lead->campaign_name }}
+                                </small>
+                            @endif
+
                             <div>
                                 @php
                                     $pColor = match($lead->priority) {
@@ -191,7 +210,10 @@
                                 </select>
                             </form>
                         </td>
-                        <td class="text-end">
+                        <td class="text-end text-nowrap">
+                            <a href="{{ $lead->whatsAppUrl() }}" target="_blank" class="btn btn-sm btn-outline-success me-1" title="Chat on WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
                             <a href="{{ route('erp.leads.show', $lead) }}" class="btn btn-sm btn-outline-dark me-1" title="View Dossier & Timeline">
                                 <i class="bi bi-eye"></i>
                             </a>

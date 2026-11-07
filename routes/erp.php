@@ -17,6 +17,7 @@ use App\Http\Controllers\ERP\ConVendorController;
 use App\Http\Controllers\ERP\CostCenterController;
 use App\Http\Controllers\ERP\CrmActivityController;
 use App\Http\Controllers\ERP\CrmCustomerController;
+use App\Http\Controllers\ERP\CrmIntegrationController;
 use App\Http\Controllers\ERP\CrmLeadController;
 use App\Http\Controllers\ERP\CrmSiteVisitController;
 use App\Http\Controllers\ERP\DepartmentController;
@@ -66,6 +67,10 @@ Route::prefix('organization')->group(function () {
 
 // Phase 2: CRM & Lead Engine
 Route::prefix('crm')->group(function () {
+    Route::get('integrations', [CrmIntegrationController::class, 'index'])->name('crm-integrations.index');
+    Route::post('integrations/settings', [CrmIntegrationController::class, 'updateSettings'])->name('crm-integrations.update');
+    Route::post('integrations/test', [CrmIntegrationController::class, 'testWebhook'])->name('crm-integrations.test');
+
     Route::post('leads/import-submissions', [CrmLeadController::class, 'importSubmissions'])->name('leads.import-submissions');
     Route::post('leads/{lead}/stage', [CrmLeadController::class, 'updateStage'])->name('leads.update-stage');
     Route::post('leads/{lead}/convert', [CrmCustomerController::class, 'convertLead'])->name('leads.convert');

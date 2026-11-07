@@ -30,6 +30,9 @@ class CrmLead extends Model
         'email',
         'secondary_phone',
         'source',
+        'campaign_name',
+        'ad_name',
+        'external_lead_id',
         'stage',
         'priority',
         'score',
@@ -142,6 +145,30 @@ class CrmLead extends Model
         }
 
         return min(100, $score);
+    }
+
+    public function webhookLogs(): HasMany
+    {
+        return $this->hasMany(CrmWebhookLog::class, 'lead_id')->latest();
+    }
+
+    public function getCleanPhone(): string
+    {
+        $phone = preg_replace('/[^0-9]/', '', $this->phone ?? '');
+        if (str_starts_with($phone, '01') && strlen($phone) === 11) {
+            $phone = '88' . $phone;
+        }
+        return $phone;
+    }
+
+    public function whatsAppUrl(?string $customText = null): string
+    {
+        $phone = $this->getCleanPhone();
+        if (!$phone) {
+            return '#';
+        }
+        $greeting = $customText ?? "Hello {$this->name}, thank you for your inquiry about our properties at Aurelia Estates.";
+        return 'https://wa.me/' . $phone . '?text=' . urlencode($greeting);
     }
 }
 
