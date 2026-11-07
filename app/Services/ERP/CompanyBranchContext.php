@@ -15,29 +15,70 @@ class CompanyBranchContext
 
     /**
      * Get the active company, resolving from session or the first active company.
+     * Auto-provisions a default company if the database has no company record yet.
      */
     public function currentCompany(): ?Company
     {
         $companyId = Session::get(self::SESSION_COMPANY_KEY);
 
         if ($companyId) {
-            $company = Company::where('status', 'active')->find($companyId);
+            $company = Company::find($companyId);
             if ($company) {
+                if ($company->status !== 'active') {
+                    $company->update(['status' => 'active']);
+                }
                 return $company;
             }
         }
 
-        $defaultCompany = Company::where('status', 'active')->first();
+        $defaultCompany = Company::where('status', 'active')->first() ?? Company::first();
         if ($defaultCompany) {
+            if ($defaultCompany->status !== 'active') {
+                $defaultCompany->update(['status' => 'active']);
+            }
             $this->setCompany($defaultCompany);
             return $defaultCompany;
         }
 
-        return null;
+        // Auto-provision default company and head office branch if no company exists yet
+        try {
+            $defaultCompany = Company::firstOrCreate(
+                ['code' => 'AURELIA'],
+                [
+                    'legal_name'        => 'Aurelia Estates & Developers Ltd.',
+                    'trade_name'        => 'Aurelia Living',
+                    'registration_no'   => 'C-198425/2026',
+                    'bin'               => '004829103-0101',
+                    'tin'               => '491827401928',
+                    'base_currency'     => 'BDT',
+                    'fiscal_year_start' => '07-01',
+                    'timezone'          => 'Asia/Dhaka',
+                    'status'            => 'active',
+                ]
+            );
+
+            Branch::firstOrCreate(
+                ['company_id' => $defaultCompany->id, 'code' => 'DHK-HQ'],
+                [
+                    'name'           => 'Dhaka Corporate HQ',
+                    'address'        => 'Level 12, Aurelia Tower, Gulshan-2, Dhaka 1212',
+                    'phone'          => '+880 2 9887766',
+                    'email'          => 'hq@aureliaestates.com',
+                    'is_head_office' => true,
+                    'status'         => 'active',
+                ]
+            );
+
+            $this->setCompany($defaultCompany);
+            return $defaultCompany;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
      * Get the active branch, resolving from session or the company's head office / first branch.
+     * Auto-provisions head office if company has no branch yet.
      */
     public function currentBranch(): ?Branch
     {
@@ -49,26 +90,48 @@ class CompanyBranchContext
         $branchId = Session::get(self::SESSION_BRANCH_KEY);
 
         if ($branchId) {
-            $branch = Branch::where('company_id', $company->id)
-                ->where('status', 'active')
-                ->find($branchId);
+            $branch = Branch::where('company_id', $company->id)->find($branchId);
             if ($branch) {
+                if ($branch->status !== 'active') {
+                    $branch->update(['status' => 'active']);
+                }
                 return $branch;
             }
         }
 
-        // Default to head office if exists, else first active branch
+        // Default to head office if exists, else first branch
         $defaultBranch = Branch::where('company_id', $company->id)
             ->where('status', 'active')
             ->orderByDesc('is_head_office')
-            ->first();
+            ->first() ?? Branch::where('company_id', $company->id)->first();
 
         if ($defaultBranch) {
+            if ($defaultBranch->status !== 'active') {
+                $defaultBranch->update(['status' => 'active']);
+            }
             $this->setBranch($defaultBranch);
             return $defaultBranch;
         }
 
-        return null;
+        // Auto-provision branch for company
+        try {
+            $defaultBranch = Branch::firstOrCreate(
+                ['company_id' => $company->id, 'code' => 'DHK-HQ'],
+                [
+                    'name'           => 'Dhaka Corporate HQ',
+                    'address'        => 'Level 12, Aurelia Tower, Gulshan-2, Dhaka 1212',
+                    'phone'          => '+880 2 9887766',
+                    'email'          => 'hq@aureliaestates.com',
+                    'is_head_office' => true,
+                    'status'         => 'active',
+                ]
+            );
+
+            $this->setBranch($defaultBranch);
+            return $defaultBranch;
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**

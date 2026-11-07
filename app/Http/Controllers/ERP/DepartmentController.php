@@ -30,15 +30,24 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $currentCompany = $this->context->currentCompany();
+
         $validated = $request->validate([
-            'name'   => 'required|string|max:255',
-            'code'   => 'nullable|string|max:50',
-            'status' => 'required|in:active,inactive',
+            'name'       => 'required|string|max:255',
+            'code'       => 'nullable|string|max:50',
+            'status'     => 'required|in:active,inactive',
+            'company_id' => 'nullable|exists:companies,id',
         ]);
 
-        $validated['company_id'] = $currentCompany->id;
+        $companyId = $validated['company_id'] ?? $currentCompany?->id;
+        if (!$companyId) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No active company found. Please configure at least one company in Organization -> Companies first.');
+        }
+
+        $validated['company_id'] = $companyId;
         $department = Department::create($validated);
-        $this->auditLog->log('department.created', $department, null, $department->toArray(), $currentCompany->id);
+        $this->auditLog->log('department.created', $department, null, $department->toArray(), $companyId);
 
         return redirect()->route('erp.departments.index')->with('success', 'Department created successfully.');
     }

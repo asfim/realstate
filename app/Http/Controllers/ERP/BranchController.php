@@ -48,17 +48,25 @@ class BranchController extends Controller
             'manager_admin_id' => 'nullable|exists:admins,id',
             'is_head_office'   => 'nullable|boolean',
             'status'           => 'required|in:active,inactive',
+            'company_id'       => 'nullable|exists:companies,id',
         ]);
 
-        $validated['company_id'] = $currentCompany->id;
+        $companyId = $validated['company_id'] ?? $currentCompany?->id;
+        if (!$companyId) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No active company found. Please configure at least one company in Organization -> Companies first.');
+        }
+
+        $validated['company_id'] = $companyId;
         $validated['is_head_office'] = $request->boolean('is_head_office');
 
         if ($validated['is_head_office']) {
-            Branch::where('company_id', $currentCompany->id)->update(['is_head_office' => false]);
+            Branch::where('company_id', $companyId)->update(['is_head_office' => false]);
         }
 
         $branch = Branch::create($validated);
-        $this->auditLog->log('branch.created', $branch, null, $branch->toArray(), $currentCompany->id, $branch->id);
+        $this->auditLog->log('branch.created', $branch, null, $branch->toArray(), $companyId, $branch->id);
 
         return redirect()->route('erp.branches.index')->with('success', 'Branch created successfully.');
     }

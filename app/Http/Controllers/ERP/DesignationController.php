@@ -36,11 +36,19 @@ class DesignationController extends Controller
             'department_id' => 'nullable|exists:departments,id',
             'name'          => 'required|string|max:255',
             'grade'         => 'nullable|string|max:50',
+            'company_id'    => 'nullable|exists:companies,id',
         ]);
 
-        $validated['company_id'] = $currentCompany->id;
+        $companyId = $validated['company_id'] ?? $currentCompany?->id;
+        if (!$companyId) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No active company found. Please configure at least one company in Organization -> Companies first.');
+        }
+
+        $validated['company_id'] = $companyId;
         $designation = Designation::create($validated);
-        $this->auditLog->log('designation.created', $designation, null, $designation->toArray(), $currentCompany->id);
+        $this->auditLog->log('designation.created', $designation, null, $designation->toArray(), $companyId);
 
         return redirect()->route('erp.designations.index')->with('success', 'Designation created successfully.');
     }

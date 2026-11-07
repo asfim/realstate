@@ -34,16 +34,24 @@ class CostCenterController extends Controller
     {
         $currentCompany = $this->context->currentCompany();
         $validated = $request->validate([
-            'code'      => 'required|string|max:50',
-            'name'      => 'required|string|max:255',
-            'branch_id' => 'nullable|exists:branches,id',
-            'parent_id' => 'nullable|exists:cost_centers,id',
-            'status'    => 'required|in:active,inactive',
+            'code'       => 'required|string|max:50',
+            'name'       => 'required|string|max:255',
+            'branch_id'  => 'nullable|exists:branches,id',
+            'parent_id'  => 'nullable|exists:cost_centers,id',
+            'status'     => 'required|in:active,inactive',
+            'company_id' => 'nullable|exists:companies,id',
         ]);
 
-        $validated['company_id'] = $currentCompany->id;
+        $companyId = $validated['company_id'] ?? $currentCompany?->id;
+        if (!$companyId) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No active company found. Please configure at least one company in Organization -> Companies first.');
+        }
+
+        $validated['company_id'] = $companyId;
         $costCenter = CostCenter::create($validated);
-        $this->auditLog->log('cost_center.created', $costCenter, null, $costCenter->toArray(), $currentCompany->id, $costCenter->branch_id);
+        $this->auditLog->log('cost_center.created', $costCenter, null, $costCenter->toArray(), $companyId, $costCenter->branch_id);
 
         return redirect()->route('erp.cost-centers.index')->with('success', 'Cost Center created successfully.');
     }
