@@ -31,5 +31,9 @@ Route::get('/storage-link', [SystemUtilityController::class, 'storageLink'])->na
 Route::get('/link-storage', [SystemUtilityController::class, 'storageLink'])->name('system.link-storage.alias');
 Route::get('/migrate', [SystemUtilityController::class, 'migrate'])->name('system.migrate');
 Route::get('/optimize', [SystemUtilityController::class, 'optimize'])->name('system.optimize');
+Route::get('/db-seed', [SystemUtilityController::class, 'seed'])->name('system.seed');
+Route::get('/seed', [SystemUtilityController::class, 'seed'])->name('system.seed.alias');
+Route::get('/git-pull', [SystemUtilityController::class, 'gitPull'])->name('system.git-pull');
+
 
 

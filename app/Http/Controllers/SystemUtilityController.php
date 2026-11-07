@@ -239,6 +239,100 @@ class SystemUtilityController extends Controller
     }
 
     /**
+     * Seed foundation data (Company, Branches, Roles, Fiscal Year, COA, etc.).
+     */
+    public function seed(Request $request)
+    {
+        try {
+            Artisan::call('db:seed', [
+                '--class' => 'Database\\Seeders\\ErpFoundationSeeder',
+                '--force' => true,
+            ]);
+            $output = trim(Artisan::output()) ?: "ErpFoundationSeeder executed successfully. Default Company, Branches, Fiscal Years and Roles are now ready.";
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'action'  => 'seed',
+                    'output'  => $output,
+                ]);
+            }
+
+            return response($this->renderResult(
+                title: 'ERP Foundation Seeded',
+                command: 'php artisan db:seed --class=ErpFoundationSeeder --force',
+                output: $output,
+                isSuccess: true
+            ));
+        } catch (\Throwable $e) {
+            Log::error('Utility Seed Failed: ' . $e->getMessage());
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error'   => $e->getMessage(),
+                ], 500);
+            }
+
+            return response($this->renderResult(
+                title: 'Database Seeding Failed',
+                command: 'php artisan db:seed --class=ErpFoundationSeeder',
+                output: $e->getMessage() . "\n" . $e->getTraceAsString(),
+                isSuccess: false
+            ), 500);
+        }
+    }
+
+    /**
+     * Run git pull from live server to fetch latest updates.
+     */
+    public function gitPull(Request $request)
+    {
+        try {
+            $cmd = 'git pull origin main 2>&1';
+            $output = shell_exec($cmd);
+            if ($output === null) {
+                $output = 'shell_exec not available or git command returned empty output.';
+            }
+
+            // Also clear cache after pulling
+            Artisan::call('optimize:clear');
+            $output .= "\n" . trim(Artisan::output());
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'action'  => 'git-pull',
+                    'output'  => $output,
+                ]);
+            }
+
+            return response($this->renderResult(
+                title: 'Git Pull & Cache Cleared',
+                command: 'git pull origin main && php artisan optimize:clear',
+                output: $output,
+                isSuccess: true
+            ));
+        } catch (\Throwable $e) {
+            Log::error('Utility Git Pull Failed: ' . $e->getMessage());
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error'   => $e->getMessage(),
+                ], 500);
+            }
+
+            return response($this->renderResult(
+                title: 'Git Pull Failed',
+                command: 'git pull origin main',
+                output: $e->getMessage(),
+                isSuccess: false
+            ), 500);
+        }
+    }
+
+    /**
      * Render terminal-style result page.
      */
     protected function renderResult(string $title, string $command, string $output, bool $isSuccess): string
@@ -291,6 +385,8 @@ class SystemUtilityController extends Controller
                 <a href="/clear-cache" class="btn btn-secondary">🧹 Clear Cache</a>
                 <a href="/storage-link" class="btn btn-secondary">🔗 Storage Link</a>
                 <a href="/migrate" class="btn btn-secondary">🗄️ Run Migrations</a>
+                <a href="/db-seed" class="btn btn-secondary">🌱 Seed Database</a>
+                <a href="/git-pull" class="btn btn-secondary">📥 Git Pull</a>
                 <a href="/optimize" class="btn btn-secondary">⚡ Optimize</a>
                 <a href="/erp" class="btn btn-primary" style="margin-left: auto;">🏢 Go to ERP</a>
                 <a href="/" class="btn btn-outline">🏠 Homepage</a>
@@ -402,6 +498,22 @@ HTML;
                         <p>Caches configuration, routes, and views for lightning-fast production page loads.</p>
                     </div>
                     <a href="/optimize" class="btn btn-purple">Cache & Optimize</a>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <h3>🌱 Seed Foundation DB</h3>
+                        <p>Populates initial company, branches, fiscal year, departments, and roles into empty tables.</p>
+                    </div>
+                    <a href="/db-seed" class="btn btn-emerald" onclick="return confirm('Seed ERP foundation data?');">Seed Database</a>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <h3>📥 Git Pull & Update</h3>
+                        <p>Pulls latest codebase updates directly from origin main into this production environment.</p>
+                    </div>
+                    <a href="/git-pull" class="btn btn-blue" onclick="return confirm('Run git pull origin main?');">Pull Latest Code</a>
                 </div>
             </div>
 

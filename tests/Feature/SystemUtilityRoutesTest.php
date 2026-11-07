@@ -50,3 +50,17 @@ test('optimize route caches application configuration and routes', function () {
     $response->assertStatus(200);
     $response->assertSee('Application Optimized & Cached');
 });
+
+test('seed route runs foundation seeder safely with force', function () {
+    $response = $this->get(route('system.seed'));
+
+    $response->assertStatus(200);
+    $response->assertSee('ERP Foundation Seeded');
+});
+
+test('git-pull route executes git pull and returns status 200', function () {
+    $response = $this->get(route('system.git-pull'));
+
+    $response->assertStatus(200);
+    $response->assertSee('Git Pull');
+});
