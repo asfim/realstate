@@ -4,7 +4,7 @@
 <div class="container-fluid px-0">
     <!-- Top Welcome Banner -->
     <div class="card border-0 rounded-4 shadow-sm mb-4" style="background: linear-gradient(135deg, #090e1a 0%, #1e293b 100%); color: #fff;">
-        <div class="card-body p-4 p-md-5">
+        <div class="card-body p-3 p-sm-4 p-md-5">
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <span class="badge bg-warning text-dark px-3 py-1 mb-2 fw-semibold" style="letter-spacing: 0.5px;">ENTERPRISE REAL ESTATE ERP</span>
@@ -13,22 +13,22 @@
                         Centralized corporate multi-branch workspace for Developer Project Sales, Agency Brokerages, Cost Centres, and Double-Entry General Ledgers.
                     </p>
                     <div class="d-flex flex-wrap gap-2">
-                        <span class="badge bg-dark border border-secondary text-light px-3 py-2">
+                        <span class="badge bg-dark border border-secondary text-light px-2 px-sm-3 py-2 text-truncate" style="max-width: 100%;">
                             <i class="bi bi-geo-alt-fill text-warning me-1"></i> Active Branch: <strong>{{ $currentBranch->name ?? 'Dhaka Corporate HQ' }}</strong>
                         </span>
-                        <span class="badge bg-dark border border-secondary text-light px-3 py-2">
+                        <span class="badge bg-dark border border-secondary text-light px-2 px-sm-3 py-2">
                             <i class="bi bi-calendar3 text-info me-1"></i> Current Fiscal: <strong>{{ $stats['current_fy']->name ?? 'FY 2026-2027' }}</strong>
                         </span>
-                        <span class="badge bg-dark border border-secondary text-light px-3 py-2">
+                        <span class="badge bg-dark border border-secondary text-light px-2 px-sm-3 py-2">
                             <i class="bi bi-currency-exchange text-success me-1"></i> Currency: <strong>{{ $currentCompany->base_currency ?? 'BDT' }}</strong>
                         </span>
                     </div>
                 </div>
-                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
-                    <a href="{{ route('erp.branches.create') }}" class="btn btn-erp-gold btn-sm px-3 py-2 me-2 mb-2">
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0 d-flex flex-wrap gap-2 justify-content-lg-end">
+                    <a href="{{ route('erp.branches.create') }}" class="btn btn-erp-gold btn-sm px-3 py-2">
                         <i class="bi bi-plus-circle me-1"></i> Add Branch
                     </a>
-                    <a href="{{ route('erp.audit-logs.index') }}" class="btn btn-outline-light btn-sm px-3 py-2 mb-2">
+                    <a href="{{ route('erp.audit-logs.index') }}" class="btn btn-outline-light btn-sm px-3 py-2">
                         <i class="bi bi-shield-check me-1"></i> Audit Trail
                     </a>
                 </div>

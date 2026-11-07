@@ -1,17 +1,17 @@
 @extends('erp.layouts.app')
 
 @section('content')
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+<div class="erp-header-row mb-4">
     <div>
         <h4 class="fw-bold mb-1 text-dark">CRM & Lead Pipeline</h4>
         <p class="text-muted small mb-0">Multi-source lead capture, sales agent assignment, scoring & conversion tracker.</p>
     </div>
-    <div class="d-flex align-items-center gap-2">
+    <div class="d-flex flex-wrap align-items-center gap-2">
         @if($unimportedSubmissionsCount > 0)
-            <form action="{{ route('erp.leads.import-submissions') }}" method="POST">
+            <form action="{{ route('erp.leads.import-submissions') }}" method="POST" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-outline-primary btn-sm px-3">
-                    <i class="bi bi-cloud-arrow-down-fill me-1"></i> Ingest Web Inquiries ({{ $unimportedSubmissionsCount }})
+                    <i class="bi bi-cloud-arrow-down-fill me-1"></i> Ingest Inquiries ({{ $unimportedSubmissionsCount }})
                 </button>
             </form>
         @endif
@@ -25,7 +25,7 @@
 </div>
 
 <!-- Pipeline Stage Filter Ribbon -->
-<div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom">
+<div class="erp-scroll-ribbon mb-4 pb-2 border-bottom">
     <a href="{{ route('erp.leads.index') }}" class="btn btn-sm {{ !request('stage') ? 'btn-dark' : 'btn-light border' }} rounded-pill px-3">
         All Leads <span class="badge {{ !request('stage') ? 'bg-secondary' : 'bg-light text-dark border' }} ms-1">{{ array_sum($stageCounts) }}</span>
     </a>
@@ -58,13 +58,13 @@
         @if(request('stage'))
             <input type="hidden" name="stage" value="{{ request('stage') }}">
         @endif
-        <div class="col-md-5">
+        <div class="col-12 col-md-5">
             <div class="input-group input-group-sm">
                 <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
                 <input type="text" name="search" class="form-control" placeholder="Search by name, phone, email, lead code..." value="{{ request('search') }}">
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-sm-6 col-md-3">
             <select name="source" class="form-select form-select-sm">
                 <option value="">-- All Sources --</option>
                 <option value="facebook_lead_ad" {{ request('source') === 'facebook_lead_ad' ? 'selected' : '' }}>Facebook Lead Ads</option>
@@ -77,7 +77,7 @@
                 <option value="agent_referral" {{ request('source') === 'agent_referral' ? 'selected' : '' }}>Agent Referral</option>
             </select>
         </div>
-        <div class="col-md-2">
+        <div class="col-12 col-sm-6 col-md-2">
             <select name="agent_id" class="form-select form-select-sm">
                 <option value="">-- All Agents --</option>
                 @foreach($agents as $agent)
@@ -85,7 +85,7 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-2 d-flex gap-2">
+        <div class="col-12 col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-dark btn-sm flex-grow-1">Filter</button>
             <a href="{{ route('erp.leads.index') }}" class="btn btn-light btn-sm border">Reset</a>
         </div>

@@ -1,7 +1,7 @@
 @extends('erp.layouts.app')
 
 @section('content')
-<div class="d-flex align-items-center justify-content-between mb-4">
+<div class="erp-header-row mb-4">
     <div>
         <h4 class="fw-bold mb-1 text-dark">Register New Lead</h4>
         <p class="text-muted small mb-0">Direct customer inquiry intake, requirement capture, and sales agent allocation.</p>

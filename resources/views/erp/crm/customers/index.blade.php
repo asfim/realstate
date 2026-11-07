@@ -1,7 +1,7 @@
 @extends('erp.layouts.app')
 
 @section('content')
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+<div class="erp-header-row mb-4">
     <div>
         <h4 class="fw-bold mb-1 text-dark">Customer Master Directory</h4>
         <p class="text-muted small mb-0">Verified buyers, converted leads, KYC identification, and nominee records.</p>
@@ -16,13 +16,13 @@
 <!-- Search -->
 <div class="card card-custom p-3 mb-4">
     <form method="GET" action="{{ route('erp.customers.index') }}" class="row g-2 align-items-center">
-        <div class="col-md-6">
+        <div class="col-12 col-md-6">
             <div class="input-group input-group-sm">
                 <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
                 <input type="text" name="search" class="form-control" placeholder="Search by customer name, phone, code, NID..." value="{{ request('search') }}">
             </div>
         </div>
-        <div class="col-md-2 d-flex gap-2">
+        <div class="col-12 col-md-3 d-flex gap-2">
             <button type="submit" class="btn btn-dark btn-sm flex-grow-1">Search</button>
             <a href="{{ route('erp.customers.index') }}" class="btn btn-light btn-sm border">Reset</a>
         </div>

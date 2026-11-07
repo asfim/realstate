@@ -205,6 +205,9 @@
         .erp-content {
             padding: 24px;
             flex-grow: 1;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .btn-erp-gold {
@@ -226,15 +229,177 @@
             background: #fff;
         }
 
+        /* ── Mobile Sidebar Overlay Backdrop ─────────── */
+        .erp-sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 14, 26, 0.68);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 1045;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+        .erp-sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ── Responsive Utility Classes ───────────────── */
+        .erp-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .erp-scroll-ribbon {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            gap: 8px;
+            padding-bottom: 6px;
+        }
+        .erp-scroll-ribbon::-webkit-scrollbar {
+            display: none;
+        }
+        .erp-scroll-ribbon .btn {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+        }
+
         @media (max-width: 991.98px) {
-            #erpSidebar { transform: translateX(calc(-1 * var(--erp-sidebar-width))); }
-            #erpSidebar.open { transform: translateX(0); }
-            #erpMain { margin-left: 0 !important; }
+            #erpSidebar {
+                transform: translateX(calc(-1 * var(--erp-sidebar-width)));
+                box-shadow: none;
+            }
+            #erpSidebar.open {
+                transform: translateX(0);
+                box-shadow: 8px 0 35px rgba(0, 0, 0, 0.5);
+            }
+            #erpMain {
+                margin-left: 0 !important;
+            }
+            .erp-navbar {
+                padding: 10px 14px;
+            }
+            .erp-content {
+                padding: 14px 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive table {
+                min-width: 580px;
+            }
+            .table {
+                font-size: 0.82rem;
+            }
+            .table th, .table td {
+                padding: 8px 10px;
+                vertical-align: middle;
+            }
+            .table th {
+                white-space: nowrap;
+                font-size: 0.72rem;
+                letter-spacing: 0.5px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .erp-content {
+                padding: 12px 10px;
+            }
+            .context-select-pill {
+                max-width: 160px;
+                padding: 4px 8px;
+                font-size: 0.78rem;
+            }
+            .context-select-pill .context-company-name {
+                display: inline-block;
+                max-width: 125px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: bottom;
+            }
+            .card-custom.p-4, .card-custom .card-body.p-4 {
+                padding: 14px !important;
+            }
+            h2, .h2 { font-size: 1.35rem !important; }
+            h3, .h3 { font-size: 1.15rem !important; }
+            h4, .h4 { font-size: 1.05rem !important; }
+            .table {
+                font-size: 0.8rem;
+            }
+            .table th, .table td {
+                padding: 6px 8px;
+            }
+
+            /* Responsive Page Header Rows across all ERP & CRM Views */
+            .erp-header-row,
+            .erp-content > .d-flex.justify-content-between.mb-4,
+            .erp-content > .d-flex.align-items-center.justify-content-between.mb-4,
+            .erp-content > .d-flex.flex-wrap.align-items-center.justify-content-between.mb-4,
+            .erp-content > .container-fluid > .d-flex.justify-content-between.mb-4 {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+            }
+            .erp-header-row > div:last-child,
+            .erp-content > .d-flex.justify-content-between.mb-4 > div:last-child,
+            .erp-content > .d-flex.align-items-center.justify-content-between.mb-4 > div:last-child,
+            .erp-content > .d-flex.flex-wrap.align-items-center.justify-content-between.mb-4 > div:last-child,
+            .erp-content > .container-fluid > .d-flex.justify-content-between.mb-4 > div:last-child {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+            .erp-header-row > div:last-child .btn,
+            .erp-header-row > div:last-child a.btn,
+            .erp-content > .d-flex.justify-content-between.mb-4 > div:last-child .btn,
+            .erp-content > .d-flex.justify-content-between.mb-4 > div:last-child a.btn,
+            .erp-content > .d-flex.align-items-center.justify-content-between.mb-4 > div:last-child .btn,
+            .erp-content > .d-flex.align-items-center.justify-content-between.mb-4 > div:last-child a.btn,
+            .erp-content > .d-flex.flex-wrap.align-items-center.justify-content-between.mb-4 > div:last-child .btn,
+            .erp-content > .d-flex.flex-wrap.align-items-center.justify-content-between.mb-4 > div:last-child a.btn {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+
+            /* Responsive Modals on Mobile */
+            .modal-dialog {
+                margin: 10px;
+                max-width: calc(100vw - 20px) !important;
+            }
+            .modal-footer {
+                flex-direction: column-reverse;
+                gap: 8px;
+            }
+            .modal-footer .btn {
+                width: 100%;
+                margin: 0 !important;
+            }
         }
     </style>
     @stack('styles')
 </head>
 <body>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="erpSidebarOverlay" class="erp-sidebar-overlay"></div>
 
     <!-- ERP Sidebar -->
     <nav id="erpSidebar">
@@ -243,7 +408,12 @@
                 <i class="bi bi-buildings text-warning"></i>
                 <span>AURELIA <span style="color: var(--erp-gold)">ERP</span></span>
             </a>
-            <span class="erp-brand-badge">Enterprise</span>
+            <div class="d-flex align-items-center gap-2">
+                <span class="erp-brand-badge d-none d-sm-inline-block">Enterprise</span>
+                <button type="button" class="btn btn-sm btn-outline-light border-0 d-lg-none p-1" id="erpSidebarCloseBtn" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
         </div>
 
         <div class="p-3">
@@ -453,20 +623,20 @@
     <div id="erpMain">
         <!-- Top Navbar -->
         <header class="erp-navbar">
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-sm btn-light d-lg-none" id="erpToggleBtn">
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <button class="btn btn-sm btn-light d-lg-none" id="erpToggleBtn" aria-label="Toggle navigation">
                     <i class="bi bi-list fs-5"></i>
                 </button>
 
                 <!-- Company & Branch Context Switcher Dropdown -->
                 <div class="dropdown">
-                    <button class="context-select-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-buildings-fill text-warning me-2"></i>
-                        <span>{{ $currentCompany->legal_name ?? 'Default Entity' }}</span>
-                        <span class="mx-2 text-muted">/</span>
-                        <span class="text-primary">{{ $currentBranch->name ?? 'All Branches' }}</span>
+                    <button class="context-select-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="{{ $currentCompany->legal_name ?? 'Default Entity' }} ({{ $currentBranch->name ?? 'All Branches' }})">
+                        <i class="bi bi-buildings-fill text-warning me-1"></i>
+                        <span class="context-company-name">{{ $currentCompany->trade_name ?? $currentCompany->legal_name ?? 'Entity' }}</span>
+                        <span class="mx-1 text-muted d-none d-sm-inline">/</span>
+                        <span class="text-primary d-none d-sm-inline">{{ $currentBranch->name ?? 'All Branches' }}</span>
                     </button>
-                    <div class="dropdown-menu shadow-lg p-3" style="min-width: 320px;">
+                    <div class="dropdown-menu shadow-lg p-3" style="min-width: 290px; max-width: 90vw;">
                         <h6 class="dropdown-header px-0 text-uppercase text-secondary fw-bold" style="font-size: 0.72rem;">Switch Active Company & Branch</h6>
                         <form action="{{ route('erp.switch-context') }}" method="POST">
                             @csrf
@@ -499,10 +669,12 @@
                 </span>
             </div>
 
-            <div class="d-flex align-items-center gap-3">
-                <a href="{{ route('erp.ai-assistant.index') }}" class="btn btn-sm btn-outline-warning d-inline-flex align-items-center gap-1 shadow-sm" style="border-color: var(--erp-gold); color: #946c00; font-weight: 600;">
-                    <i class="bi bi-robot text-warning"></i> Ask AI Agent
-                    <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">NEW</span>
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <a href="{{ route('erp.ai-assistant.index') }}" class="btn btn-sm btn-outline-warning d-inline-flex align-items-center gap-1 shadow-sm px-2 px-sm-3" style="border-color: var(--erp-gold); color: #946c00; font-weight: 600;">
+                    <i class="bi bi-robot text-warning"></i>
+                    <span class="d-none d-sm-inline">Ask AI Agent</span>
+                    <span class="d-sm-none">AI</span>
+                    <span class="badge bg-warning text-dark ms-1 d-none d-md-inline" style="font-size:0.6rem;">NEW</span>
                 </a>
 
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary d-none d-sm-inline-flex align-items-center gap-1">
@@ -624,11 +796,63 @@
         document.addEventListener('DOMContentLoaded', function() {
             const toggleBtn = document.getElementById('erpToggleBtn');
             const sidebar = document.getElementById('erpSidebar');
-            if (toggleBtn && sidebar) {
-                toggleBtn.addEventListener('click', function() {
-                    sidebar.classList.toggle('open');
+            const overlay = document.getElementById('erpSidebarOverlay');
+            const closeBtn = document.getElementById('erpSidebarCloseBtn');
+
+            function openSidebar() {
+                if (sidebar) sidebar.classList.add('open');
+                if (overlay) overlay.classList.add('show');
+                if (window.innerWidth < 992) {
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            function closeSidebar() {
+                if (sidebar) sidebar.classList.remove('open');
+                if (overlay) overlay.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (sidebar && sidebar.classList.contains('open')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
                 });
             }
+
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeSidebar);
+            }
+
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
+                    closeSidebar();
+                }
+            });
+
+            // Auto-close on mobile when navigating non-collapse links
+            document.querySelectorAll('#erpSidebar a:not([data-bs-toggle])').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 992) {
+                        closeSidebar();
+                    }
+                });
+            });
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 992) {
+                    closeSidebar();
+                }
+            });
 
             // Drawer AI Logic
             const drawerForm = document.getElementById('drawerChatForm');

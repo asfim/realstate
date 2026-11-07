@@ -1,7 +1,7 @@
 @extends('erp.layouts.app')
 
 @section('content')
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+<div class="erp-header-row mb-4">
     <div>
         <h4 class="fw-bold mb-1 text-dark">Site Visits & Property Inspections</h4>
         <p class="text-muted small mb-0">Scheduled client site tours, agent accompaniment logs, client feedback, and ratings.</p>
@@ -14,7 +14,7 @@
 <!-- Filters -->
 <div class="card card-custom p-3 mb-4">
     <form method="GET" action="{{ route('erp.site-visits.index') }}" class="row g-2 align-items-center">
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <select name="status" class="form-select form-select-sm">
                 <option value="">-- All Visit Statuses --</option>
                 <option value="scheduled" {{ request('status') === 'scheduled' ? 'selected' : '' }}>Scheduled</option>
@@ -23,7 +23,7 @@
                 <option value="no_show" {{ request('status') === 'no_show' ? 'selected' : '' }}>Client No-Show</option>
             </select>
         </div>
-        <div class="col-md-2 d-flex gap-2">
+        <div class="col-12 col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-dark btn-sm flex-grow-1">Filter</button>
             <a href="{{ route('erp.site-visits.index') }}" class="btn btn-light btn-sm border">Reset</a>
         </div>

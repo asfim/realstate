@@ -1,7 +1,7 @@
 @extends('erp.layouts.app')
 
 @section('content')
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+<div class="erp-header-row mb-4">
     <div>
         <div class="d-flex align-items-center gap-2 mb-1">
             <span class="badge bg-dark font-monospace px-2 py-1">{{ $lead->lead_code }}</span>

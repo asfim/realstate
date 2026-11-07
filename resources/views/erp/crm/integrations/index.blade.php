@@ -1,7 +1,7 @@
 @extends('erp.layouts.app')
 
 @section('content')
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+<div class="erp-header-row mb-4">
     <div>
         <h4 class="fw-bold mb-1 text-dark">
             <i class="bi bi-meta text-primary me-2"></i> Meta (Facebook & WhatsApp) Ad Integrations
@@ -23,55 +23,55 @@
 @endif
 
 <!-- Metric Overview Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card card-custom p-3 border-0 bg-primary bg-opacity-10">
+<div class="row g-2 g-sm-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card card-custom p-2 p-sm-3 border-0 bg-primary bg-opacity-10 h-100">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-uppercase text-primary fw-bold" style="font-size: 0.72rem;">Total Ad Leads Synced</span>
+                    <span class="text-uppercase text-primary fw-bold" style="font-size: 0.68rem;">Ad Leads Synced</span>
                     <h3 class="fw-bold text-primary mb-0 mt-1">{{ number_format($totalLogs) }}</h3>
                 </div>
-                <div class="bg-primary text-white p-3 rounded-circle">
-                    <i class="bi bi-cloud-arrow-down fs-4"></i>
+                <div class="bg-primary text-white p-2 p-sm-3 rounded-circle">
+                    <i class="bi bi-cloud-arrow-down fs-5 fs-sm-4"></i>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-custom p-3 border-0 bg-info bg-opacity-10">
+    <div class="col-6 col-lg-3">
+        <div class="card card-custom p-2 p-sm-3 border-0 bg-info bg-opacity-10 h-100">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-uppercase text-info fw-bold" style="font-size: 0.72rem;">Facebook Instant Forms</span>
+                    <span class="text-uppercase text-info fw-bold" style="font-size: 0.68rem;">Facebook Forms</span>
                     <h3 class="fw-bold text-info mb-0 mt-1">{{ number_format($facebookCount) }}</h3>
                 </div>
-                <div class="bg-info text-white p-3 rounded-circle">
-                    <i class="bi bi-facebook fs-4"></i>
+                <div class="bg-info text-white p-2 p-sm-3 rounded-circle">
+                    <i class="bi bi-facebook fs-5 fs-sm-4"></i>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-custom p-3 border-0 bg-success bg-opacity-10">
+    <div class="col-6 col-lg-3">
+        <div class="card card-custom p-2 p-sm-3 border-0 bg-success bg-opacity-10 h-100">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-uppercase text-success fw-bold" style="font-size: 0.72rem;">Click-to-WhatsApp Leads</span>
+                    <span class="text-uppercase text-success fw-bold" style="font-size: 0.68rem;">WhatsApp Leads</span>
                     <h3 class="fw-bold text-success mb-0 mt-1">{{ number_format($whatsappCount) }}</h3>
                 </div>
-                <div class="bg-success text-white p-3 rounded-circle">
-                    <i class="bi bi-whatsapp fs-4"></i>
+                <div class="bg-success text-white p-2 p-sm-3 rounded-circle">
+                    <i class="bi bi-whatsapp fs-5 fs-sm-4"></i>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card card-custom p-3 border-0 bg-warning bg-opacity-10">
+    <div class="col-6 col-lg-3">
+        <div class="card card-custom p-2 p-sm-3 border-0 bg-warning bg-opacity-10 h-100">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <span class="text-uppercase text-warning fw-bold" style="font-size: 0.72rem;">Synced Today</span>
+                    <span class="text-uppercase text-warning fw-bold" style="font-size: 0.68rem;">Synced Today</span>
                     <h3 class="fw-bold text-warning mb-0 mt-1">{{ number_format($todayCount) }}</h3>
                 </div>
-                <div class="bg-warning text-white p-3 rounded-circle">
-                    <i class="bi bi-calendar2-check fs-4"></i>
+                <div class="bg-warning text-white p-2 p-sm-3 rounded-circle">
+                    <i class="bi bi-calendar2-check fs-5 fs-sm-4"></i>
                 </div>
             </div>
         </div>

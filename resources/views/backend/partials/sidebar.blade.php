@@ -18,6 +18,13 @@
             </a>
         </li>
 
+        <li>
+            <a href="{{ route('erp.leads.index') }}" class="text-info fw-semibold" style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.2);">
+                <i class="bi bi-person-lines-fill text-info"></i>
+                CRM & Leads Engine
+            </a>
+        </li>
+
         @can('homepage-settings.view')
             <li>
                 <a href="{{ route('admin.homepage_settings.index') }}"
