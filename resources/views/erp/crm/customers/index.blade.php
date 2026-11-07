@@ -22,9 +22,9 @@
                 <input type="text" name="search" class="form-control" placeholder="Search by customer name, phone, code, NID..." value="{{ request('search') }}">
             </div>
         </div>
-        <div class="col-12 col-md-3 d-flex gap-2">
-            <button type="submit" class="btn btn-dark btn-sm flex-grow-1">Search</button>
-            <a href="{{ route('erp.customers.index') }}" class="btn btn-light btn-sm border">Reset</a>
+        <div class="col-12 col-md-auto d-flex gap-2">
+            <button type="submit" class="btn btn-dark btn-sm px-3">Search</button>
+            <a href="{{ route('erp.customers.index') }}" class="btn btn-light btn-sm border px-3">Reset</a>
         </div>
     </form>
 </div>

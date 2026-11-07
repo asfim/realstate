@@ -188,15 +188,43 @@
             .table th, .table td { white-space: nowrap; }
 
             /* Form buttons */
-            .form-actions .btn { width: 100%; margin-bottom: 8px; }
+            .form-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+            .form-actions .btn { width: auto !important; flex: 0 0 auto !important; }
 
-            /* Page title rows (title + add button) */
+            /* Page title rows (title + add button) - compact, not stretched */
             .page-title-row {
                 flex-direction: column !important;
                 align-items: flex-start !important;
                 gap: 10px;
             }
-            .page-title-row .btn { width: 100%; }
+            .page-title-row > div:last-child {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                width: auto;
+            }
+            .page-title-row .btn {
+                width: auto !important;
+                flex: 0 0 auto !important;
+                display: inline-flex !important;
+                align-items: center;
+                gap: 6px;
+            }
+
+            /* Table action buttons stay compact */
+            .table td.text-end,
+            .table td:last-child {
+                white-space: nowrap !important;
+                width: 1%;
+            }
+            .table td .btn {
+                width: auto !important;
+                flex: 0 0 auto !important;
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                padding: 4px 8px;
+            }
         }
 
         /* ── Responsive: Small Mobile (≤ 480px) ────────── */

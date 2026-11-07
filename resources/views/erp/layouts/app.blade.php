@@ -278,6 +278,19 @@
             -webkit-overflow-scrolling: touch;
             border-radius: 8px;
         }
+        .table td.text-end,
+        .table td:last-child {
+            white-space: nowrap !important;
+            width: 1%;
+        }
+        .table td .btn,
+        .table td a.btn {
+            width: auto !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap !important;
+        }
 
         @media (max-width: 991.98px) {
             #erpSidebar {
@@ -347,7 +360,7 @@
                 padding: 6px 8px;
             }
 
-            /* Responsive Page Header Rows across all ERP & CRM Views */
+            /* Responsive Page Header Rows across all ERP & CRM Views: keep buttons compact & natural width */
             .erp-header-row,
             .erp-content > .d-flex.justify-content-between.mb-4,
             .erp-content > .d-flex.align-items-center.justify-content-between.mb-4,
@@ -364,8 +377,9 @@
             .erp-content > .container-fluid > .d-flex.justify-content-between.mb-4 > div:last-child {
                 display: flex;
                 flex-wrap: wrap;
+                align-items: center;
                 gap: 8px;
-                width: 100%;
+                width: auto;
             }
             .erp-header-row > div:last-child .btn,
             .erp-header-row > div:last-child a.btn,
@@ -375,8 +389,32 @@
             .erp-content > .d-flex.align-items-center.justify-content-between.mb-4 > div:last-child a.btn,
             .erp-content > .d-flex.flex-wrap.align-items-center.justify-content-between.mb-4 > div:last-child .btn,
             .erp-content > .d-flex.flex-wrap.align-items-center.justify-content-between.mb-4 > div:last-child a.btn {
-                flex: 1 1 auto;
-                text-align: center;
+                width: auto !important;
+                flex: 0 0 auto !important;
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap !important;
+                padding: 6px 12px;
+            }
+
+            /* Table action buttons stay compact and never stretch */
+            .table td.text-end,
+            .table td:last-child {
+                white-space: nowrap !important;
+                width: 1%;
+            }
+            .table td .btn,
+            .table td a.btn,
+            .table .btn {
+                width: auto !important;
+                flex: 0 0 auto !important;
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap !important;
+                padding: 4px 8px;
+                font-size: 0.8rem;
             }
 
             /* Responsive Modals on Mobile */

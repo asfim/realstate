@@ -23,9 +23,9 @@
                 <option value="no_show" {{ request('status') === 'no_show' ? 'selected' : '' }}>Client No-Show</option>
             </select>
         </div>
-        <div class="col-12 col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-dark btn-sm flex-grow-1">Filter</button>
-            <a href="{{ route('erp.site-visits.index') }}" class="btn btn-light btn-sm border">Reset</a>
+        <div class="col-12 col-md-auto d-flex gap-2">
+            <button type="submit" class="btn btn-dark btn-sm px-3">Filter</button>
+            <a href="{{ route('erp.site-visits.index') }}" class="btn btn-light btn-sm border px-3">Reset</a>
         </div>
     </form>
 </div>
